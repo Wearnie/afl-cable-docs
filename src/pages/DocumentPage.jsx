@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { findDocuments } from '../data/documentMap'
 import { findFinalTestCert } from '../data/finalTestCerts'
 import CableBreakdown from '../components/CableBreakdown'
@@ -53,12 +53,6 @@ export default function DocumentPage() {
               "<span className="font-mono font-semibold text-afl-text">{code}</span>" is {code.length} characters.
               AFL product codes are exactly 13 characters.
             </p>
-            <Link
-              to="/generate"
-              className="inline-block mt-5 px-6 py-2.5 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
-            >
-              Look up a code
-            </Link>
           </div>
         ) : documents.length === 0 && !djNumber ? (
           <div className="space-y-3">

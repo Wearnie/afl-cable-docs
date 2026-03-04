@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
@@ -63,12 +63,6 @@ export default function DJDocumentPage() {
             <p className="text-afl-muted text-sm mt-1">
               This DJ number may not have been registered yet. Contact AFL for assistance.
             </p>
-            <Link
-              to="/generate"
-              className="inline-block mt-5 px-6 py-2.5 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
-            >
-              Generate a QR code
-            </Link>
           </div>
         ) : (
           <div className="space-y-3">
