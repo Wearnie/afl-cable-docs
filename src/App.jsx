@@ -1,5 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom'
 import DocumentPage from './pages/DocumentPage'
+import DJDocumentPage from './pages/DJDocumentPage'
 import GeneratePage from './pages/GeneratePage'
 import UploadPage from './pages/UploadPage'
 
@@ -48,7 +49,7 @@ function HomePage() {
           </Link>
 
           <Link
-            to="/LMDC1DPA144BE?dj=DJ3429835"
+            to="/dj/03429835"
             className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-blue/40 transition-all duration-200"
           >
             <div className="w-14 h-14 rounded-xl bg-afl-blue flex items-center justify-center mb-5 shadow-sm">
@@ -72,6 +73,7 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/generate" element={<GeneratePage />} />
       <Route path="/upload" element={<UploadPage />} />
+      <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
       <Route path="/:productCode" element={<DocumentPage />} />
     </Routes>
   )

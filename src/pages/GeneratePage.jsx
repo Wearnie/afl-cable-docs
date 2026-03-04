@@ -1,19 +1,24 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
 import { docTypeInfo } from '../data/documentMap'
 import { findFinalTestCert } from '../data/finalTestCerts'
 import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
-  const [input, setInput] = useState('')
   const [djInput, setDjInput] = useState('')
-  const code = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
-  const djNumber = djInput.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const [mappingLoaded, setMappingLoaded] = useState(false)
+  const djNumber = djInput.replace(/\D/g, '') // digits only
 
-  const isValid = code.length === 13
-  const documents = useMemo(() => (isValid ? findDocuments(code) : []), [code, isValid])
-  const finalTestCert = useMemo(() => findFinalTestCert(djNumber), [djNumber])
+  useEffect(() => {
+    loadDJMapping().then(() => setMappingLoaded(true))
+  }, [])
+
+  const productCode = mappingLoaded ? lookupProductCode(djNumber) : null
+  const isValid = djNumber.length === 8
+  const documents = useMemo(() => (productCode ? findDocuments(productCode) : []), [productCode])
+  const finalTestCert = useMemo(() => findFinalTestCert(djNumber) || findFinalTestCert('DJ' + djNumber), [djNumber])
 
   const baseUrl = typeof window !== 'undefined'
     ? window.location.origin
@@ -43,48 +48,47 @@ export default function GeneratePage() {
           <div className="space-y-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
-                Product Code
-              </label>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g. LMDC1DPA144BE"
-                maxLength={13}
-                className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
-                autoFocus
-              />
-              <div className="flex items-center justify-between mt-2">
-                <span className={`text-xs font-medium ${code.length === 13 ? 'text-emerald-600' : 'text-afl-muted'}`}>
-                  {code.length}/13 characters
-                </span>
-                {code.length > 0 && code.length !== 13 && (
-                  <span className="text-xs text-amber-500 font-medium">
-                    {13 - code.length} more needed
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
-                DJ Number <span className="text-afl-muted/60 normal-case tracking-normal font-normal">(optional — for Final Test Certificate)</span>
+                DJ Number
               </label>
               <input
                 type="text"
                 value={djInput}
                 onChange={(e) => setDjInput(e.target.value)}
-                placeholder="e.g. DJ3429835"
-                className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
+                placeholder="e.g. 03429835"
+                maxLength={8}
+                className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
+                autoFocus
               />
+              <div className="flex items-center justify-between mt-2">
+                <span className={`text-xs font-medium ${djNumber.length === 8 ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                  {djNumber.length}/8 digits
+                </span>
+                {djNumber.length > 0 && djNumber.length !== 8 && (
+                  <span className="text-xs text-amber-500 font-medium">
+                    {8 - djNumber.length} more needed
+                  </span>
+                )}
+              </div>
             </div>
+
+            {/* Resolved product code */}
+            {isValid && (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-afl-light border border-afl-border">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Product Code</span>
+                {productCode ? (
+                  <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{productCode}</span>
+                ) : (
+                  <span className="text-sm text-amber-600 font-medium">Not found in lookup — QR will still generate</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {/* QR Code + preview */}
         {isValid && (
           <>
-            <QRGenerator productCode={code} djNumber={djNumber} baseUrl={baseUrl} />
+            <QRGenerator djNumber={djNumber} productCode={productCode} baseUrl={baseUrl} />
 
             <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
@@ -116,14 +120,16 @@ export default function GeneratePage() {
                 </div>
               ) : (
                 <p className="text-afl-muted text-sm">
-                  No documents match this code. The QR will still work — the page will show "No documents found".
+                  {productCode
+                    ? 'No documents match this product code. The QR will still work.'
+                    : 'DJ number not in lookup table. Documents will show once mapping is added.'}
                 </p>
               )}
             </div>
 
             <div className="text-center">
               <Link
-                to={djNumber ? `/${code}?dj=${encodeURIComponent(djNumber)}` : `/${code}`}
+                to={`/dj/${djNumber}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →

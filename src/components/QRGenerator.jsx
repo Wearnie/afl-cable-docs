@@ -1,13 +1,10 @@
 import { useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 
-export default function QRGenerator({ productCode, djNumber, baseUrl }) {
+export default function QRGenerator({ djNumber, productCode, baseUrl }) {
   const printRef = useRef(null)
-  const code = productCode.toUpperCase()
-  const dj = djNumber ? djNumber.toUpperCase().trim() : ''
-  const url = dj
-    ? `${baseUrl}/${code}?dj=${encodeURIComponent(dj)}`
-    : `${baseUrl}/${code}`
+  const dj = djNumber.replace(/\D/g, '')
+  const url = `${baseUrl}/dj/${dj}`
 
   const handlePrint = () => {
     const printContent = printRef.current
@@ -16,7 +13,7 @@ export default function QRGenerator({ productCode, djNumber, baseUrl }) {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Label - ${code}</title>
+          <title>QR Label - DJ ${dj}</title>
           <style>
             @page { size: 62mm 40mm; margin: 2mm; }
             body {
@@ -29,15 +26,15 @@ export default function QRGenerator({ productCode, djNumber, baseUrl }) {
               font-family: Arial, sans-serif;
             }
             .label { text-align: center; }
-            .code {
-              font-size: 10px;
+            .dj {
+              font-size: 11px;
               font-weight: bold;
               font-family: monospace;
               margin-top: 4px;
-              letter-spacing: 1px;
+              letter-spacing: 1.5px;
             }
-            .dj {
-              font-size: 8px;
+            .code {
+              font-size: 7px;
               font-weight: bold;
               font-family: monospace;
               margin-top: 1px;
@@ -54,8 +51,8 @@ export default function QRGenerator({ productCode, djNumber, baseUrl }) {
         <body>
           <div class="label">
             ${printContent.querySelector('svg').outerHTML}
-            <div class="code">${code}</div>
-            ${dj ? `<div class="dj">${dj}</div>` : ''}
+            <div class="dj">DJ ${dj}</div>
+            ${productCode ? `<div class="code">${productCode}</div>` : ''}
             <div class="brand">AFL Cable Docs</div>
           </div>
         </body>
