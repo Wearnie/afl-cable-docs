@@ -108,7 +108,9 @@ export const documentMap = [
   { pattern: 'NMD61DPB048BK', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
   { pattern: 'N3D**EB******', type: 'Test Certificate', name: 'N3DxxEB Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210909%20N3DxxEB%20Test%20Certificate.pdf` },
   { pattern: 'LMD6**PA*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMH6**PA*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMDC**PA*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMHC**PA*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'BMMC**LC144BK', type: 'Test Certificate', name: 'BMMCxxLC144BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220124%20BMMCxxLC144BK%20Test%20Certificate.pdf` },
   { pattern: 'TVBQ**AA012**', type: 'Test Certificate', name: 'TVBQxxAAxx12 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220209%20TVBQxxAAxx12%20Test%20Certificate.pdf` },
   { pattern: 'TVBQ**AA024**', type: 'Test Certificate', name: 'TVBQxxAAxx24 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220209%20TVBQxxAAxx24%20Test%20Certificate.pdf` },
@@ -128,6 +130,7 @@ export const documentMap = [
   { pattern: 'RLD1**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
   { pattern: 'NMDC1DPB144BK', type: 'Test Certificate', name: 'NMDC1DPB144BK Type Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240506%20NMDC1DPB144BK%20Type%20Test%20Certificate.pdf` },
   { pattern: 'LMD8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMH8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
 
 ]
 // ============================================================================
