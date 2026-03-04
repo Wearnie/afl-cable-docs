@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-afl-navy: #003366;
+  --color-afl-blue: #0072CE;
+  --color-afl-cyan: #00B5E2;
+  --color-afl-light: #F0F4F8;
+  --color-afl-card: #FFFFFF;
+  --color-afl-border: #DEE3EA;
+  --color-afl-text: #1B2A3D;
+  --color-afl-muted: #6B7A8D;
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-afl-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Staggered card entrance */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Accordion expand */
+@keyframes slideDown {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 800px; }
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out both;
+  overflow: hidden;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+}
