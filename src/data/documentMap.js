@@ -29,8 +29,10 @@ export const documentMap = [
   // --- Installation ---
   { pattern: 'S************', type: 'Installation', name: 'ADSS Installation Instruction - Quick Reference Guide', url: `${DOC_BASE_URL}/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf` },
   { pattern: 'S************', type: 'Installation', name: 'ADSS Installation Instructions', url: `${DOC_BASE_URL}/installation/ADSS%20Installation%20Instructions.pdf` },
-  { pattern: '*************', type: 'Installation', name: 'Downhole and Vertical Installation Instructions', url: `${DOC_BASE_URL}/installation/Downhole%20and%20Vertical%20Installation%20Instructions.pdf` },
   { pattern: 'L************', type: 'Installation', name: 'Loose Tube Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf` },
+  { pattern: 'N************', type: 'Installation', name: 'Loose Tube Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf` },
+  { pattern: 'R************', type: 'Installation', name: 'Loose Tube Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf` },
+  { pattern: 'B************', type: 'Installation', name: 'Loose Tube Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf` },
   { pattern: 'U************', type: 'Installation', name: 'MicroCore Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/MicroCore%20Installation%20%26%20Application%20Instructions.pdf` },
   { pattern: 'U************', type: 'Installation', name: 'MicroCore Cable Installation - Handling Tips', url: `${DOC_BASE_URL}/installation/MicroCore%20Cable%20Installation%20-%20Handling%20Tips.pdf` },
   { pattern: 'T************', type: 'Installation', name: 'Premise Cable Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Premise%20%28Tight%20Buffered%29%20Cable%20Installation%20%26%20Application%20Instructions.pdf` },
@@ -126,10 +128,6 @@ export const documentMap = [
   { pattern: 'RLD1**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
   { pattern: 'NMDC1DPB144BK', type: 'Test Certificate', name: 'NMDC1DPB144BK Type Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240506%20NMDC1DPB144BK%20Type%20Test%20Certificate.pdf` },
   { pattern: 'LMD8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
-
-  // --- OSP ---
-  { pattern: '*************', type: 'OSP', name: 'OSP Cable - Optical Characteristics (1D), (1E), (1F), (62), (53), (55)', url: `${DOC_BASE_URL}/osp/OSP%20Cable%20-%20Optical%20Characteristics%20%281D%29%2C%20%281E%29%2C%20%281F%29%2C%20%2862%29%2C%20%2853%29%2C%20%2855%29.pdf` },
-  { pattern: 'T************', type: 'OSP', name: 'Premise - Optical Characteristics', url: `${DOC_BASE_URL}/osp/Premise%20-%20Optical%20Characteristics%2030.06.23.pdf` },
 
 ]
 // ============================================================================
