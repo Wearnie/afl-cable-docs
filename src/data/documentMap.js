@@ -26,6 +26,27 @@ export const documentMap = [
   { pattern: 'UTE**********', type: 'Stripping', name: 'UTEx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/UTEx%20Cable%20Stripping%20Instructions.pdf` },
   { pattern: 'UTN**********', type: 'Stripping', name: 'UTNx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf` },
 
+  // --- Stripping (broadened — same cable family, same strip process) ---
+  { pattern: 'LMJ**********', type: 'Stripping', name: 'LMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LMK**********', type: 'Stripping', name: 'LMHx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LMB**********', type: 'Stripping', name: 'LMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LKD**********', type: 'Stripping', name: 'LQDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LQDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LKH**********', type: 'Stripping', name: 'LQHx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LQHx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LLB**********', type: 'Stripping', name: 'LQDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LQDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'LTD**********', type: 'Stripping', name: 'LMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'L2D**********', type: 'Stripping', name: 'LMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'RMF**********', type: 'Stripping', name: 'RLD Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/RLD%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'RMD**********', type: 'Stripping', name: 'RLD Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/RLD%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'RTF**********', type: 'Stripping', name: 'RLD Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/RLD%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'NKD**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'NKJ**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'N2D**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'NTE**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'NOD**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
+  { pattern: 'SM8**********', type: 'Stripping', name: 'SMMx Cable Stripping Instructions (Single Jacket)', url: `${DOC_BASE_URL}/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf` },
+  { pattern: 'BMJ**********', type: 'Stripping', name: 'SMJx Cable Stripping Instructions (Double Jacket)', url: `${DOC_BASE_URL}/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf` },
+  { pattern: 'BMP**********', type: 'Stripping', name: 'SMMx Cable Stripping Instructions (Single Jacket)', url: `${DOC_BASE_URL}/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf` },
+
   // --- Installation ---
   { pattern: 'S************', type: 'Installation', name: 'ADSS Installation Instruction - Quick Reference Guide', url: `${DOC_BASE_URL}/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf` },
   { pattern: 'S************', type: 'Installation', name: 'ADSS Installation Instructions', url: `${DOC_BASE_URL}/installation/ADSS%20Installation%20Instructions.pdf` },
@@ -105,7 +126,7 @@ export const documentMap = [
 
   // --- Test Certificate ---
   { pattern: 'SMM4**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
-  { pattern: 'NMD61DPB048BK', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  { pattern: 'NMD6**P*048**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
   { pattern: 'N3D**EB******', type: 'Test Certificate', name: 'N3DxxEB Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210909%20N3DxxEB%20Test%20Certificate.pdf` },
   { pattern: 'LMD6**PA*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMH6**PA*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
@@ -130,9 +151,54 @@ export const documentMap = [
   { pattern: 'BMJ51DLE048BK', type: 'Test Certificate', name: 'BMJ51DLE048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231025%20BMJ51DLE048BK%20Test%20Certificate.pdf` },
   { pattern: 'LTDQ**LA*****', type: 'Test Certificate', name: 'LTDQxxLA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231025%20LTDQxxLA%20Test%20Certificate.pdf` },
   { pattern: 'RLD1**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
-  { pattern: 'NMDC1DPB144BK', type: 'Test Certificate', name: 'NMDC1DPB144BK Type Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240506%20NMDC1DPB144BK%20Type%20Test%20Certificate.pdf` },
+  { pattern: 'NMDC1*P*144**', type: 'Test Certificate', name: 'NMDC1DPB144BK Type Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240506%20NMDC1DPB144BK%20Type%20Test%20Certificate.pdf` },
   { pattern: 'LMD8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMH8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+
+  // --- Test Certificate (broadened — same construction, different variation/sheath) ---
+  // LMD/LMH PB variants share PA certs (same cable, different variation)
+  { pattern: 'LMD6**PB*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMH6**PB*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMD8**PB*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMH8**PB*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMDC**PB*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMHC**PB*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  // NMD cert broadened — same construction, different fibre counts
+  { pattern: 'NMD6**P*012**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  { pattern: 'NMD6**P*024**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  { pattern: 'NMD6**P*072**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  // SMM broadened — SMM 024/048 share SMM4 048 cert
+  { pattern: 'SMM4**L*024**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  // LQD shares LQB cert (both axial tubes)
+  { pattern: 'LQD1**EA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
+  { pattern: 'LQD1**FA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
+  // UTE broadened — UTE 1D shares 1E cert (same construction)
+  { pattern: 'UTE6**FA*****', type: 'Test Certificate', name: 'UTE6xxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTE6xxFD%20Test%20Certificate.pdf` },
+  { pattern: 'UTEC**FD*****', type: 'Test Certificate', name: 'UTNCxxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTNCxxFD%20Test%20Certificate.pdf` },
+  { pattern: 'UTEC**FA*****', type: 'Test Certificate', name: 'UTNCxxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTNCxxFD%20Test%20Certificate.pdf` },
+  // SMM broadened — span 5/6 share SMM4 048 cert
+  { pattern: 'SMM5**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  { pattern: 'SMM5**L*024**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  { pattern: 'SMM6**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  // LMJ shares LMK cert (double jacket, same construction)
+  { pattern: 'LMJ6**JA*****', type: 'Test Certificate', name: 'LMK6xxJA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LMK6xxJA%20Test%20Certificate.pdf` },
+  // LMB shares LMD cert (armored variant, same base cable)
+  { pattern: 'LMB6**PA*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMB8**PA*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  // LMH PM (LSZH) variant shares PA cert
+  { pattern: 'LMH6**PM*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMH8**PM*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  { pattern: 'LMHC**PM*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
+  // NMD8 shares NMD6 cert (same family, larger size)
+  { pattern: 'NMD8**P*096**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  // LQD with PA construction shares LQB cert
+  { pattern: 'LQD1**PA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
+  // Ribbon RMF/RTF share RLD cert (same F construction)
+  { pattern: 'RMF6**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
+  { pattern: 'RTF6**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
+  // NKD shares NMD cert (non-metallic, armored variant)
+  { pattern: 'NKD6**P*006**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  { pattern: 'NKD6**P*024**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
 
 ]
 // ============================================================================
