@@ -113,11 +113,8 @@ export const documentMap = [
   { pattern: 'RLD1*********', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
   { pattern: 'RLB1*********', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
   { pattern: 'TVBQ*********', type: 'TDS', name: 'TVBQ - Indoor Outdoor Premise Tight Buffered Cable', url: `${DOC_BASE_URL}/tds/TVBQ%20-%20Indoor%20Outdoor%20Premise%20Tight%20Buffered%20Cable.pdf` },
-  { pattern: 'S************', type: 'TDS', name: 'ADSS Accessories Selection Guide', url: `${DOC_BASE_URL}/tds/ADSS%20Accessories%20Selection%20Guide.pdf` },
-  { pattern: 'S************', type: 'TDS', name: 'ADSS Product Line Reference Sheet', url: `${DOC_BASE_URL}/tds/ADSS%20Product%20Line%20Reference%20Sheet.pdf` },
-  { pattern: 'S************', type: 'TDS', name: 'AFL ADSS Electrical Stress Report Summary', url: `${DOC_BASE_URL}/tds/AFL%20ADSS%20Electrical%20Stress%20Report%20Summary.pdf` },
-  { pattern: 'S************', type: 'TDS', name: 'Electrical Stress Questionnaire', url: `${DOC_BASE_URL}/tds/Electrical%20Stress%20Questionnaire.pdf` },
-  { pattern: 'S************', type: 'TDS', name: 'Part Number Overview - ADSS Cables', url: `${DOC_BASE_URL}/tds/Part%20Number%20Overview%20_ADSS%20Cables.pdf` },
+  // Removed 5 generic S************ TDS reference docs (Accessories, Product Line, Electrical Stress, Questionnaire, Part Number Overview)
+  // They were matching every S-prefix cable and inflating doc counts to 8-10
   { pattern: 'T************', type: 'TDS', name: 'AFL Premise Competitor Cross Reference - INTERNAL USE ONLY', url: `${DOC_BASE_URL}/tds/AFL%20Premise%20Competitor%20Cross%20Reference%2012.21%20-%20INTERNAL%20USE%20ONLY.pdf` },
   { pattern: 'T************', type: 'TDS', name: 'AFL Riser Cables ANZ 0819 - TWB-AP', url: `${DOC_BASE_URL}/tds/AFL%20Riser%20Cables%20%20ANZ%200819%20-%20TWB-AP.pdf` },
   { pattern: 'T************', type: 'TDS', name: 'Part Number Overview Aust Manufactured Premise Cable', url: `${DOC_BASE_URL}/tds/Part%20Number%20Overview%20Aust%20Manufactured%20Premise%20Cable.pdf` },
