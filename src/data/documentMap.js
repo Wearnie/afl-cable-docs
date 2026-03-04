@@ -123,6 +123,8 @@ export const documentMap = [
   { pattern: 'UTE6**FD*****', type: 'Test Certificate', name: 'UTE6xxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTE6xxFD%20Test%20Certificate.pdf` },
   { pattern: 'UTNC**FD*****', type: 'Test Certificate', name: 'UTNCxxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTNCxxFD%20Test%20Certificate.pdf` },
   { pattern: 'TVBQ**AA006**', type: 'Test Certificate', name: 'TVBQxxAAxx6 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220224%20TVBQxxAAxx6%20Test%20Certificate.pdf` },
+  { pattern: 'TVAQ**AA006**', type: 'Test Certificate', name: 'TVBQxxAAxx6 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220224%20TVBQxxAAxx6%20Test%20Certificate.pdf` },
+  { pattern: 'TVAQ**AA012**', type: 'Test Certificate', name: 'TVBQxxAAxx12 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220209%20TVBQxxAAxx12%20Test%20Certificate.pdf` },
   { pattern: 'LMDQ**PA*****', type: 'Test Certificate', name: 'LMDQxxPA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220331%20LMDQxxPA%20Test%20Certificate.pdf` },
   { pattern: 'SMM51DLL060BK', type: 'Test Certificate', name: 'SMM51DLL060BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231024%20SMM51DLL060BK%20Test%20Certificate.pdf` },
   { pattern: 'BMJ51DLE048BK', type: 'Test Certificate', name: 'BMJ51DLE048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231025%20BMJ51DLE048BK%20Test%20Certificate.pdf` },
