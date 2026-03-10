@@ -62,6 +62,12 @@ export async function removeDJMappings(djNumbers) {
   })
 }
 
+// Sync from SharePoint Excel
+
+export async function syncFromExcel() {
+  return apiCall('/api/sync-mapping', { method: 'POST' })
+}
+
 // Final Test Certificate API
 
 export async function uploadFinalTestCert(djNumber, file) {

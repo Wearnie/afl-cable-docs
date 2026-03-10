@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { addDJMappings, removeDJMappings, clearAdminKey } from '../lib/adminApi'
+import { addDJMappings, removeDJMappings, syncFromExcel, clearAdminKey } from '../lib/adminApi'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, decodeProductCode } from '../data/documentMap'
 import AdminGate from '../components/AdminGate'
@@ -15,6 +15,11 @@ function AdminPageInner() {
   const [addError, setAddError] = useState('')
   const [addSuccess, setAddSuccess] = useState('')
   const [adding, setAdding] = useState(false)
+
+  // Sync from Excel
+  const [syncing, setSyncing] = useState(false)
+  const [syncResult, setSyncResult] = useState(null)
+  const [syncError, setSyncError] = useState('')
 
   // Bulk paste
   const [bulkInput, setBulkInput] = useState('')
@@ -111,6 +116,26 @@ function AdminPageInner() {
     }
   }
 
+  const handleSync = async () => {
+    setSyncing(true)
+    setSyncResult(null)
+    setSyncError('')
+
+    try {
+      const data = await syncFromExcel()
+      setSyncResult(data)
+      // Reload mapping if changes were committed
+      if (data.commit?.committed) {
+        const fresh = await loadDJMapping()
+        setMapping(fresh)
+      }
+    } catch (err) {
+      setSyncError(err.message)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   // Filtered entries for the table
   const entries = useMemo(() => {
     if (!mapping) return []
@@ -159,6 +184,58 @@ function AdminPageInner() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 -mt-8 pb-12 space-y-4">
+        {/* Sync from Excel */}
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-1">
+                Sync from SharePoint
+              </h2>
+              <p className="text-afl-muted text-xs">
+                Pull DJ→Product Code mappings from the Print Message workbook. Also runs automatically at 6am daily.
+              </p>
+            </div>
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="px-5 py-2.5 bg-afl-blue text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {syncing ? 'Syncing...' : 'Sync Now'}
+            </button>
+          </div>
+
+          {syncError && (
+            <div className="mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+              {syncError}
+            </div>
+          )}
+
+          {syncResult && (
+            <div className={`mt-3 rounded-xl px-4 py-3 text-sm border ${
+              syncResult.commit?.committed
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : 'bg-blue-50 border-blue-200 text-blue-700'
+            }`}>
+              <p className="font-semibold">{syncResult.message}</p>
+              <p className="text-xs mt-1 opacity-80">
+                {syncResult.entries} entries read from Excel
+                {syncResult.commit?.committed && (
+                  <> — {syncResult.commit.added} added, {syncResult.commit.updated} updated, {syncResult.commit.removed} removed</>
+                )}
+              </p>
+              {syncResult.parseErrors?.length > 0 && (
+                <details className="mt-2">
+                  <summary className="text-xs cursor-pointer">Parse warnings ({syncResult.parseErrors.length})</summary>
+                  <pre className="text-[11px] mt-1 whitespace-pre-wrap">{syncResult.parseErrors.join('\n')}</pre>
+                </details>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Add single */}
         <form onSubmit={handleAddSingle} className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
           <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-4">
