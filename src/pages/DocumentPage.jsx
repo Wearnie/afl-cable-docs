@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { findDocuments } from '../data/documentMap'
-import { findFinalTestCert } from '../data/finalTestCerts'
+import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import CableBreakdown from '../components/CableBreakdown'
 import DocumentCard from '../components/DocumentCard'
 
@@ -10,9 +11,14 @@ export default function DocumentPage() {
   const code = productCode.toUpperCase()
   const djNumber = searchParams.get('dj')?.toUpperCase().trim() || ''
   const isValidLength = code.length === 13
+  const [certsLoaded, setCertsLoaded] = useState(false)
+
+  useEffect(() => {
+    loadFinalTestCerts().then(() => setCertsLoaded(true))
+  }, [])
 
   const documents = findDocuments(code)
-  const finalTestCert = djNumber ? findFinalTestCert(djNumber) : null
+  const finalTestCert = certsLoaded && djNumber ? findFinalTestCert(djNumber) : null
 
   // Build the final test cert document object for DocumentCard
   const finalTestDoc = djNumber

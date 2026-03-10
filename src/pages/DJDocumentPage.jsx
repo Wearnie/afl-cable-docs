@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
-import { findFinalTestCert } from '../data/finalTestCerts'
+import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import CableBreakdown from '../components/CableBreakdown'
 import DocumentCard from '../components/DocumentCard'
 
@@ -13,7 +13,7 @@ export default function DJDocumentPage() {
   const [productCode, setProductCode] = useState(null)
 
   useEffect(() => {
-    loadDJMapping().then(() => {
+    Promise.all([loadDJMapping(), loadFinalTestCerts()]).then(() => {
       setProductCode(lookupProductCode(dj))
       setLoading(false)
     })

@@ -7,9 +7,10 @@
 // Order matters: first match per document type wins
 // ============================================================================
 
-// Base URL for document hosting. Override via environment for Azure Blob, etc.
+// Base URL for document hosting.
+// Set VITE_DOC_BASE_URL in Vercel env vars to point at Azure Blob, S3, etc.
 // Default: relative /docs/ path (served from public/docs/ by Vite)
-const DOC_BASE_URL = '/docs'
+const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 
 export const documentMap = [
   // --- Stripping ---
@@ -44,8 +45,7 @@ export const documentMap = [
   { pattern: 'NTE**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
   { pattern: 'NOD**********', type: 'Stripping', name: 'NMDx Cable Stripping Instructions', url: `${DOC_BASE_URL}/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf` },
   { pattern: 'SM8**********', type: 'Stripping', name: 'SMMx Cable Stripping Instructions (Single Jacket)', url: `${DOC_BASE_URL}/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf` },
-  { pattern: 'BMJ**********', type: 'Stripping', name: 'SMJx Cable Stripping Instructions (Double Jacket)', url: `${DOC_BASE_URL}/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf` },
-  { pattern: 'BMP**********', type: 'Stripping', name: 'SMMx Cable Stripping Instructions (Single Jacket)', url: `${DOC_BASE_URL}/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf` },
+  // Removed: BMJ/BMP (Buried) using SMJ/SMM (ADSS) stripping — different construction
 
   // --- Installation ---
   { pattern: 'S************', type: 'Installation', name: 'ADSS Installation Instruction - Quick Reference Guide', url: `${DOC_BASE_URL}/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf` },
@@ -58,68 +58,89 @@ export const documentMap = [
   { pattern: 'U************', type: 'Installation', name: 'MicroCore Cable Installation - Handling Tips', url: `${DOC_BASE_URL}/installation/MicroCore%20Cable%20Installation%20-%20Handling%20Tips.pdf` },
   { pattern: 'T************', type: 'Installation', name: 'Premise Cable Installation & Application Instructions', url: `${DOC_BASE_URL}/installation/Premise%20%28Tight%20Buffered%29%20Cable%20Installation%20%26%20Application%20Instructions.pdf` },
 
-  // --- TDS ---
-  { pattern: 'SMM4****048**', type: 'TDS', name: '48 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMM6****072**', type: 'TDS', name: '72 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMM8****096**', type: 'TDS', name: '96 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMMC****144**', type: 'TDS', name: '144 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMJ5****060**', type: 'TDS', name: '60 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/60%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMJ6****072**', type: 'TDS', name: '72 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMJ8****096**', type: 'TDS', name: '96 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'SMJC****144**', type: 'TDS', name: '144 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'S**5****060**', type: 'TDS', name: '60 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'S**6****072**', type: 'TDS', name: '72 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'S**8****096**', type: 'TDS', name: '96 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'S**C****144**', type: 'TDS', name: '144 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
-  { pattern: 'LLB1*********', type: 'TDS', name: 'Mini Axial LT Cable LSZH', url: `${DOC_BASE_URL}/tds/Mini%20Axial%20LT%20Cable%20LSZH.pdf` },
-  { pattern: 'LLD1*********', type: 'TDS', name: 'Mini Axial LT Cable', url: `${DOC_BASE_URL}/tds/Mini%20Axial%20LT%20Cable.pdf` },
-  { pattern: 'LQB1*********', type: 'TDS', name: 'Axial LT Cable LSZH', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable%20LSZH.pdf` },
-  { pattern: 'LQH1*********', type: 'TDS', name: 'Axial LT Cable with Sacrificial sheath', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf` },
-  { pattern: 'LQD1*********', type: 'TDS', name: 'Axial LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable.pdf` },
-  { pattern: 'NLD1*********', type: 'TDS', name: 'Axial NMA LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20NMA%20LT%20Cable.pdf` },
-  { pattern: 'LMD6****072**', type: 'TDS', name: '72F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMD8****096**', type: 'TDS', name: '96F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMDC****144**', type: 'TDS', name: '144F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMDO****288**', type: 'TDS', name: '288F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/288F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMDQ****312**', type: 'TDS', name: '312F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/312F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LTDQ****624**', type: 'TDS', name: '624F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/624F%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMH6****072**', type: 'TDS', name: '72F Stranded LT Cable with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf` },
+  // --- TDS (restored from Excel Document Map — specific patterns) ---
+  { pattern: 'S*M4**LB0**BK', type: 'TDS', name: '48 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMM6**PA0**BK', type: 'TDS', name: '72 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMM8**PA0**BK', type: 'TDS', name: '96 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMMC**PA***BK', type: 'TDS', name: '144 Fibre Short Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'S*M5**LL0**BK', type: 'TDS', name: '60 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/60%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMM6**LL0**BK', type: 'TDS', name: '72 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMM8**PE0**BK', type: 'TDS', name: '96 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMMC**LI***BK', type: 'TDS', name: '144 Fibre Mid Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'S*J5**LE0**BK', type: 'TDS', name: '60 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMJ6**LE0**BK', type: 'TDS', name: '72 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/72%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMJ8**LA0**BK', type: 'TDS', name: '96 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'SMJC**LE***BK', type: 'TDS', name: '144 Fibre Long Span ADSS Cable', url: `${DOC_BASE_URL}/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf` },
+  { pattern: 'LQB1**PA0****', type: 'TDS', name: 'Mini Axial LT Cable LSZH', url: `${DOC_BASE_URL}/tds/Mini%20Axial%20LT%20Cable%20LSZH.pdf` },
+  { pattern: 'LQD1**PA0**BE', type: 'TDS', name: 'Mini Axial LT Cable', url: `${DOC_BASE_URL}/tds/Mini%20Axial%20LT%20Cable.pdf` },
+  { pattern: 'LLB1**EA0****', type: 'TDS', name: 'Axial LT Cable LSZH', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable%20LSZH.pdf` },
+  { pattern: 'LQH1**E*0**BK', type: 'TDS', name: 'Axial LT Cable with Sacrificial sheath', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf` },
+  { pattern: 'LQD1**EA0**BE', type: 'TDS', name: 'Axial LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20LT%20Cable.pdf` },
+  { pattern: 'NLD1**EB006BK', type: 'TDS', name: 'Axial NMA LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NLD1**EB012BK', type: 'TDS', name: 'Axial NMA LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NLD1**EB024BK', type: 'TDS', name: 'Axial NMA LT Cable', url: `${DOC_BASE_URL}/tds/Axial%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'LQD1*******BK', type: 'TDS', name: '72F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LKD6**PA0**BE', type: 'TDS', name: '72F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMD8**PA096BE', type: 'TDS', name: '96F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMDC**PA144BE', type: 'TDS', name: '144F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMDO**PA288BE', type: 'TDS', name: '288F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/288F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMDQ**PA312BE', type: 'TDS', name: '312F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/312F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LTDQ**LA624BE', type: 'TDS', name: '624F Stranded LT Cable', url: `${DOC_BASE_URL}/tds/624F%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMH6**P*0**BK', type: 'TDS', name: '72F Stranded LT Cable with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf` },
+  { pattern: 'LKH6**P*0**BK', type: 'TDS', name: '72F Stranded LT Cable with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf` },
   { pattern: 'LMH8****096**', type: 'TDS', name: '96F Stranded LT Cable with Sacrificial sheath', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20LT%20Cable%20with%20Sacrificial%20sheath.pdf` },
   { pattern: 'LMHC****144**', type: 'TDS', name: '144F Stranded LT Cable with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf` },
   { pattern: 'LMD6***M072**', type: 'TDS', name: '72F Stranded LT Cable with LSZH Sheath', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf` },
-  { pattern: 'LMD8***M096**', type: 'TDS', name: '96F Stranded LT Cable with LSZH Sheath', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf` },
-  { pattern: 'LMDC***M144**', type: 'TDS', name: '144F Stranded LT Cable with LSZH Sheath', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf` },
-  { pattern: 'NMD6****072**', type: 'TDS', name: '72F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf` },
-  { pattern: 'NMD8****096**', type: 'TDS', name: '96F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf` },
-  { pattern: 'NMDC****144**', type: 'TDS', name: '144F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20NMA%20LT%20Cable.pdf` },
-  { pattern: 'NMD6***M072**', type: 'TDS', name: '72 Stranded NMA LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/72%20Stranded%20NMA%20LTC%20LSZH%20Sheath.pdf` },
-  { pattern: 'NMD8***M096**', type: 'TDS', name: '96 NMA Stranded LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf` },
-  { pattern: 'NMDC***M144**', type: 'TDS', name: '144 NMA Stranded LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/144%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf` },
-  { pattern: 'UTN6****144**', type: 'TDS', name: '144F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMH8**P*096BK', type: 'TDS', name: '96F Stranded LT Cable with LSZH Sheath', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf` },
+  { pattern: 'LMBC**PA144**', type: 'TDS', name: '144F Stranded LT Cable with LSZH Sheath', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf` },
+  { pattern: 'NMD6**PB0****', type: 'TDS', name: '72F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NKD6**PB0****', type: 'TDS', name: '72F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NKD8**PB048**', type: 'TDS', name: '72F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NMD8**PB096**', type: 'TDS', name: '96F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NMDC**PB144**', type: 'TDS', name: '144F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NKD6**PM0****', type: 'TDS', name: '144F Stranded NMA LT Cable', url: `${DOC_BASE_URL}/tds/144F%20Stranded%20NMA%20LT%20Cable.pdf` },
+  { pattern: 'NMD6**PM0****', type: 'TDS', name: '72 Stranded NMA LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/72%20Stranded%20NMA%20LTC%20LSZH%20Sheath.pdf` },
+  { pattern: 'NMD8**PM096**', type: 'TDS', name: '96 NMA Stranded LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf` },
+  { pattern: 'NKD8**PM048**', type: 'TDS', name: '96 NMA Stranded LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf` },
+  { pattern: 'NMDC**PM144**', type: 'TDS', name: '144 NMA Stranded LTC LSZH Sheath', url: `${DOC_BASE_URL}/tds/144%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf` },
+  { pattern: 'UTE6**FA***BE', type: 'TDS', name: '144F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'UME6**FA0**BE', type: 'TDS', name: '144F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'UKE6**FA0**BE', type: 'TDS', name: '144F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
   { pattern: 'UTE6****144**', type: 'TDS', name: '144F MicroCore Stranded LTC with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf` },
-  { pattern: 'UTNC****288**', type: 'TDS', name: '288F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'UTEC****288**', type: 'TDS', name: '288F MicroCore Stranded LT with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf` },
-  { pattern: 'LMJ6****072**', type: 'TDS', name: '72F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMJ8****096**', type: 'TDS', name: '96F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMJC****144**', type: 'TDS', name: '144F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
-  { pattern: 'LMK6****072**', type: 'TDS', name: '72F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
-  { pattern: 'LMK8****096**', type: 'TDS', name: '96F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
-  { pattern: 'LMKC****144**', type: 'TDS', name: '144F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
-  { pattern: 'NMK6****072**', type: 'TDS', name: '72F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
-  { pattern: 'NMK8****096**', type: 'TDS', name: '96F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
-  { pattern: 'NMKC****144**', type: 'TDS', name: '144F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
-  { pattern: 'RMD8****096**', type: 'TDS', name: '96F NM Flat Rod Armoured LT Cable - RMD8', url: `${DOC_BASE_URL}/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf` },
-  { pattern: 'RMF6****144**', type: 'TDS', name: '144F NM Flat FRP Armoured LT Cable - RMF6', url: `${DOC_BASE_URL}/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf` },
-  { pattern: 'RLD1*********', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
-  { pattern: 'RLB1*********', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
-  { pattern: 'TVBQ*********', type: 'TDS', name: 'TVBQ - Indoor Outdoor Premise Tight Buffered Cable', url: `${DOC_BASE_URL}/tds/TVBQ%20-%20Indoor%20Outdoor%20Premise%20Tight%20Buffered%20Cable.pdf` },
-  // Removed 5 generic S************ TDS reference docs (Accessories, Product Line, Electrical Stress, Questionnaire, Part Number Overview)
-  // They were matching every S-prefix cable and inflating doc counts to 8-10
-  { pattern: 'T************', type: 'TDS', name: 'AFL Premise Competitor Cross Reference - INTERNAL USE ONLY', url: `${DOC_BASE_URL}/tds/AFL%20Premise%20Competitor%20Cross%20Reference%2012.21%20-%20INTERNAL%20USE%20ONLY.pdf` },
-  { pattern: 'T************', type: 'TDS', name: 'AFL Riser Cables ANZ 0819 - TWB-AP', url: `${DOC_BASE_URL}/tds/AFL%20Riser%20Cables%20%20ANZ%200819%20-%20TWB-AP.pdf` },
-  { pattern: 'T************', type: 'TDS', name: 'Part Number Overview Aust Manufactured Premise Cable', url: `${DOC_BASE_URL}/tds/Part%20Number%20Overview%20Aust%20Manufactured%20Premise%20Cable.pdf` },
-  { pattern: 'L************', type: 'TDS', name: 'Part Number Overview - TLC Cables', url: `${DOC_BASE_URL}/tds/Part%20Number%20Overview%20_TLC%20Cables%2004.24.pdf` },
-  { pattern: 'L************', type: 'TDS', name: 'Stock Cable lengths for 1200mm Drum', url: `${DOC_BASE_URL}/tds/Stock%20Cable%20lengths%20for%201200mm%20Drum.pdf` },
+  { pattern: 'UTEC**FA288BE', type: 'TDS', name: '288F MicroCore Stranded LT Cable', url: `${DOC_BASE_URL}/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'UMNC**FD***BE', type: 'TDS', name: '288F MicroCore Stranded LT with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf` },
+  { pattern: 'UTNC**FD***BE', type: 'TDS', name: '288F MicroCore Stranded LT with Sacrificial Sheath', url: `${DOC_BASE_URL}/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf` },
+  { pattern: 'LMJ6**JA0**BE', type: 'TDS', name: '72F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMJ8**JA096BE', type: 'TDS', name: '96F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMJC**JA144BE', type: 'TDS', name: '144F High Strength Stranded LT Cable', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf` },
+  { pattern: 'LMK6**J*0**BK', type: 'TDS', name: '72F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
+  { pattern: 'LKK6**J*0**BK', type: 'TDS', name: '72F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
+  { pattern: 'LMK8**J*096BK', type: 'TDS', name: '96F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
+  { pattern: 'LMKC**J*144BK', type: 'TDS', name: '144F High Strength Stranded Loose Tube Cable SS', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf` },
+  { pattern: 'NMJ6**JB0****', type: 'TDS', name: '72F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
+  { pattern: 'NKJ6**JB0****', type: 'TDS', name: '72F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
+  { pattern: 'NMJ8**JB096**', type: 'TDS', name: '96F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/96F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
+  { pattern: 'NMJC**JB144**', type: 'TDS', name: '144F High Strength Stranded NMA Loose Tube Cable', url: `${DOC_BASE_URL}/tds/144F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf` },
+  { pattern: 'RMD8**PB096**', type: 'TDS', name: '96F NM Flat Rod Armoured LT Cable - RMD8', url: `${DOC_BASE_URL}/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf` },
+  { pattern: 'RKD8**PB048**', type: 'TDS', name: '96F NM Flat Rod Armoured LT Cable - RMD8', url: `${DOC_BASE_URL}/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf` },
+  { pattern: 'RTF6**FB*****', type: 'TDS', name: '144F NM Flat FRP Armoured LT Cable - RMF6', url: `${DOC_BASE_URL}/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf` },
+  { pattern: 'RKF6**FB*****', type: 'TDS', name: '144F NM Flat FRP Armoured LT Cable - RMF6', url: `${DOC_BASE_URL}/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf` },
+  { pattern: 'RMF6**FB*****', type: 'TDS', name: '144F NM Flat FRP Armoured LT Cable - RMF6', url: `${DOC_BASE_URL}/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf` },
+  { pattern: 'RLD1**FB002BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB004BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB006BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB008BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB012BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB016BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FB024BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf` },
+  { pattern: 'RLD1**FM002BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM004BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM006BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM008BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM012BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM016BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'RLD1**FM024BK', type: 'TDS', name: 'Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath', url: `${DOC_BASE_URL}/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf` },
+  { pattern: 'TVBQ**AA0****', type: 'TDS', name: 'TVBQ - Indoor Outdoor Premise Tight Buffered Cable', url: `${DOC_BASE_URL}/tds/TVBQ%20-%20Indoor%20Outdoor%20Premise%20Tight%20Buffered%20Cable.pdf` },
 
   // --- Test Certificate ---
   { pattern: 'SMM4**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
@@ -144,7 +165,7 @@ export const documentMap = [
   { pattern: 'TVAQ**AA006**', type: 'Test Certificate', name: 'TVBQxxAAxx6 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220224%20TVBQxxAAxx6%20Test%20Certificate.pdf` },
   { pattern: 'TVAQ**AA012**', type: 'Test Certificate', name: 'TVBQxxAAxx12 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220209%20TVBQxxAAxx12%20Test%20Certificate.pdf` },
   { pattern: 'LMDQ**PA*****', type: 'Test Certificate', name: 'LMDQxxPA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220331%20LMDQxxPA%20Test%20Certificate.pdf` },
-  { pattern: 'SMM51DLL060BK', type: 'Test Certificate', name: 'SMM51DLL060BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231024%20SMM51DLL060BK%20Test%20Certificate.pdf` },
+  { pattern: 'S*M5**LL*****', type: 'Test Certificate', name: 'SMM51DLL060BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231024%20SMM51DLL060BK%20Test%20Certificate.pdf` },
   { pattern: 'BMJ51DLE048BK', type: 'Test Certificate', name: 'BMJ51DLE048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231025%20BMJ51DLE048BK%20Test%20Certificate.pdf` },
   { pattern: 'LTDQ**LA*****', type: 'Test Certificate', name: 'LTDQxxLA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/231025%20LTDQxxLA%20Test%20Certificate.pdf` },
   { pattern: 'RLD1**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
@@ -160,12 +181,8 @@ export const documentMap = [
   { pattern: 'LMH8**PB*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMDC**PB*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMHC**PB*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
-  // NMD cert broadened — same construction, different fibre counts
-  { pattern: 'NMD6**P*012**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
-  { pattern: 'NMD6**P*024**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
-  { pattern: 'NMD6**P*072**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
-  // SMM broadened — SMM 024/048 share SMM4 048 cert
-  { pattern: 'SMM4**L*024**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  // Removed: NMD6 012/024/072F using 048F cert — wrong fibre count
+  // Removed: SMM4 024F using 048F cert — wrong fibre count
   // LQD shares LQB cert (both axial tubes)
   { pattern: 'LQD1**EA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
   { pattern: 'LQD1**FA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
@@ -173,10 +190,7 @@ export const documentMap = [
   { pattern: 'UTE6**FA*****', type: 'Test Certificate', name: 'UTE6xxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTE6xxFD%20Test%20Certificate.pdf` },
   { pattern: 'UTEC**FD*****', type: 'Test Certificate', name: 'UTNCxxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTNCxxFD%20Test%20Certificate.pdf` },
   { pattern: 'UTEC**FA*****', type: 'Test Certificate', name: 'UTNCxxFD Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20UTNCxxFD%20Test%20Certificate.pdf` },
-  // SMM broadened — span 5/6 share SMM4 048 cert
-  { pattern: 'SMM5**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
-  { pattern: 'SMM5**L*024**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
-  { pattern: 'SMM6**L*048**', type: 'Test Certificate', name: 'SMM4xxLx048 Test Certificate', url: `${DOC_BASE_URL}/test-certificates/181220%20SMM4xxLx048.pdf` },
+  // Removed: SMM5/SMM6 using SMM4 cert — different core structure (5/6 tubes vs 4)
   // LMJ shares LMK cert (double jacket, same construction)
   { pattern: 'LMJ6**JA*****', type: 'Test Certificate', name: 'LMK6xxJA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LMK6xxJA%20Test%20Certificate.pdf` },
   // LMB shares LMD cert (armored variant, same base cable)
@@ -186,16 +200,13 @@ export const documentMap = [
   { pattern: 'LMH6**PM*****', type: 'Test Certificate', name: 'LMD6xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/210917%20LMD6xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMH8**PM*****', type: 'Test Certificate', name: 'LMD8xxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240805%20LMD8xxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
   { pattern: 'LMHC**PM*****', type: 'Test Certificate', name: 'LMDCxxPA (SZ7) Test Certificate', url: `${DOC_BASE_URL}/test-certificates/211217%20LMDCxxPA%20%28SZ7%29%20Test%20Certificate.pdf` },
-  // NMD8 shares NMD6 cert (same family, larger size)
-  { pattern: 'NMD8**P*096**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  // Removed: NMD8 096F using NMD6 048F cert — different core structure AND fibre count
   // LQD with PA construction shares LQB cert
   { pattern: 'LQD1**PA*****', type: 'Test Certificate', name: 'LQB1xxEA Test Certificate', url: `${DOC_BASE_URL}/test-certificates/220216%20LQB1xxEA%20Test%20Certificate.pdf` },
   // Ribbon RMF/RTF share RLD cert (same F construction)
   { pattern: 'RMF6**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
   { pattern: 'RTF6**F******', type: 'Test Certificate', name: 'RLD1xxF Test Certificate', url: `${DOC_BASE_URL}/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf` },
-  // NKD shares NMD cert (non-metallic, armored variant)
-  { pattern: 'NKD6**P*006**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
-  { pattern: 'NKD6**P*024**', type: 'Test Certificate', name: 'NMD61DPB048BK Test Certificate', url: `${DOC_BASE_URL}/test-certificates/191011%20NMD61DPB048BK.pdf` },
+  // Removed: NKD 006/024F using NMD 048F cert — wrong fibre count
 
 ]
 // ============================================================================

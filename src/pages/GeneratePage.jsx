@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
 import { docTypeInfo } from '../data/documentMap'
-import { findFinalTestCert } from '../data/finalTestCerts'
+import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
@@ -12,7 +12,7 @@ export default function GeneratePage() {
   const djNumber = djInput.replace(/\D/g, '') // digits only
 
   useEffect(() => {
-    loadDJMapping().then(() => setMappingLoaded(true))
+    Promise.all([loadDJMapping(), loadFinalTestCerts()]).then(() => setMappingLoaded(true))
   }, [])
 
   const productCode = mappingLoaded ? lookupProductCode(djNumber) : null

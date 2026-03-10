@@ -1,26 +1,31 @@
 // Final Test Certificate lookup
-// Checks local store (localStorage) first, then falls back to static entries.
-// When you move to Supabase/Azure, swap getLocalCert for an API call.
+// Fetches /data/final-test-certs.json on first call and caches in memory.
+// Power Automate pushes new entries via GitHub API → Vercel redeploys.
 
-import { getLocalCert } from '../lib/localCertStore'
+let cache = null
 
-const staticCerts = {
-  // Example entry for demo
-  'DJ3429835': { name: 'Final Test Certificate — DJ3429835', url: '/examples/ftc-DJ3429835.html' },
+export async function loadFinalTestCerts() {
+  if (cache) return cache
+  const res = await fetch('/data/final-test-certs.json')
+  cache = await res.json()
+  return cache
 }
 
 /**
  * Look up a final test certificate by DJ number.
- * Returns { name, url } or null if not yet uploaded.
+ * Returns { url } or null if not yet uploaded.
  */
 export function findFinalTestCert(djNumber) {
-  if (!djNumber) return null
-  const key = djNumber.toUpperCase().trim()
+  if (!cache || !djNumber) return null
+  const key = djNumber.replace(/\D/g, '') // strip non-digits
+  return cache[key] || null
+}
 
-  // Check local uploads first (Rod's uploads from this browser)
-  const local = getLocalCert(key)
-  if (local) return local
-
-  // Fall back to static entries
-  return staticCerts[key] || null
+/**
+ * Get all final test certs as an array (for listing).
+ * Returns [{ djNumber, url }, ...]
+ */
+export function getAllFinalTestCerts() {
+  if (!cache) return []
+  return Object.entries(cache).map(([dj, data]) => ({ djNumber: dj, ...data }))
 }
