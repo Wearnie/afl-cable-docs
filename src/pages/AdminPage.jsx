@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { addDJMappings, removeDJMappings, syncFromExcel, clearAdminKey } from '../lib/adminApi'
+import { addDJMappings, removeDJMappings, syncFromExcel, uploadStaticDoc, clearAdminKey } from '../lib/adminApi'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, decodeProductCode } from '../data/documentMap'
 import AdminGate from '../components/AdminGate'
@@ -334,6 +334,9 @@ function AdminPageInner() {
           </form>
         </div>
 
+        {/* Upload document */}
+        <DocUploadCard />
+
         {/* Current mappings */}
         <div className="bg-white rounded-2xl shadow-sm border border-afl-border overflow-hidden">
           <div className="p-4 border-b border-afl-border">
@@ -414,6 +417,92 @@ function AdminPageInner() {
         </div>
       </main>
     </div>
+  )
+}
+
+const DOC_TYPE_OPTIONS = [
+  { value: 'tds', label: 'Technical Data Sheet (TDS)' },
+  { value: 'stripping', label: 'Stripping Instructions' },
+  { value: 'test-certificates', label: 'Test Certificate' },
+  { value: 'installation', label: 'Installation Guide' },
+]
+
+function DocUploadCard() {
+  const [docType, setDocType] = useState('tds')
+  const [file, setFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState('')
+  const fileRef = useRef(null)
+
+  const handleUpload = async (e) => {
+    e.preventDefault()
+    if (!file) return
+
+    setUploading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const data = await uploadStaticDoc(docType, file)
+      setResult(data)
+      setFile(null)
+      if (fileRef.current) fileRef.current.value = ''
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleUpload} className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-4">
+        Upload Document
+      </h2>
+      <p className="text-afl-muted text-xs mb-4">
+        Upload a TDS, stripping guide, test certificate, or installation guide PDF. The file name must match what's in the document map.
+      </p>
+
+      <div className="flex gap-3 items-end flex-wrap">
+        <div>
+          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Type</label>
+          <select
+            value={docType}
+            onChange={e => setDocType(e.target.value)}
+            className="px-3 py-2.5 border border-afl-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+          >
+            {DOC_TYPE_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex-1 min-w-[200px]">
+          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">PDF File</label>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/pdf"
+            onChange={e => { setFile(e.target.files[0] || null); setError(''); setResult(null) }}
+            className="w-full text-sm text-afl-text file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={!file || uploading}
+          className="px-5 py-2.5 bg-afl-cyan text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+        >
+          {uploading ? 'Uploading...' : 'Upload'}
+        </button>
+      </div>
+
+      {error && <p className="text-red-600 text-xs mt-3">{error}</p>}
+      {result && (
+        <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700">
+          {result.message} {result.replaced && '(replaced existing file)'}
+        </div>
+      )}
+    </form>
   )
 }
 

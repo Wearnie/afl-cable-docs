@@ -68,6 +68,26 @@ export async function syncFromExcel() {
   return apiCall('/api/sync-mapping', { method: 'POST' })
 }
 
+// Static Document Upload API (TDS, Stripping, etc.)
+
+export async function uploadStaticDoc(docType, file) {
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result.split(',')[1])
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+
+  return apiCall('/api/upload-doc', {
+    method: 'POST',
+    body: JSON.stringify({
+      docType,
+      fileName: file.name,
+      fileBase64: base64,
+    }),
+  })
+}
+
 // Final Test Certificate API
 
 export async function uploadFinalTestCert(djNumber, file) {
