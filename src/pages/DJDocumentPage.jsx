@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
+import { loadDJOverrides, applyOverrides } from '../data/djOverrides'
 import CableBreakdown from '../components/CableBreakdown'
 import DocumentCard from '../components/DocumentCard'
 
@@ -13,13 +14,13 @@ export default function DJDocumentPage() {
   const [productCode, setProductCode] = useState(null)
 
   useEffect(() => {
-    Promise.all([loadDJMapping(), loadFinalTestCerts()]).then(() => {
+    Promise.all([loadDJMapping(), loadFinalTestCerts(), loadDJOverrides()]).then(() => {
       setProductCode(lookupProductCode(dj))
       setLoading(false)
     })
   }, [dj])
 
-  const documents = productCode ? findDocuments(productCode) : []
+  const documents = productCode ? applyOverrides(dj, findDocuments(productCode)) : []
   const finalTestCert = findFinalTestCert(dj) || findFinalTestCert('DJ' + dj)
   const finalTestDoc = finalTestCert
     ? { type: 'Final Test Certificate', name: `Final Test Certificate — ${dj}`, url: finalTestCert.url }
