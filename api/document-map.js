@@ -1,0 +1,149 @@
+// Vercel Serverless Function: CRUD for document-map.json
+// GET    /api/document-map          → returns all entries
+// POST   /api/document-map          → add entries { entries: [{ pattern, type, name, path }] }
+// DELETE /api/document-map          → remove entries { patterns: ["K3M**********"] }
+
+const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
+const FILE_PATH = 'public/data/document-map.json'
+
+async function githubRequest(path, options = {}) {
+  const token = process.env.GITHUB_TOKEN
+  if (!token) throw new Error('GITHUB_TOKEN not configured')
+
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`GitHub API ${res.status}: ${body}`)
+  }
+  return res.json()
+}
+
+function checkAdminKey(req) {
+  const key = req.headers['x-admin-key'] || ''
+  const expected = process.env.ADMIN_KEY
+  if (!expected) return { ok: false, error: 'ADMIN_KEY not configured' }
+  if (key !== expected) return { ok: false, error: 'Invalid admin key' }
+  return { ok: true }
+}
+
+async function readDocumentMap() {
+  const file = await githubRequest(`contents/${FILE_PATH}?ref=${GITHUB_BRANCH}`)
+  const content = Buffer.from(file.content, 'base64').toString('utf-8')
+  return { entries: JSON.parse(content), sha: file.sha }
+}
+
+async function writeDocumentMap(entries, sha, message) {
+  const content = Buffer.from(JSON.stringify(entries, null, 2) + '\n').toString('base64')
+  await githubRequest(`contents/${FILE_PATH}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message,
+      content,
+      sha,
+      branch: GITHUB_BRANCH,
+    }),
+  })
+}
+
+function validateEntry(entry) {
+  if (!entry.pattern || entry.pattern.length !== 13) return 'Pattern must be exactly 13 characters'
+  if (!entry.type) return 'Type is required'
+  if (!entry.name) return 'Name is required'
+  if (!entry.path) return 'Path is required'
+  if (!entry.path.startsWith('/')) return 'Path must start with /'
+  return null
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Admin-Key')
+  if (req.method === 'OPTIONS') return res.status(200).end()
+
+  try {
+    // GET — public, no auth needed
+    if (req.method === 'GET') {
+      const { entries } = await readDocumentMap()
+      return res.json({ entries, count: entries.length })
+    }
+
+    // POST and DELETE require admin auth
+    const auth = checkAdminKey(req)
+    if (!auth.ok) return res.status(401).json({ error: auth.error })
+
+    if (req.method === 'POST') {
+      const { entries: newEntries } = req.body
+      if (!Array.isArray(newEntries) || newEntries.length === 0) {
+        return res.status(400).json({ error: 'Required: entries array with at least one entry' })
+      }
+
+      // Validate all entries
+      for (const entry of newEntries) {
+        const err = validateEntry(entry)
+        if (err) return res.status(400).json({ error: `Invalid entry (${entry.pattern}): ${err}` })
+      }
+
+      const { entries: existing, sha } = await readDocumentMap()
+
+      // Add new entries (replace if same pattern+type exists)
+      const updated = [...existing]
+      for (const newEntry of newEntries) {
+        const idx = updated.findIndex(e => e.pattern === newEntry.pattern && e.type === newEntry.type)
+        if (idx >= 0) {
+          updated[idx] = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+        } else {
+          updated.push({ pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path })
+        }
+      }
+
+      await writeDocumentMap(updated, sha, `Add ${newEntries.length} document mapping(s)`)
+
+      return res.json({
+        success: true,
+        added: newEntries.length,
+        total: updated.length,
+        message: `${newEntries.length} mapping(s) saved. Site will redeploy in ~60 seconds.`,
+      })
+    }
+
+    if (req.method === 'DELETE') {
+      const { patterns } = req.body
+      if (!Array.isArray(patterns) || patterns.length === 0) {
+        return res.status(400).json({ error: 'Required: patterns array' })
+      }
+
+      const { entries: existing, sha } = await readDocumentMap()
+      const patternSet = new Set(patterns)
+      const updated = existing.filter(e => !patternSet.has(e.pattern))
+      const removed = existing.length - updated.length
+
+      if (removed === 0) {
+        return res.json({ success: true, removed: 0, message: 'No matching patterns found' })
+      }
+
+      await writeDocumentMap(updated, sha, `Remove ${removed} document mapping(s)`)
+
+      return res.json({
+        success: true,
+        removed,
+        total: updated.length,
+        message: `${removed} mapping(s) removed. Site will redeploy in ~60 seconds.`,
+      })
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' })
+  } catch (err) {
+    console.error('Document map API error:', err)
+    return res.status(500).json({ error: err.message })
+  }
+}

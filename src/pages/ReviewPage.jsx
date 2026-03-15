@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDJMapping } from '../data/djLookup'
-import { findDocuments, documentMap, decodeProductCode, docTypeInfo, patternMatches } from '../data/documentMap'
+import { findDocuments, getDocumentMap, decodeProductCode, docTypeInfo, patternMatches, loadDocumentMap } from '../data/documentMap'
 
 const DOC_TYPES = ['TDS', 'Stripping', 'Test Certificate', 'Installation']
 const PRIMARY_TYPES = ['TDS', 'Stripping', 'Test Certificate']
@@ -18,11 +18,12 @@ function isApplicable(productCode, docType) {
 
 // Extract unique candidate documents per type
 function getCandidatesByType() {
+  const map = getDocumentMap()
   const candidates = {}
   for (const type of DOC_TYPES) {
     const seen = new Set()
     candidates[type] = []
-    for (const entry of documentMap) {
+    for (const entry of map) {
       if (entry.type === type && !seen.has(entry.url)) {
         seen.add(entry.url)
         candidates[type].push({ name: entry.name, url: entry.url, pattern: entry.pattern })
@@ -97,13 +98,13 @@ export default function ReviewPage() {
   const [assignments, setAssignments] = useState({}) // key: `${code}-${type}` → { name, url, pattern }
 
   useEffect(() => {
-    loadDJMapping().then(data => {
+    Promise.all([loadDJMapping(), loadDocumentMap()]).then(([data]) => {
       setMapping(data)
       setLoading(false)
     })
   }, [])
 
-  const candidates = useMemo(() => getCandidatesByType(), [])
+  const candidates = useMemo(() => mapping ? getCandidatesByType() : {}, [mapping])
 
   // Group by product code
   const codeRows = useMemo(() => {

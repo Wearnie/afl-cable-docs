@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { addDJMappings, removeDJMappings, syncFromExcel, uploadStaticDoc, clearAdminKey } from '../lib/adminApi'
+import { removeDJMappings, uploadStaticDoc, addDocumentMappings, clearAdminKey } from '../lib/adminApi'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, decodeProductCode } from '../data/documentMap'
 import AdminGate from '../components/AdminGate'
@@ -8,24 +8,6 @@ import AdminGate from '../components/AdminGate'
 function AdminPageInner() {
   const [mapping, setMapping] = useState(null)
   const [loading, setLoading] = useState(true)
-
-  // Add single entry
-  const [djInput, setDjInput] = useState('')
-  const [codeInput, setCodeInput] = useState('')
-  const [addError, setAddError] = useState('')
-  const [addSuccess, setAddSuccess] = useState('')
-  const [adding, setAdding] = useState(false)
-
-  // Sync from Excel
-  const [syncing, setSyncing] = useState(false)
-  const [syncResult, setSyncResult] = useState(null)
-  const [syncError, setSyncError] = useState('')
-
-  // Bulk paste
-  const [bulkInput, setBulkInput] = useState('')
-  const [bulkError, setBulkError] = useState('')
-  const [bulkSuccess, setBulkSuccess] = useState('')
-  const [bulkAdding, setBulkAdding] = useState(false)
 
   // Search
   const [search, setSearch] = useState('')
@@ -36,105 +18,6 @@ function AdminPageInner() {
       setLoading(false)
     })
   }, [])
-
-  const djNumber = djInput.replace(/\D/g, '')
-  const productCode = codeInput.toUpperCase().replace(/[^A-Z0-9]/g, '')
-
-  // Preview what documents the product code maps to
-  const preview = useMemo(() => {
-    if (productCode.length !== 13) return null
-    const docs = findDocuments(productCode)
-    const decoded = decodeProductCode(productCode)
-    return { docs, decoded }
-  }, [productCode])
-
-  const handleAddSingle = async (e) => {
-    e.preventDefault()
-    if (djNumber.length !== 8 || productCode.length !== 13) return
-
-    setAdding(true)
-    setAddError('')
-    setAddSuccess('')
-
-    try {
-      const data = await addDJMappings({ [djNumber]: productCode })
-      setAddSuccess(`DJ ${djNumber} → ${productCode}. Total: ${data.total} mappings. Site redeploys in ~60s.`)
-      setDjInput('')
-      setCodeInput('')
-    } catch (err) {
-      setAddError(err.message)
-    } finally {
-      setAdding(false)
-    }
-  }
-
-  const handleBulkAdd = async (e) => {
-    e.preventDefault()
-    const lines = bulkInput.trim().split('\n').filter(l => l.trim())
-    if (lines.length === 0) return
-
-    const entries = {}
-    const errors = []
-
-    for (const line of lines) {
-      // Accept: DJ,Code  or  DJ\tCode  or  DJ Code  or  DJ → Code
-      const parts = line.split(/[,\t→\s]+/).map(s => s.trim()).filter(Boolean)
-      if (parts.length < 2) {
-        errors.push(`"${line}" — expected DJ number and product code`)
-        continue
-      }
-      const dj = parts[0].replace(/\D/g, '')
-      const code = parts[1].toUpperCase().replace(/[^A-Z0-9]/g, '')
-      if (dj.length !== 8) {
-        errors.push(`"${parts[0]}" — DJ must be 8 digits`)
-        continue
-      }
-      if (code.length !== 13) {
-        errors.push(`"${parts[1]}" — product code must be 13 characters`)
-        continue
-      }
-      entries[dj] = code
-    }
-
-    if (errors.length > 0) {
-      setBulkError(errors.join('\n'))
-      if (Object.keys(entries).length === 0) return
-    }
-
-    setBulkAdding(true)
-    setBulkSuccess('')
-
-    try {
-      const data = await addDJMappings(entries)
-      setBulkSuccess(`Added ${data.added}, updated ${data.updated}. Total: ${data.total} mappings.`)
-      setBulkInput('')
-      setBulkError('')
-    } catch (err) {
-      setBulkError(err.message)
-    } finally {
-      setBulkAdding(false)
-    }
-  }
-
-  const handleSync = async () => {
-    setSyncing(true)
-    setSyncResult(null)
-    setSyncError('')
-
-    try {
-      const data = await syncFromExcel()
-      setSyncResult(data)
-      // Reload mapping if changes were committed
-      if (data.commit?.committed) {
-        const fresh = await loadDJMapping()
-        setMapping(fresh)
-      }
-    } catch (err) {
-      setSyncError(err.message)
-    } finally {
-      setSyncing(false)
-    }
-  }
 
   // Filtered entries for the table
   const entries = useMemo(() => {
@@ -169,12 +52,13 @@ function AdminPageInner() {
             <div className="flex items-center gap-4">
               <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
               <div className="border-l border-white/20 pl-4">
-                <h1 className="text-lg font-bold text-white font-heading">DJ Mapping Admin</h1>
-                <p className="text-blue-300 text-sm">Add, edit and remove DJ → Product Code pairings</p>
+                <h1 className="text-lg font-bold text-white font-heading">Admin</h1>
+                <p className="text-blue-300 text-sm">Upload documents and manage mappings</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Link to="/" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">Home</Link>
+              <Link to="/upload" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">Upload Certs</Link>
               <button onClick={() => { clearAdminKey(); location.reload() }} className="text-blue-400/60 hover:text-white text-xs transition-colors">
                 Logout
               </button>
@@ -184,154 +68,10 @@ function AdminPageInner() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 -mt-8 pb-12 space-y-4">
-        {/* Sync from Excel */}
-        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-1">
-                Sync from SharePoint
-              </h2>
-              <p className="text-afl-muted text-xs">
-                Pull DJ→Product Code mappings from the Print Message workbook. Also runs automatically at 6am daily.
-              </p>
-            </div>
-            <button
-              onClick={handleSync}
-              disabled={syncing}
-              className="px-5 py-2.5 bg-afl-blue text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0 flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              {syncing ? 'Syncing...' : 'Sync Now'}
-            </button>
-          </div>
-
-          {syncError && (
-            <div className="mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-              {syncError}
-            </div>
-          )}
-
-          {syncResult && (
-            <div className={`mt-3 rounded-xl px-4 py-3 text-sm border ${
-              syncResult.commit?.committed
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                : 'bg-blue-50 border-blue-200 text-blue-700'
-            }`}>
-              <p className="font-semibold">{syncResult.message}</p>
-              <p className="text-xs mt-1 opacity-80">
-                {syncResult.entries} entries read from Excel
-                {syncResult.commit?.committed && (
-                  <> — {syncResult.commit.added} added, {syncResult.commit.updated} updated, {syncResult.commit.removed} removed</>
-                )}
-              </p>
-              {syncResult.parseErrors?.length > 0 && (
-                <details className="mt-2">
-                  <summary className="text-xs cursor-pointer">Parse warnings ({syncResult.parseErrors.length})</summary>
-                  <pre className="text-[11px] mt-1 whitespace-pre-wrap">{syncResult.parseErrors.join('\n')}</pre>
-                </details>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Add single */}
-        <form onSubmit={handleAddSingle} className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-4">
-            Add Single Mapping
-          </h2>
-          <div className="flex gap-3 items-end">
-            <div className="flex-1">
-              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">DJ Number</label>
-              <input
-                type="text"
-                value={djInput}
-                onChange={e => { setDjInput(e.target.value); setAddError(''); setAddSuccess('') }}
-                placeholder="03429835"
-                maxLength={8}
-                className="w-full px-3 py-2.5 border border-afl-border rounded-xl font-mono text-sm tracking-wider focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
-              />
-            </div>
-            <div className="text-afl-muted text-lg px-1 pb-2">→</div>
-            <div className="flex-[2]">
-              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Product Code</label>
-              <input
-                type="text"
-                value={codeInput}
-                onChange={e => { setCodeInput(e.target.value); setAddError(''); setAddSuccess('') }}
-                placeholder="LMD61DPA072BE"
-                maxLength={13}
-                className="w-full px-3 py-2.5 border border-afl-border rounded-xl font-mono text-sm tracking-wider focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={djNumber.length !== 8 || productCode.length !== 13 || adding}
-              className="px-5 py-2.5 bg-afl-cyan text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-            >
-              {adding ? 'Saving...' : 'Add'}
-            </button>
-          </div>
-
-          {/* Live preview of document matches */}
-          {preview && (
-            <div className="mt-3 bg-afl-light rounded-xl p-3 border border-afl-border">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-1.5">
-                Document preview for {productCode}
-              </p>
-              {preview.docs.length > 0 ? (
-                <div className="space-y-1">
-                  {preview.docs.map((doc, i) => (
-                    <div key={i} className="flex items-center gap-2 text-[12px]">
-                      <span className="text-emerald-600 font-bold shrink-0">{doc.type}</span>
-                      <span className="text-afl-text truncate">{doc.name}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-amber-600 text-[12px]">No documents match this product code yet.</p>
-              )}
-              <div className="flex flex-wrap gap-1 mt-2">
-                {preview.decoded.map((d, i) => (
-                  <span key={i} className="text-[10px] bg-white border border-afl-border rounded px-1.5 py-0.5 text-afl-text">
-                    {d.label}: {d.description}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {addError && <p className="text-red-600 text-xs mt-2">{addError}</p>}
-          {addSuccess && <p className="text-emerald-600 text-xs mt-2">{addSuccess}</p>}
-        </form>
-
-        {/* Bulk paste */}
-        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-3">
-            Bulk Import
-          </h2>
-          <p className="text-afl-muted text-xs mb-3">
-            Paste rows from Excel. One per line: <code className="bg-gray-100 px-1 rounded">DJ_NUMBER, PRODUCT_CODE</code>
-          </p>
-          <form onSubmit={handleBulkAdd}>
-            <textarea
-              value={bulkInput}
-              onChange={e => { setBulkInput(e.target.value); setBulkError(''); setBulkSuccess('') }}
-              placeholder={"03429835, LMD61DPA072BE\n12345678, SMM41DLB048BK"}
-              rows={5}
-              className="w-full px-3 py-2.5 border border-afl-border rounded-xl font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent resize-y"
-            />
-            {bulkError && <pre className="text-red-600 text-xs mt-2 whitespace-pre-wrap">{bulkError}</pre>}
-            {bulkSuccess && <p className="text-emerald-600 text-xs mt-2">{bulkSuccess}</p>}
-            <button
-              type="submit"
-              disabled={!bulkInput.trim() || bulkAdding}
-              className="mt-3 px-5 py-2.5 bg-afl-navy text-white rounded-xl text-sm font-bold font-heading hover:bg-afl-navy/90 transition disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {bulkAdding ? 'Importing...' : 'Import All'}
-            </button>
-          </form>
+        {/* Info banner */}
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl px-5 py-4 text-sm text-blue-800">
+          <strong>DJ → Product Code mappings</strong> are created automatically when a Final Test Certificate is uploaded.
+          {' '}<Link to="/upload" className="text-afl-cyan font-semibold hover:underline">Go to Upload Certs</Link> to add new mappings.
         </div>
 
         {/* Upload document */}
@@ -427,6 +167,14 @@ const DOC_TYPE_OPTIONS = [
   { value: 'installation', label: 'Installation Guide' },
 ]
 
+// Map folder names to document-map type values
+const FOLDER_TO_TYPE = {
+  tds: 'TDS',
+  stripping: 'Stripping',
+  'test-certificates': 'Test Certificate',
+  installation: 'Installation',
+}
+
 function DocUploadCard() {
   const [docType, setDocType] = useState('tds')
   const [file, setFile] = useState(null)
@@ -435,6 +183,13 @@ function DocUploadCard() {
   const [error, setError] = useState('')
   const fileRef = useRef(null)
 
+  // Pattern mapping after upload
+  const [patternInput, setPatternInput] = useState('')
+  const [mappingName, setMappingName] = useState('')
+  const [savingMapping, setSavingMapping] = useState(false)
+  const [mappingResult, setMappingResult] = useState(null)
+  const [mappingError, setMappingError] = useState('')
+
   const handleUpload = async (e) => {
     e.preventDefault()
     if (!file) return
@@ -442,10 +197,15 @@ function DocUploadCard() {
     setUploading(true)
     setError('')
     setResult(null)
+    setMappingResult(null)
+    setMappingError('')
 
     try {
       const data = await uploadStaticDoc(docType, file)
       setResult(data)
+      // Pre-fill mapping name from file name (strip .pdf)
+      const nameWithoutExt = file.name.replace(/\.pdf$/i, '')
+      setMappingName(nameWithoutExt)
       setFile(null)
       if (fileRef.current) fileRef.current.value = ''
     } catch (err) {
@@ -455,46 +215,84 @@ function DocUploadCard() {
     }
   }
 
+  const handleAddMapping = async () => {
+    const patterns = patternInput.split(/[,\n]+/).map(s => s.trim()).filter(Boolean)
+    if (patterns.length === 0 || !mappingName.trim()) return
+
+    // Validate patterns
+    for (const p of patterns) {
+      if (p.length !== 13) {
+        setMappingError(`Pattern "${p}" must be exactly 13 characters`)
+        return
+      }
+    }
+
+    setSavingMapping(true)
+    setMappingError('')
+    setMappingResult(null)
+
+    try {
+      const docTypeName = FOLDER_TO_TYPE[docType] || 'TDS'
+      const entries = patterns.map(pattern => ({
+        pattern,
+        type: docTypeName,
+        name: mappingName.trim(),
+        path: result.path, // path returned from upload
+      }))
+
+      const data = await addDocumentMappings(entries)
+      setMappingResult(data)
+      setPatternInput('')
+    } catch (err) {
+      setMappingError(err.message)
+    } finally {
+      setSavingMapping(false)
+    }
+  }
+
   return (
-    <form onSubmit={handleUpload} className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+    <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
       <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading mb-4">
         Upload Document
       </h2>
       <p className="text-afl-muted text-xs mb-4">
-        Upload a TDS, stripping guide, test certificate, or installation guide PDF. The file name must match what's in the document map.
+        Upload a PDF, then add product code patterns so the document is matched to the right cables.
       </p>
 
-      <div className="flex gap-3 items-end flex-wrap">
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Type</label>
-          <select
-            value={docType}
-            onChange={e => setDocType(e.target.value)}
-            className="px-3 py-2.5 border border-afl-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+      {/* Step 1: Upload */}
+      <form onSubmit={handleUpload}>
+        <div className="flex gap-3 items-end flex-wrap">
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Type</label>
+            <select
+              value={docType}
+              onChange={e => { setDocType(e.target.value); setResult(null); setMappingResult(null) }}
+              className="px-3 py-2.5 border border-afl-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+            >
+              {DOC_TYPE_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">PDF File</label>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/pdf"
+              onChange={e => { setFile(e.target.files[0] || null); setError(''); setResult(null); setMappingResult(null) }}
+              className="w-full text-sm text-afl-text file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!file || uploading}
+            className="px-5 py-2.5 bg-afl-cyan text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
-            {DOC_TYPE_OPTIONS.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
+            {uploading ? 'Uploading...' : 'Upload'}
+          </button>
         </div>
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">PDF File</label>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="application/pdf"
-            onChange={e => { setFile(e.target.files[0] || null); setError(''); setResult(null) }}
-            className="w-full text-sm text-afl-text file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={!file || uploading}
-          className="px-5 py-2.5 bg-afl-cyan text-white rounded-xl text-sm font-bold font-heading hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-        >
-          {uploading ? 'Uploading...' : 'Upload'}
-        </button>
-      </div>
+      </form>
 
       {error && <p className="text-red-600 text-xs mt-3">{error}</p>}
       {result && (
@@ -502,7 +300,63 @@ function DocUploadCard() {
           {result.message} {result.replaced && '(replaced existing file)'}
         </div>
       )}
-    </form>
+
+      {/* Step 2: Add pattern mapping (only shown after successful upload) */}
+      {result && (
+        <div className="mt-4 bg-afl-light border border-afl-border rounded-xl p-4">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-navy font-heading mb-3">
+            Step 2: Link to Product Codes
+          </h3>
+          <p className="text-afl-muted text-xs mb-3">
+            Enter one or more 13-character product code patterns. Use <code className="bg-white px-1 rounded">*</code> for wildcard positions.
+            Example: <code className="bg-white px-1 rounded">LMD6**PA***BE</code>
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Document Name</label>
+              <input
+                type="text"
+                value={mappingName}
+                onChange={e => setMappingName(e.target.value)}
+                className="w-full px-3 py-2 border border-afl-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">
+                Patterns (one per line, or comma-separated)
+              </label>
+              <textarea
+                value={patternInput}
+                onChange={e => { setPatternInput(e.target.value); setMappingError('') }}
+                placeholder={"LMD6**PA***BE\nLMD6**PB***BE"}
+                rows={3}
+                className="w-full px-3 py-2 border border-afl-border rounded-xl font-mono text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent resize-y"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleAddMapping}
+                disabled={!patternInput.trim() || !mappingName.trim() || savingMapping}
+                className="px-5 py-2.5 bg-afl-navy text-white rounded-xl text-sm font-bold font-heading hover:bg-afl-navy/90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {savingMapping ? 'Saving...' : 'Save Mapping'}
+              </button>
+              <span className="text-afl-muted text-xs">
+                File path: <code className="bg-white px-1 rounded text-[11px]">{result.path}</code>
+              </span>
+            </div>
+          </div>
+
+          {mappingError && <p className="text-red-600 text-xs mt-2">{mappingError}</p>}
+          {mappingResult && (
+            <div className="mt-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-xs text-emerald-700">
+              {mappingResult.message}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 

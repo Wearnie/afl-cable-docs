@@ -1,4 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { loadDocumentMap } from './data/documentMap'
 import DocumentPage from './pages/DocumentPage'
 import DJDocumentPage from './pages/DJDocumentPage'
 import GeneratePage from './pages/GeneratePage'
@@ -47,7 +49,7 @@ function HomePage() {
             </div>
             <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-600 mb-1 font-heading">Upload</h2>
             <h3 className="text-xl font-bold text-afl-text font-heading">Test Certs</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Upload Final Test Certificates by DJ number.</p>
+            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Upload Final Test Certificates — DJ and product code read from PDF.</p>
           </Link>
 
           <Link
@@ -98,6 +100,8 @@ function HomePage() {
 }
 
 export default function App() {
+  useEffect(() => { loadDocumentMap() }, [])
+
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />

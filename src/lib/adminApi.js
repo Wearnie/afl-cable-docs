@@ -48,24 +48,11 @@ export async function lookupDJ(djNumber) {
   return apiCall(`/api/dj-mapping?dj=${encodeURIComponent(djNumber)}`)
 }
 
-export async function addDJMappings(entries) {
-  return apiCall('/api/dj-mapping', {
-    method: 'POST',
-    body: JSON.stringify({ entries }),
-  })
-}
-
 export async function removeDJMappings(djNumbers) {
   return apiCall('/api/dj-mapping', {
     method: 'DELETE',
     body: JSON.stringify({ djNumbers }),
   })
-}
-
-// Sync from SharePoint Excel
-
-export async function syncFromExcel() {
-  return apiCall('/api/sync-mapping', { method: 'POST' })
 }
 
 // Static Document Upload API (TDS, Stripping, etc.)
@@ -88,17 +75,33 @@ export async function uploadStaticDoc(docType, file) {
   })
 }
 
-// Final Test Certificate API
+// Document Map API
 
-export async function uploadFinalTestCert(djNumber, file) {
-  // Convert file to base64
+export async function fetchDocumentMap() {
+  return apiCall('/api/document-map')
+}
+
+export async function addDocumentMappings(entries) {
+  return apiCall('/api/document-map', {
+    method: 'POST',
+    body: JSON.stringify({ entries }),
+  })
+}
+
+export async function removeDocumentMappings(patterns) {
+  return apiCall('/api/document-map', {
+    method: 'DELETE',
+    body: JSON.stringify({ patterns }),
+  })
+}
+
+// Final Test Certificate API
+// The server extracts DJ number and product code from the PDF automatically
+
+export async function uploadFinalTestCert(file) {
   const base64 = await new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload = () => {
-      // Remove the data:...;base64, prefix
-      const result = reader.result.split(',')[1]
-      resolve(result)
-    }
+    reader.onload = () => resolve(reader.result.split(',')[1])
     reader.onerror = reject
     reader.readAsDataURL(file)
   })
@@ -106,7 +109,6 @@ export async function uploadFinalTestCert(djNumber, file) {
   return apiCall('/api/upload-cert', {
     method: 'POST',
     body: JSON.stringify({
-      djNumber,
       fileName: file.name,
       fileBase64: base64,
     }),

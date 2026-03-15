@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadFinalTestCerts, getAllFinalTestCerts } from '../data/finalTestCerts'
-import { uploadFinalTestCert, hasAdminKey } from '../lib/adminApi'
+import { uploadFinalTestCert } from '../lib/adminApi'
 import AdminGate from '../components/AdminGate'
 
 function UploadPageInner() {
   const [certs, setCerts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [djInput, setDjInput] = useState('')
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [result, setResult] = useState(null)
@@ -20,9 +19,6 @@ function UploadPageInner() {
       setLoading(false)
     })
   }, [])
-
-  const djNumber = djInput.replace(/\D/g, '')
-  const isValidDj = djNumber.length === 8
 
   const handleFileChange = (e) => {
     const f = e.target.files[0]
@@ -38,20 +34,20 @@ function UploadPageInner() {
     }
     setFile(f)
     setError('')
+    setResult(null)
   }
 
   const handleUpload = async (e) => {
     e.preventDefault()
-    if (!isValidDj || !file) return
+    if (!file) return
 
     setUploading(true)
     setError('')
     setResult(null)
 
     try {
-      const data = await uploadFinalTestCert(djNumber, file)
+      const data = await uploadFinalTestCert(file)
       setResult(data)
-      setDjInput('')
       setFile(null)
       if (fileRef.current) fileRef.current.value = ''
       // Refresh the cert list
@@ -72,7 +68,7 @@ function UploadPageInner() {
             <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
             <div className="border-l border-white/20 pl-4">
               <h1 className="text-lg font-bold text-white font-heading">Final Test Certificates</h1>
-              <p className="text-blue-300 text-sm">Upload and manage certificates</p>
+              <p className="text-blue-300 text-sm">Upload certificates — DJ number and product code are read automatically</p>
             </div>
           </div>
           <Link to="/" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">
@@ -87,23 +83,9 @@ function UploadPageInner() {
           <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">
             Upload a Final Test Certificate
           </h2>
-
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
-              DJ Number
-            </label>
-            <input
-              type="text"
-              value={djInput}
-              onChange={(e) => setDjInput(e.target.value)}
-              placeholder="e.g. 03429835"
-              maxLength={8}
-              className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
-            />
-            <span className={`text-xs mt-1 block ${isValidDj ? 'text-emerald-600' : 'text-afl-muted'}`}>
-              {djNumber.length}/8 digits
-            </span>
-          </div>
+          <p className="text-afl-muted text-xs">
+            Upload the Optical Test Report PDF. The Job Number and Item Code are extracted automatically from the document.
+          </p>
 
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
@@ -130,8 +112,12 @@ function UploadPageInner() {
           )}
 
           {result && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700">
-              {result.message}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700 space-y-1">
+              <p>{result.message}</p>
+              <div className="flex items-center gap-4 text-xs font-mono">
+                <span>DJ: <strong>{result.djNumber}</strong></span>
+                <span>Product Code: <strong>{result.productCode}</strong></span>
+              </div>
               <Link to={`/dj/${result.djNumber}`} className="block mt-1 text-afl-cyan font-semibold hover:underline">
                 View DJ {result.djNumber} page
               </Link>
@@ -140,10 +126,10 @@ function UploadPageInner() {
 
           <button
             type="submit"
-            disabled={!isValidDj || !file || uploading}
+            disabled={!file || uploading}
             className="w-full px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold font-heading hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {uploading ? 'Uploading...' : 'Upload Certificate'}
+            {uploading ? 'Uploading & reading PDF...' : 'Upload Certificate'}
           </button>
         </form>
 

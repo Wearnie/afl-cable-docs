@@ -1,16 +1,19 @@
 // Vercel Serverless Function: Final Test Certificate Upload
-// POST /api/upload-cert — upload a PDF, commits to GitHub repo
+// POST /api/upload-cert — upload a PDF, extracts Job Number & Item Code from the cert,
+// commits the PDF to GitHub, updates the cert index and DJ→Product Code mapping.
 //
-// Accepts multipart/form-data with:
-//   - djNumber: 8-digit DJ number
-//   - file: PDF file (max 10MB)
+// The PDF is parsed (page 1 only) to find:
+//   Job Number: XXXXXXXX   → DJ number (8 digits)
+//   Item Code: XXXXXXXXXXXXX → Product code (13 chars)
 //
 // Stores the PDF at public/docs/final-test-certs/{djNumber}.pdf
-// Updates public/data/final-test-certs.json with the new entry
+
+import pdf from 'pdf-parse/lib/pdf-parse.js'
 
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
 const CERTS_JSON_PATH = 'public/data/final-test-certs.json'
+const DJ_MAPPING_PATH = 'public/data/dj-mapping.json'
 
 async function githubRequest(path, options = {}) {
   const token = process.env.GITHUB_TOKEN
@@ -64,6 +67,40 @@ function checkAdminKey(req) {
   return { ok: true }
 }
 
+/**
+ * Extract Job Number and Item Code from page 1 of a Final Test Certificate PDF.
+ * Template fields:
+ *   "Job Number: 51042448"
+ *   "Item Code: TVBQ55AA024AQ"
+ */
+async function extractFromPdf(base64Data) {
+  const buffer = Buffer.from(base64Data, 'base64')
+
+  // Only parse page 1
+  const data = await pdf(buffer, {
+    max: 1, // first page only
+  })
+
+  const text = data.text
+
+  // Extract Job Number (8 digits after "Job Number:")
+  const jobMatch = text.match(/Job\s*Number\s*:\s*(\d{8})/i)
+  if (!jobMatch) {
+    throw new Error('Could not find "Job Number" on page 1 of the PDF. Expected format: "Job Number: 12345678"')
+  }
+
+  // Extract Item Code (13 alphanumeric chars after "Item Code:")
+  const itemMatch = text.match(/Item\s*Code\s*:\s*([A-Z0-9]{13})/i)
+  if (!itemMatch) {
+    throw new Error('Could not find "Item Code" on page 1 of the PDF. Expected format: "Item Code: TVBQ55AA024AQ"')
+  }
+
+  return {
+    djNumber: jobMatch[1],
+    productCode: itemMatch[1].toUpperCase(),
+  }
+}
+
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -79,16 +116,10 @@ export default async function handler(req, res) {
   if (!auth.ok) return res.status(401).json({ error: auth.error })
 
   try {
-    // Parse the JSON body (base64-encoded PDF)
-    const { djNumber, fileName, fileBase64 } = req.body
+    const { fileName, fileBase64 } = req.body
 
-    if (!djNumber || !fileBase64) {
-      return res.status(400).json({ error: 'Required: djNumber, fileBase64' })
-    }
-
-    const cleanDj = djNumber.replace(/\D/g, '')
-    if (cleanDj.length !== 8) {
-      return res.status(400).json({ error: 'DJ number must be 8 digits' })
+    if (!fileBase64) {
+      return res.status(400).json({ error: 'Required: fileBase64' })
     }
 
     // Check file size (base64 is ~4/3 of original, so 14MB base64 ≈ 10MB file)
@@ -96,10 +127,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'File too large (max 10MB)' })
     }
 
-    const pdfPath = `public/docs/final-test-certs/${cleanDj}.pdf`
-    const certName = fileName || `${cleanDj}.pdf`
+    // 1. Extract DJ number and product code from the PDF
+    const { djNumber, productCode } = await extractFromPdf(fileBase64)
 
-    // 1. Upload the PDF to the repo
+    const pdfPath = `public/docs/final-test-certs/${djNumber}.pdf`
+    const certName = fileName || `${djNumber}.pdf`
+
+    // 2. Upload the PDF to the repo
     let existingSha = null
     try {
       const existing = await githubRequest(`contents/${pdfPath}?ref=${GITHUB_BRANCH}`)
@@ -112,15 +146,16 @@ export default async function handler(req, res) {
       pdfPath,
       fileBase64,
       existingSha,
-      `Upload final test cert for DJ ${cleanDj}`
+      `Upload final test cert for DJ ${djNumber} (${productCode})`
     )
 
-    // 2. Update the certs JSON index
+    // 3. Update the certs JSON index
     const { content: certsIndex, sha: certsSha } = await getFileFromGithub(CERTS_JSON_PATH)
 
-    certsIndex[cleanDj] = {
-      url: `/docs/final-test-certs/${cleanDj}.pdf`,
+    certsIndex[djNumber] = {
+      url: `/docs/final-test-certs/${djNumber}.pdf`,
       name: certName,
+      productCode,
       uploadedAt: new Date().toISOString(),
     }
 
@@ -128,14 +163,28 @@ export default async function handler(req, res) {
       CERTS_JSON_PATH,
       Buffer.from(JSON.stringify(certsIndex, null, 2)).toString('base64'),
       certsSha,
-      `Register final test cert for DJ ${cleanDj}`
+      `Register final test cert for DJ ${djNumber}`
+    )
+
+    // 4. Update DJ → Product Code mapping
+    const { content: djMapping, sha: djSha } = await getFileFromGithub(DJ_MAPPING_PATH)
+    const isNew = !djMapping[djNumber]
+    djMapping[djNumber] = productCode
+
+    await commitFileToGithub(
+      DJ_MAPPING_PATH,
+      Buffer.from(JSON.stringify(djMapping, null, 2)).toString('base64'),
+      djSha,
+      `${isNew ? 'Add' : 'Update'} DJ mapping ${djNumber} → ${productCode} (from cert upload)`
     )
 
     return res.json({
       success: true,
-      djNumber: cleanDj,
-      url: `/docs/final-test-certs/${cleanDj}.pdf`,
-      message: `Certificate uploaded. Site will redeploy in ~60 seconds.`,
+      djNumber,
+      productCode,
+      url: `/docs/final-test-certs/${djNumber}.pdf`,
+      mappingCreated: isNew,
+      message: `Certificate uploaded for DJ ${djNumber} → ${productCode}. Site will redeploy in ~60 seconds.`,
     })
   } catch (err) {
     console.error('Upload cert error:', err)

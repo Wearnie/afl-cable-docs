@@ -1,5 +1,16 @@
-import { describe, it, expect } from 'vitest'
-import { patternMatches, findDocuments, decodeProductCode } from './documentMap.js'
+import { describe, it, expect, beforeAll } from 'vitest'
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
+import { patternMatches, findDocuments, decodeProductCode, _setDocumentMapCache } from './documentMap.js'
+
+// Load the JSON document map and inject it before tests run
+beforeAll(() => {
+  const json = readFileSync(resolve(__dirname, '../../public/data/document-map.json'), 'utf-8')
+  const entries = JSON.parse(json)
+  // Simulate what loadDocumentMap() does: prepend DOC_BASE_URL to path
+  const DOC_BASE_URL = '/docs'
+  _setDocumentMapCache(entries.map(e => ({ ...e, url: `${DOC_BASE_URL}${e.path}` })))
+})
 
 // ============================================================================
 // patternMatches
