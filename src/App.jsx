@@ -7,6 +7,7 @@ import GeneratePage from './pages/GeneratePage'
 import UploadPage from './pages/UploadPage'
 import ReviewPage from './pages/ReviewPage'
 import AdminPage from './pages/AdminPage'
+import AuditPage from './pages/AuditPage'
 
 function HomePage() {
   return (
@@ -22,7 +23,7 @@ function HomePage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 -mt-10 pb-12">
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-6">
           <Link
             to="/generate"
             className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-cyan/40 transition-all duration-200"
@@ -93,6 +94,20 @@ function HomePage() {
             <h3 className="text-xl font-bold text-afl-text font-heading">DJ Mappings</h3>
             <p className="text-afl-muted mt-2 text-sm leading-relaxed">Add and manage DJ → Product Code pairings.</p>
           </Link>
+
+          <Link
+            to="/audit"
+            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-rose-400/40 transition-all duration-200"
+          >
+            <div className="w-14 h-14 rounded-xl bg-rose-500 flex items-center justify-center mb-5 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-rose-600 mb-1 font-heading">Admin</h2>
+            <h3 className="text-xl font-bold text-afl-text font-heading">Pattern Audit</h3>
+            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Review, edit, and upload document pattern mappings.</p>
+          </Link>
         </div>
       </main>
     </div>
@@ -109,6 +124,7 @@ export default function App() {
       <Route path="/upload" element={<UploadPage />} />
       <Route path="/review" element={<ReviewPage />} />
       <Route path="/admin" element={<AdminPage />} />
+      <Route path="/audit" element={<AuditPage />} />
       <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
       <Route path="/:productCode" element={<DocumentPage />} />
     </Routes>
