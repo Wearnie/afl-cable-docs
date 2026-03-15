@@ -37,26 +37,15 @@ async function githubRequest(path, options = {}) {
   return res.json()
 }
 
-function checkAdminKey(req) {
-  const key = req.headers['x-admin-key'] || ''
-  const expected = process.env.ADMIN_KEY
-  if (!expected) return { ok: false, error: 'ADMIN_KEY not configured' }
-  if (key !== expected) return { ok: false, error: 'Invalid admin key' }
-  return { ok: true }
-}
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Admin-Key')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-
-  const auth = checkAdminKey(req)
-  if (!auth.ok) return res.status(401).json({ error: auth.error })
 
   try {
     const { docType, fileName, fileBase64 } = req.body

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadFinalTestCerts, getAllFinalTestCerts } from '../data/finalTestCerts'
 import { uploadFinalTestCert } from '../lib/adminApi'
-import AdminGate from '../components/AdminGate'
 
 function UploadPageInner() {
   const [certs, setCerts] = useState([])
@@ -170,10 +169,4 @@ function UploadPageInner() {
   )
 }
 
-export default function UploadPage() {
-  return (
-    <AdminGate>
-      <UploadPageInner />
-    </AdminGate>
-  )
-}
+export default UploadPageInner

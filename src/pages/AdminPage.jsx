@@ -1,10 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { removeDJMappings, uploadStaticDoc, addDocumentMappings, clearAdminKey } from '../lib/adminApi'
+import { removeDJMappings, uploadStaticDoc, addDocumentMappings } from '../lib/adminApi'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, decodeProductCode } from '../data/documentMap'
-import AdminGate from '../components/AdminGate'
-
 function AdminPageInner() {
   const [mapping, setMapping] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -59,9 +57,6 @@ function AdminPageInner() {
             <div className="flex items-center gap-3">
               <Link to="/" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">Home</Link>
               <Link to="/upload" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">Upload Certs</Link>
-              <button onClick={() => { clearAdminKey(); location.reload() }} className="text-blue-400/60 hover:text-white text-xs transition-colors">
-                Logout
-              </button>
             </div>
           </div>
         </div>
@@ -360,10 +355,4 @@ function DocUploadCard() {
   )
 }
 
-export default function AdminPage() {
-  return (
-    <AdminGate>
-      <AdminPageInner />
-    </AdminGate>
-  )
-}
+export default AdminPageInner

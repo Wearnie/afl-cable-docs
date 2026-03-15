@@ -1,30 +1,11 @@
 // Admin API client
-// Handles authentication and API calls to Vercel serverless functions
-
-const ADMIN_KEY_STORAGE = 'afl-admin-key'
-
-export function getAdminKey() {
-  return sessionStorage.getItem(ADMIN_KEY_STORAGE) || ''
-}
-
-export function setAdminKey(key) {
-  sessionStorage.setItem(ADMIN_KEY_STORAGE, key)
-}
-
-export function clearAdminKey() {
-  sessionStorage.removeItem(ADMIN_KEY_STORAGE)
-}
-
-export function hasAdminKey() {
-  return !!getAdminKey()
-}
+// Handles API calls to Vercel serverless functions
 
 async function apiCall(path, options = {}) {
   const res = await fetch(path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'X-Admin-Key': getAdminKey(),
       ...options.headers,
     },
   })

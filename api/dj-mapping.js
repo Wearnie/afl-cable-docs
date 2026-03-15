@@ -47,19 +47,11 @@ async function commitFile(content, sha, message) {
   })
 }
 
-function checkAdminKey(req) {
-  const key = req.headers['x-admin-key'] || ''
-  const expected = process.env.ADMIN_KEY
-  if (!expected) return { ok: false, error: 'ADMIN_KEY not configured on server' }
-  if (key !== expected) return { ok: false, error: 'Invalid admin key' }
-  return { ok: true }
-}
-
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Admin-Key')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   try {
@@ -76,9 +68,6 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const auth = checkAdminKey(req)
-      if (!auth.ok) return res.status(401).json({ error: auth.error })
-
       const { entries } = req.body // { entries: { "12345678": "LMDXXXXXX", ... } }
       if (!entries || typeof entries !== 'object') {
         return res.status(400).json({ error: 'Body must include { entries: { djNumber: productCode, ... } }' })
@@ -126,9 +115,6 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const auth = checkAdminKey(req)
-      if (!auth.ok) return res.status(401).json({ error: auth.error })
-
       const { djNumbers } = req.body // { djNumbers: ["12345678", ...] }
       if (!Array.isArray(djNumbers) || djNumbers.length === 0) {
         return res.status(400).json({ error: 'Body must include { djNumbers: ["12345678", ...] }' })

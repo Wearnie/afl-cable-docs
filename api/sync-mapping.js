@@ -11,7 +11,6 @@
 //   SHAREPOINT_SITE_ID    — SharePoint site ID (or hostname)
 //   EXCEL_FILE_PATH       — Path to the Excel file in the document library
 //   GITHUB_TOKEN          — For committing the updated JSON
-//   ADMIN_KEY             — For manual triggers
 
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
@@ -178,28 +177,15 @@ async function commitMapping(mapping) {
 
 // --- Handler ---
 
-function checkAdminKey(req) {
-  // Allow Vercel Cron (has special header) or admin key
-  if (req.headers['authorization'] === `Bearer ${process.env.CRON_SECRET}`) return { ok: true }
-  const key = req.headers['x-admin-key'] || ''
-  const expected = process.env.ADMIN_KEY
-  if (!expected) return { ok: false, error: 'ADMIN_KEY not configured' }
-  if (key !== expected) return { ok: false, error: 'Invalid admin key' }
-  return { ok: true }
-}
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Admin-Key,Authorization')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' })
   }
-
-  const auth = checkAdminKey(req)
-  if (!auth.ok) return res.status(401).json({ error: auth.error })
 
   try {
     // 1. Get Microsoft Graph token

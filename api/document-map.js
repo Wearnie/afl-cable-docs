@@ -28,14 +28,6 @@ async function githubRequest(path, options = {}) {
   return res.json()
 }
 
-function checkAdminKey(req) {
-  const key = req.headers['x-admin-key'] || ''
-  const expected = process.env.ADMIN_KEY
-  if (!expected) return { ok: false, error: 'ADMIN_KEY not configured' }
-  if (key !== expected) return { ok: false, error: 'Invalid admin key' }
-  return { ok: true }
-}
-
 async function readDocumentMap() {
   const file = await githubRequest(`contents/${FILE_PATH}?ref=${GITHUB_BRANCH}`)
   const content = Buffer.from(file.content, 'base64').toString('utf-8')
@@ -67,7 +59,7 @@ function validateEntry(entry) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Admin-Key')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   try {
@@ -76,10 +68,6 @@ export default async function handler(req, res) {
       const { entries } = await readDocumentMap()
       return res.json({ entries, count: entries.length })
     }
-
-    // POST and DELETE require admin auth
-    const auth = checkAdminKey(req)
-    if (!auth.ok) return res.status(401).json({ error: auth.error })
 
     if (req.method === 'POST') {
       const { entries: newEntries } = req.body
