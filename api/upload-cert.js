@@ -8,7 +8,9 @@
 //
 // Stores the PDF at public/docs/final-test-certs/{djNumber}.pdf
 
-import pdf from 'pdf-parse/lib/pdf-parse.js'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const pdf = require('pdf-parse/lib/pdf-parse.js')
 
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
