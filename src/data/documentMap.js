@@ -21,8 +21,8 @@ let _documentMapCache = null
 export async function loadDocumentMap() {
   if (_documentMapCache) return _documentMapCache
 
-  const res = await fetch('/data/document-map.json')
-  const entries = await res.json()
+  const res = await fetch(`/api/document-map?_t=${Date.now()}`)
+  const { entries } = await res.json()
 
   // Convert relative paths to full URLs with DOC_BASE_URL
   _documentMapCache = entries.map(e => ({

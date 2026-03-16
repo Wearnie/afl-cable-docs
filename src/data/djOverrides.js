@@ -6,7 +6,7 @@ let _cache = null
 export async function loadDJOverrides() {
   if (_cache) return _cache
   try {
-    const res = await fetch('/data/dj-doc-overrides.json')
+    const res = await fetch(`/api/dj-overrides?_t=${Date.now()}`)
     _cache = await res.json()
   } catch {
     _cache = {}

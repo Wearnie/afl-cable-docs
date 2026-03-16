@@ -1,12 +1,11 @@
 // Final Test Certificate lookup
-// Fetches /data/final-test-certs.json on first call and caches in memory.
-// Power Automate pushes new entries via GitHub API → Vercel redeploys.
+// Cache-busted fetch so newly uploaded certs appear without waiting for redeploy.
 
 let cache = null
 
 export async function loadFinalTestCerts() {
   if (cache) return cache
-  const res = await fetch('/data/final-test-certs.json')
+  const res = await fetch(`/data/final-test-certs.json?_t=${Date.now()}`)
   cache = await res.json()
   return cache
 }

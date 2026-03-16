@@ -1,12 +1,13 @@
 // DJ Number → Product Code lookup
-// Fetches /data/dj-mapping.json on first call and caches in memory.
-// In production, Power Automate overwrites dj-mapping.json → Vercel redeploys.
+// Fetches from the API (reads live GitHub data) so newly uploaded
+// certs and DJ mappings are available immediately without waiting
+// for a Vercel redeploy.
 
 let cache = null
 
 export async function loadDJMapping() {
   if (cache) return cache
-  const res = await fetch('/data/dj-mapping.json')
+  const res = await fetch(`/api/dj-mapping?_t=${Date.now()}`)
   cache = await res.json()
   return cache
 }

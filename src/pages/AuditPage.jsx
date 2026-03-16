@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { patternMatches, invalidateDocumentMapCache } from '../data/documentMap'
+import { loadDocumentMap, patternMatches } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
-import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc, fetchDocumentMap } from '../lib/adminApi'
+import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const TYPE_OPTIONS = ['TDS', 'Test Certificate', 'Stripping', 'Installation', 'Other']
@@ -472,14 +472,8 @@ export default function AuditPage() {
   }, [])
 
   useEffect(() => {
-    // Load from API (reads live GitHub data) so edits are visible immediately on refresh.
-    // The static /data/document-map.json only updates after Vercel redeploy (~60s).
-    Promise.all([
-      fetchDocumentMap().then(r => r.entries.map(e => ({ ...e, url: `${DOC_BASE_URL}${e.path}` }))),
-      loadDJMapping(),
-    ]).then(([docMap, djMap]) => {
+    Promise.all([loadDocumentMap(), loadDJMapping()]).then(([docMap, djMap]) => {
       setDocumentMap(docMap)
-      invalidateDocumentMapCache(docMap)
       setDjMapping(djMap)
       setLoading(false)
       recountReviewed()
