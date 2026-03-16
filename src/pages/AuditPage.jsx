@@ -178,7 +178,7 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
 }
 
 // Single document card
-function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange, onMapChanged }) {
+function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange }) {
   const [open, setOpen] = useState(defaultOpen || false)
   const [toast, setToast] = useState(null)
   const [extraPatterns, setExtraPatterns] = useState([])
@@ -196,8 +196,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 
   const handlePatternDeleted = useCallback((pattern) => {
     setDeletedPatterns(prev => new Set([...prev, pattern]))
-    if (onMapChanged) onMapChanged('delete', { oldPattern: pattern })
-  }, [onMapChanged])
+  }, [])
 
   const handlePatternEdited = useCallback((oldPattern, newPattern) => {
     // Track the replacement so activePatterns recalculates matches correctly.
@@ -276,10 +275,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
               onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} onEdited={handlePatternEdited} />
           ))}
           <PatternRow key={`new-${extraPatterns.length}`} pattern="" type={doc.type} name={doc.name} path={doc.path} isNew
-            onSaved={(val) => {
-              setExtraPatterns(prev => [...prev, val])
-              if (onMapChanged) onMapChanged('add', { entries: [{ pattern: val, type: doc.type, name: doc.name, path: doc.path }] })
-            }}
+            onSaved={(val) => setExtraPatterns(prev => [...prev, val])}
             onToast={(msg, type) => setToast({ msg, type })} />
 
           {matched.length > 0 && (
@@ -589,24 +585,6 @@ export default function AuditPage() {
 
   const handleToast = useCallback((msg, type) => setToast({ msg, type }), [])
 
-  // Optimistically update the in-memory document map after add/edit/delete
-  const updateMap = useCallback((action, { oldPattern, newEntry, entries: newEntries }) => {
-    setDocumentMap(prev => {
-      let updated
-      if (action === 'add') {
-        updated = [...prev, ...newEntries.map(e => ({ ...e, url: `${DOC_BASE_URL}${e.path}` }))]
-      } else if (action === 'edit') {
-        updated = prev.map(e => e.pattern === oldPattern ? { ...newEntry, url: `${DOC_BASE_URL}${newEntry.path}` } : e)
-      } else if (action === 'delete') {
-        updated = prev.filter(e => e.pattern !== oldPattern)
-      } else {
-        return prev
-      }
-      invalidateDocumentMapCache(updated)
-      return updated
-    })
-  }, [])
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -700,7 +678,7 @@ export default function AuditPage() {
                 {type} <span className="text-gray-400 font-normal text-sm">({docs.length} of {allDocs.length} PDFs, {allDocs.reduce((s, d) => s + d.patterns.length, 0)} patterns)</span>
               </h2>
               {docs.map(doc => (
-                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} onReviewChange={recountReviewed} onMapChanged={updateMap} />
+                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} onReviewChange={recountReviewed} />
               ))}
             </div>
           )
