@@ -4,5 +4,17 @@
       "/test-certificates/231024%20SMM51DLL060BK%20Test%20Certificate.pdf"
     ],
     "include": []
+  },
+  "99999999": {
+    "exclude": [
+      "/stress-test/exclude-1.pdf"
+    ],
+    "include": [
+      {
+        "type": "StressTest",
+        "name": "Test Include",
+        "path": "/stress-test/include-1.pdf"
+      }
+    ]
   }
 }
