@@ -468,12 +468,6 @@
     "path": "/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf"
   },
   {
-    "pattern": "RLD1**FB002BK",
-    "type": "TDS",
-    "name": "Axial Non-Metallic Flat FRP Armoured LTC",
-    "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf"
-  },
-  {
     "pattern": "RLD1**FB004BK",
     "type": "TDS",
     "name": "Axial Non-Metallic Flat FRP Armoured LTC",
@@ -1012,5 +1006,11 @@
     "type": "TDS",
     "name": "288F MicroCore Stranded LT with Sacrificial Sheath",
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf"
+  },
+  {
+    "pattern": "RLD1**FB002**",
+    "type": "TDS",
+    "name": "Axial Non-Metallic Flat FRP Armoured LTC",
+    "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf"
   }
 ]
