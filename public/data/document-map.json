@@ -894,12 +894,6 @@
     "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   },
   {
-    "pattern": "UTN6**FD***BE",
-    "type": "TDS",
-    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
-    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
-  },
-  {
     "pattern": "LMD6**PA0**BE",
     "type": "TDS",
     "name": "72F Stranded LT Cable",
@@ -1003,6 +997,12 @@
   },
   {
     "pattern": "UMN6**FD0****",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
+  },
+  {
+    "pattern": "UTN6**FD*****",
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
     "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
