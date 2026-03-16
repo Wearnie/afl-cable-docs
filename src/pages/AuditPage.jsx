@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { loadDocumentMap, patternMatches, invalidateDocumentMapCache } from '../data/documentMap'
+import { patternMatches, invalidateDocumentMapCache } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
-import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
+import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc, fetchDocumentMap } from '../lib/adminApi'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const TYPE_OPTIONS = ['TDS', 'Test Certificate', 'Stripping', 'Installation', 'Other']
@@ -183,6 +183,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
   const [toast, setToast] = useState(null)
   const [extraPatterns, setExtraPatterns] = useState([])
   const [deletedPatterns, setDeletedPatterns] = useState(new Set())
+  const [editedPatterns, setEditedPatterns] = useState(new Map())
   const [reviewed, setReviewed] = useState(() => !!getReviewedDocs()[doc.path])
 
   const toggleReviewed = (e) => {
@@ -199,16 +200,19 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
   }, [onMapChanged])
 
   const handlePatternEdited = useCallback((oldPattern, newPattern) => {
-    setDeletedPatterns(prev => new Set([...prev, oldPattern]))
-    setExtraPatterns(prev => [...prev, newPattern])
+    // Track the replacement so activePatterns recalculates matches correctly.
+    // Don't add to extraPatterns — the PatternRow already updated itself in-place.
+    setEditedPatterns(prev => new Map([...prev, [oldPattern, newPattern]]))
     if (onMapChanged) onMapChanged('edit', { oldPattern, newEntry: { pattern: newPattern, type: doc.type, name: doc.name, path: doc.path } })
   }, [onMapChanged, doc.type, doc.name, doc.path])
 
-  // Active patterns = original minus deleted, plus newly added
-  const activePatterns = useMemo(() =>
-    [...doc.patterns.filter(p => !deletedPatterns.has(p)), ...extraPatterns],
-    [doc.patterns, deletedPatterns, extraPatterns]
-  )
+  // Active patterns = original (with edits applied, minus deleted), plus newly added
+  const activePatterns = useMemo(() => {
+    const fromOriginal = doc.patterns
+      .filter(p => !deletedPatterns.has(p))
+      .map(p => editedPatterns.get(p) || p)
+    return [...fromOriginal, ...extraPatterns]
+  }, [doc.patterns, deletedPatterns, editedPatterns, extraPatterns])
 
   const { matched, nearMisses } = useMemo(() => {
     const matched = []
@@ -472,8 +476,14 @@ export default function AuditPage() {
   }, [])
 
   useEffect(() => {
-    Promise.all([loadDocumentMap(), loadDJMapping()]).then(([docMap, djMap]) => {
+    // Load from API (reads live GitHub data) so edits are visible immediately on refresh.
+    // The static /data/document-map.json only updates after Vercel redeploy (~60s).
+    Promise.all([
+      fetchDocumentMap().then(r => r.entries.map(e => ({ ...e, url: `${DOC_BASE_URL}${e.path}` }))),
+      loadDJMapping(),
+    ]).then(([docMap, djMap]) => {
       setDocumentMap(docMap)
+      invalidateDocumentMapCache(docMap)
       setDjMapping(djMap)
       setLoading(false)
       recountReviewed()
