@@ -178,6 +178,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
   const [open, setOpen] = useState(defaultOpen || false)
   const [toast, setToast] = useState(null)
   const [extraPatterns, setExtraPatterns] = useState([])
+  const [deletedPatterns, setDeletedPatterns] = useState(new Set())
   const [reviewed, setReviewed] = useState(() => !!getReviewedDocs()[doc.path])
 
   const toggleReviewed = (e) => {
@@ -188,13 +189,23 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     if (onReviewChange) onReviewChange()
   }
 
+  const handlePatternDeleted = useCallback((pattern) => {
+    setDeletedPatterns(prev => new Set([...prev, pattern]))
+  }, [])
+
+  // Active patterns = original minus deleted
+  const activePatterns = useMemo(() =>
+    doc.patterns.filter(p => !deletedPatterns.has(p)),
+    [doc.patterns, deletedPatterns]
+  )
+
   const { matched, nearMisses } = useMemo(() => {
     const matched = []
     const nearMisses = []
     for (const code of allProductCodes) {
       let isMatch = false
       let bestMM = 99, bestPat = ''
-      for (const p of doc.patterns) {
+      for (const p of activePatterns) {
         if (patternMatches(code, p)) isMatch = true
         const mm = mismatchCount(code, p)
         if (mm < bestMM) { bestMM = mm; bestPat = p }
@@ -205,7 +216,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     }
     nearMisses.sort((a, b) => a.mismatches - b.mismatches)
     return { matched, nearMisses }
-  }, [doc.patterns, allProductCodes, djEntries])
+  }, [activePatterns, allProductCodes, djEntries])
 
   const statusClass = matched.length === 0 ? 'bg-red-50 text-red-700 border-red-200' :
     nearMisses.length > 0 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
@@ -232,7 +243,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
         <span className={`text-xs transition-transform ${open ? 'rotate-90' : ''}`}>&#9654;</span>
         <span className={`font-semibold text-sm flex-1 truncate ${reviewed ? 'text-emerald-800' : ''}`}>{doc.name}</span>
         <span className={`text-[11px] font-bold rounded-full px-2.5 py-0.5 border ${statusClass}`}>{statusLabel}</span>
-        <span className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border border-gray-200 bg-gray-50 text-gray-500">{doc.patterns.length} pattern{doc.patterns.length > 1 ? 's' : ''}</span>
+        <span className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border border-gray-200 bg-gray-50 text-gray-500">{activePatterns.length} pattern{activePatterns.length !== 1 ? 's' : ''}</span>
       </div>
 
       {open && (
@@ -243,11 +254,11 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
           <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 mt-4 mb-2">Patterns</h4>
           {doc.patterns.map((p, i) => (
             <PatternRow key={`${p}-${i}`} pattern={p} type={doc.type} name={doc.name} path={doc.path}
-              onToast={(msg, type) => setToast({ msg, type })} />
+              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} />
           ))}
           {extraPatterns.map((p, i) => (
             <PatternRow key={`extra-${i}`} pattern={p} type={doc.type} name={doc.name} path={doc.path}
-              onToast={(msg, type) => setToast({ msg, type })} />
+              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} />
           ))}
           <PatternRow key={`new-${extraPatterns.length}`} pattern="" type={doc.type} name={doc.name} path={doc.path} isNew
             onSaved={(val) => setExtraPatterns(prev => [...prev, val])}
@@ -265,7 +276,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
                   </tr></thead>
                   <tbody className="divide-y divide-gray-100">
                     {matched.map(m => {
-                      const matchPat = doc.patterns.find(p => patternMatches(m.code, p)) || doc.patterns[0]
+                      const matchPat = activePatterns.find(p => patternMatches(m.code, p)) || activePatterns[0]
                       return (
                         <tr key={m.code} className="hover:bg-gray-50/60">
                           <td className="px-3 py-1.5 font-mono text-[12px] font-semibold">{m.code}</td>
