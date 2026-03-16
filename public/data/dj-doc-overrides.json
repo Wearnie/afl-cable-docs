@@ -7,14 +7,9 @@
   },
   "99999999": {
     "exclude": [
-      "/stress-test/exclude-1.pdf"
+      "/stress-test/exclude-1.pdf",
+      "/stress-test/exclude-2.pdf"
     ],
-    "include": [
-      {
-        "type": "StressTest",
-        "name": "Test Include",
-        "path": "/stress-test/include-1.pdf"
-      }
-    ]
+    "include": []
   }
 }
