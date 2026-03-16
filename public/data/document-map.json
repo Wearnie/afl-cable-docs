@@ -468,12 +468,6 @@
     "path": "/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf"
   },
   {
-    "pattern": "RLD1**FM002BK",
-    "type": "TDS",
-    "name": "Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath",
-    "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf"
-  },
-  {
     "pattern": "RLD1**FM004BK",
     "type": "TDS",
     "name": "Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath",
@@ -1012,5 +1006,11 @@
     "type": "TDS",
     "name": "Axial Non-Metallic Flat FRP Armoured LTC",
     "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC.pdf"
+  },
+  {
+    "pattern": "RLD1**FM002**",
+    "type": "TDS",
+    "name": "Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath",
+    "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf"
   }
 ]
