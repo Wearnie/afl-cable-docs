@@ -2,7 +2,9 @@
 // Handles API calls to Vercel serverless functions
 
 async function apiCall(path, options = {}) {
-  const res = await fetch(path, {
+  // Cache-bust GET requests to avoid stale browser/CDN responses
+  const url = (options.method && options.method !== 'GET') ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
+  const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
