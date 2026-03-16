@@ -68,10 +68,11 @@ function Toast({ message, type, onDone }) {
 }
 
 // Editable pattern row
-function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved, onToast }) {
+function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved, onToast, onDeleted }) {
   const [pattern, setPattern] = useState(initialPattern)
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState('')
+  const [deleted, setDeleted] = useState(false)
   const original = useRef(initialPattern)
 
   const handleSave = async () => {
@@ -102,6 +103,24 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
     setPattern(HIDDEN_PATTERN)
     setTimeout(() => handleSave(), 0)
   }
+
+  const handleDelete = async () => {
+    if (!original.current) return
+    if (!confirm(`Delete pattern "${original.current}"?\n\nThis permanently removes it from document-map.json.`)) return
+    setSaving(true); setStatus('Deleting...')
+    try {
+      await removeDocumentMappings([original.current])
+      setDeleted(true)
+      setStatus('Deleted')
+      onToast(`Pattern deleted: ${original.current}`, 'success')
+      if (onDeleted) onDeleted(original.current)
+    } catch (err) {
+      setStatus(err.message)
+      onToast('Error: ' + err.message, 'error')
+    } finally { setSaving(false) }
+  }
+
+  if (deleted) return null
 
   // For new rows, only show Add button
   if (isNew) {
@@ -145,7 +164,11 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
         className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-gray-100 text-gray-600 border border-gray-300 hover:bg-red-50 hover:text-red-700 hover:border-red-300 disabled:opacity-50 transition-colors">
         Hide
       </button>
-      {status && <span className={`text-xs ${status === 'Saved!' ? 'text-emerald-600' : 'text-gray-500'}`}>{status}</span>}
+      <button onClick={handleDelete} disabled={saving}
+        className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold text-red-400 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 transition-colors">
+        Delete
+      </button>
+      {status && <span className={`text-xs ${status === 'Saved!' ? 'text-emerald-600' : status === 'Deleted' ? 'text-red-500' : 'text-gray-500'}`}>{status}</span>}
     </div>
   )
 }
