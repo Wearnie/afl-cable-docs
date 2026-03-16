@@ -324,12 +324,6 @@
     "path": "/tds/Axial%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NLD1**EB006BK",
-    "type": "TDS",
-    "name": "Axial NMA LT Cable",
-    "path": "/tds/Axial%20NMA%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "NLD1**EB012BK",
     "type": "TDS",
     "name": "Axial NMA LT Cable",
@@ -1030,5 +1024,11 @@
     "type": "TDS",
     "name": "Axial LT Cable with Sacrificial sheath",
     "path": "/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf"
+  },
+  {
+    "pattern": "NLD1**EB006**",
+    "type": "TDS",
+    "name": "Axial NMA LT Cable",
+    "path": "/tds/Axial%20NMA%20LT%20Cable.pdf"
   }
 ]
