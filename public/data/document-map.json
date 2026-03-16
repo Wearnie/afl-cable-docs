@@ -6,12 +6,6 @@
     "path": "/stripping/K3Mx%20CABLE%20STRIPPING%20INSTRUCTIONS.pdf"
   },
   {
-    "pattern": "LMD**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "LMH**********",
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
@@ -1006,5 +1000,11 @@
     "type": "TDS",
     "name": "144F High Strength Stranded Loose Tube Cable SS",
     "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+  },
+  {
+    "pattern": "L*D**********",
+    "type": "Stripping",
+    "name": "LMDx Cable Stripping Instructions",
+    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
