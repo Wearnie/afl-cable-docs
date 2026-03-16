@@ -318,12 +318,6 @@
     "path": "/tds/Axial%20LT%20Cable%20LSZH.pdf"
   },
   {
-    "pattern": "LQH1**E*0**BK",
-    "type": "TDS",
-    "name": "Axial LT Cable with Sacrificial sheath",
-    "path": "/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf"
-  },
-  {
     "pattern": "LQD1**EA0**BE",
     "type": "TDS",
     "name": "Axial LT Cable",
