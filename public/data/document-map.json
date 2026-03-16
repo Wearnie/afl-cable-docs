@@ -348,12 +348,6 @@
     "path": "/tds/Axial%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LQD1*******BK",
-    "type": "TDS",
-    "name": "72F Stranded LT Cable",
-    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LKD6**PA0**BE",
     "type": "TDS",
     "name": "72F Stranded LT Cable",
