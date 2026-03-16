@@ -420,12 +420,6 @@
     "path": "/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NKD8**PB048**",
-    "type": "TDS",
-    "name": "72F Stranded NMA LT Cable",
-    "path": "/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "NMD8**PB096**",
     "type": "TDS",
     "name": "96F Stranded NMA LT Cable",
