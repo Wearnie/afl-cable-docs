@@ -1012,11 +1012,5 @@
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
-    "pattern": "ZZT*******103",
-    "type": "StressTest",
-    "name": "Stress Test Pattern 103",
-    "path": "/stress-test/test-103.pdf"
   }
 ]
