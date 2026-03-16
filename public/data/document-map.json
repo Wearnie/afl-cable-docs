@@ -990,12 +990,6 @@
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "UMN6**FD0****",
-    "type": "TDS",
-    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
-    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
-  },
-  {
     "pattern": "UTN6**FD*****",
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
@@ -1012,5 +1006,11 @@
     "type": "StressTest",
     "name": "Save Test Edited",
     "path": "/test.pdf"
+  },
+  {
+    "pattern": "UMN6**FD0**BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
   }
 ]
