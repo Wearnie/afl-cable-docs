@@ -1012,5 +1012,65 @@
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
+  },
+  {
+    "pattern": "ZZT*******200",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 200",
+    "path": "/stress-test/test-200.pdf"
+  },
+  {
+    "pattern": "ZZT*******201",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 201",
+    "path": "/stress-test/test-201.pdf"
+  },
+  {
+    "pattern": "ZZT*******202",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 202",
+    "path": "/stress-test/test-202.pdf"
+  },
+  {
+    "pattern": "ZZT*******203",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 203",
+    "path": "/stress-test/test-203.pdf"
+  },
+  {
+    "pattern": "ZZT*******204",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 204",
+    "path": "/stress-test/test-204.pdf"
+  },
+  {
+    "pattern": "ZZT*******205",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 205",
+    "path": "/stress-test/test-205.pdf"
+  },
+  {
+    "pattern": "ZZT*******206",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 206",
+    "path": "/stress-test/test-206.pdf"
+  },
+  {
+    "pattern": "ZZT*******207",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 207",
+    "path": "/stress-test/test-207.pdf"
+  },
+  {
+    "pattern": "ZZT*******208",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 208",
+    "path": "/stress-test/test-208.pdf"
+  },
+  {
+    "pattern": "ZZT*******209",
+    "type": "StressTest",
+    "name": "Stress Test Pattern 209",
+    "path": "/stress-test/test-209.pdf"
   }
 ]
