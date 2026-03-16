@@ -14,6 +14,7 @@ const VALID_DOC_TYPES = {
   stripping: 'stripping',
   'test-certificates': 'test-certificates',
   installation: 'installation',
+  other: 'other',
 }
 
 async function githubRequest(path, options = {}) {

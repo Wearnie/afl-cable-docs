@@ -303,6 +303,7 @@ export default function GeneratePage() {
                       <option value="Test Certificate">Test Certificate</option>
                       <option value="Stripping">Stripping</option>
                       <option value="Installation">Installation</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div className="max-h-60 overflow-y-auto space-y-1">
