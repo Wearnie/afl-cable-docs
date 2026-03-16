@@ -1012,5 +1012,11 @@
     "type": "Test Certificate",
     "name": "RLD1xxF Test Certificate",
     "path": "/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf"
+  },
+  {
+    "pattern": "LKB6**PA0****",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable with LSZH Sheath",
+    "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf"
   }
 ]
