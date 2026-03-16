@@ -68,7 +68,7 @@ function Toast({ message, type, onDone }) {
 }
 
 // Editable pattern row
-function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved, onToast, onDeleted }) {
+function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved, onToast, onDeleted, onEdited }) {
   const [pattern, setPattern] = useState(initialPattern)
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState('')
@@ -85,11 +85,13 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
         await removeDocumentMappings([original.current])
       }
       await addDocumentMappings([{ pattern: val, type, name, path }])
+      const oldVal = original.current
       original.current = val
       setPattern(val)
       setStatus('Saved!')
       onToast(`Pattern ${isNew ? 'added' : 'updated'}: ${val}`, 'success')
       if (isNew && onSaved) onSaved(val)
+      if (!isNew && onEdited && oldVal !== val) onEdited(oldVal, val)
       setTimeout(() => setStatus(''), 2000)
     } catch (err) {
       setStatus(err.message)
@@ -193,6 +195,11 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     setDeletedPatterns(prev => new Set([...prev, pattern]))
   }, [])
 
+  const handlePatternEdited = useCallback((oldPattern, newPattern) => {
+    setDeletedPatterns(prev => new Set([...prev, oldPattern]))
+    setExtraPatterns(prev => [...prev, newPattern])
+  }, [])
+
   // Active patterns = original minus deleted, plus newly added
   const activePatterns = useMemo(() =>
     [...doc.patterns.filter(p => !deletedPatterns.has(p)), ...extraPatterns],
@@ -254,11 +261,11 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
           <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 mt-4 mb-2">Patterns</h4>
           {doc.patterns.map((p, i) => (
             <PatternRow key={`${p}-${i}`} pattern={p} type={doc.type} name={doc.name} path={doc.path}
-              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} />
+              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} onEdited={handlePatternEdited} />
           ))}
           {extraPatterns.map((p, i) => (
             <PatternRow key={`extra-${i}`} pattern={p} type={doc.type} name={doc.name} path={doc.path}
-              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} />
+              onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} onEdited={handlePatternEdited} />
           ))}
           <PatternRow key={`new-${extraPatterns.length}`} pattern="" type={doc.type} name={doc.name} path={doc.path} isNew
             onSaved={(val) => setExtraPatterns(prev => [...prev, val])}
