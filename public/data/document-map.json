@@ -504,12 +504,6 @@
     "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "UTE6****144**",
-    "type": "TDS",
-    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
-    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
-  },
-  {
     "pattern": "UTEC**FA288BE",
     "type": "TDS",
     "name": "288F MicroCore Stranded LT Cable",
