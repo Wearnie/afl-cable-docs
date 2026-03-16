@@ -546,12 +546,6 @@
     "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMK6**J*0**BK",
-    "type": "TDS",
-    "name": "72F High Strength Stranded Loose Tube Cable SS",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
     "pattern": "LKK6**J*0**BK",
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube Cable SS",
