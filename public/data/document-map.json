@@ -1024,5 +1024,11 @@
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube Cable SS",
     "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+  },
+  {
+    "pattern": "UTN6**FD***BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
   }
 ]
