@@ -1024,5 +1024,11 @@
     "type": "TDS",
     "name": "72F Stranded LT Cable",
     "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMB6**PA0****",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable with LSZH Sheath",
+    "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf"
   }
 ]
