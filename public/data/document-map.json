@@ -402,12 +402,6 @@
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "UMNC**FD***BE",
-    "type": "TDS",
-    "name": "288F MicroCore Stranded LT with Sacrificial Sheath",
-    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf"
-  },
-  {
     "pattern": "UTNC**FD***BE",
     "type": "TDS",
     "name": "288F MicroCore Stranded LT with Sacrificial Sheath",
@@ -1012,5 +1006,11 @@
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
     "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
+  },
+  {
+    "pattern": "UMNC**FD*****",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT with Sacrificial Sheath",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20with%20Sacrificial%20Sheath.pdf"
   }
 ]
