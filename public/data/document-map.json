@@ -114,12 +114,6 @@
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "L2D**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "RMF**********",
     "type": "Stripping",
     "name": "RLD Cable Stripping Instructions",
