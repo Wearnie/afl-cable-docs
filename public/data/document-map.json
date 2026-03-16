@@ -1006,5 +1006,11 @@
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
     "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
+  },
+  {
+    "pattern": "ZZT**********",
+    "type": "StressTest",
+    "name": "Save Test",
+    "path": "/test.pdf"
   }
 ]
