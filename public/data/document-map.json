@@ -1018,5 +1018,11 @@
     "type": "TDS",
     "name": "96F Stranded LT Cable with LSZH Sheath",
     "path": "/tds/96F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf"
+  },
+  {
+    "pattern": "LMH8**P*096**",
+    "type": "TDS",
+    "name": "96F Stranded LT Cable with Sacrificial sheath",
+    "path": "/tds/96F%20Stranded%20LT%20Cable%20with%20Sacrificial%20sheath.pdf"
   }
 ]
