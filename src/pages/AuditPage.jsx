@@ -201,10 +201,10 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 
   const handlePatternEdited = useCallback((oldPattern, newPattern) => {
     // Track the replacement so activePatterns recalculates matches correctly.
-    // Don't add to extraPatterns — the PatternRow already updated itself in-place.
+    // Don't update parent documentMap state — that causes doc.patterns to change,
+    // which remounts PatternRows and creates visual duplicates.
     setEditedPatterns(prev => new Map([...prev, [oldPattern, newPattern]]))
-    if (onMapChanged) onMapChanged('edit', { oldPattern, newEntry: { pattern: newPattern, type: doc.type, name: doc.name, path: doc.path } })
-  }, [onMapChanged, doc.type, doc.name, doc.path])
+  }, [])
 
   // Active patterns = original (with edits applied, minus deleted), plus newly added
   const activePatterns = useMemo(() => {
