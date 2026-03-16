@@ -1006,11 +1006,5 @@
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
-    "pattern": "L*K**********",
-    "type": "Stripping",
-    "name": "LMHx Cable Stripping Instructions",
-    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
