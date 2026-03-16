@@ -1008,9 +1008,9 @@
     "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
   },
   {
-    "pattern": "ZZT**********",
+    "pattern": "ZZU**********",
     "type": "StressTest",
-    "name": "Save Test",
+    "name": "Save Test Edited",
     "path": "/test.pdf"
   }
 ]
