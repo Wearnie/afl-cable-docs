@@ -618,12 +618,6 @@
     "path": "/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf"
   },
   {
-    "pattern": "RKF6**FB*****",
-    "type": "TDS",
-    "name": "144F NM Flat FRP Armoured LT Cable - RMF6",
-    "path": "/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf"
-  },
-  {
     "pattern": "RMF6**FB*****",
     "type": "TDS",
     "name": "144F NM Flat FRP Armoured LT Cable - RMF6",
