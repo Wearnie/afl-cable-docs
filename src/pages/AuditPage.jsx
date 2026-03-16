@@ -193,10 +193,10 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     setDeletedPatterns(prev => new Set([...prev, pattern]))
   }, [])
 
-  // Active patterns = original minus deleted
+  // Active patterns = original minus deleted, plus newly added
   const activePatterns = useMemo(() =>
-    doc.patterns.filter(p => !deletedPatterns.has(p)),
-    [doc.patterns, deletedPatterns]
+    [...doc.patterns.filter(p => !deletedPatterns.has(p)), ...extraPatterns],
+    [doc.patterns, deletedPatterns, extraPatterns]
   )
 
   const { matched, nearMisses } = useMemo(() => {
