@@ -1024,5 +1024,11 @@
     "type": "TDS",
     "name": "96F Stranded LT Cable with Sacrificial sheath",
     "path": "/tds/96F%20Stranded%20LT%20Cable%20with%20Sacrificial%20sheath.pdf"
+  },
+  {
+    "pattern": "NKD8**PB048**",
+    "type": "TDS",
+    "name": "96F Stranded NMA LT Cable",
+    "path": "/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf"
   }
 ]
