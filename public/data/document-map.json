@@ -1012,11 +1012,5 @@
     "type": "Test Certificate",
     "name": "RLD1xxF Test Certificate",
     "path": "/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf"
-  },
-  {
-    "pattern": "ZZTEST1234567",
-    "type": "TDS",
-    "name": "TEST - DELETE ME",
-    "path": "/tds/test.pdf"
   }
 ]
