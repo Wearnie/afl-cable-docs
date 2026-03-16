@@ -58,7 +58,7 @@ function validateEntry(entry) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
@@ -101,6 +101,50 @@ export default async function handler(req, res) {
         added: newEntries.length,
         total: updated.length,
         message: `${newEntries.length} mapping(s) saved. Site will redeploy in ~60 seconds.`,
+      })
+    }
+
+    // PUT — atomic edit: remove old pattern(s) + add new pattern(s) in one commit
+    if (req.method === 'PUT') {
+      const { remove, add } = req.body
+      if (!Array.isArray(remove) && !Array.isArray(add)) {
+        return res.status(400).json({ error: 'Required: remove (patterns array) and/or add (entries array)' })
+      }
+
+      if (add) {
+        for (const entry of add) {
+          const err = validateEntry(entry)
+          if (err) return res.status(400).json({ error: `Invalid entry (${entry.pattern}): ${err}` })
+        }
+      }
+
+      const { entries: existing, sha } = await readDocumentMap()
+
+      // Remove
+      const removeSet = new Set(remove || [])
+      let updated = existing.filter(e => !removeSet.has(e.pattern))
+
+      // Add
+      if (add) {
+        for (const newEntry of add) {
+          const idx = updated.findIndex(e => e.pattern === newEntry.pattern && e.type === newEntry.type)
+          if (idx >= 0) {
+            updated[idx] = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+          } else {
+            updated.push({ pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path })
+          }
+        }
+      }
+
+      const removedCount = existing.length - (updated.length - (add || []).length)
+      await writeDocumentMap(updated, sha, `Edit document mapping(s): -${removeSet.size} +${(add || []).length}`)
+
+      return res.json({
+        success: true,
+        removed: removeSet.size,
+        added: (add || []).length,
+        total: updated.length,
+        message: `Mapping(s) updated. Site will redeploy in ~60 seconds.`,
       })
     }
 

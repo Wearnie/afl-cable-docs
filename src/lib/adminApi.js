@@ -76,6 +76,13 @@ export async function removeDocumentMappings(patterns) {
   })
 }
 
+export async function editDocumentMappings(remove, add) {
+  return apiCall('/api/document-map', {
+    method: 'PUT',
+    body: JSON.stringify({ remove, add }),
+  })
+}
+
 // Final Test Certificate API
 // The server extracts DJ number and product code from the PDF automatically
 

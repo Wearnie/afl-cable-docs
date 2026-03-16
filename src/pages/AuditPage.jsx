@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDocumentMap, patternMatches } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
-import { addDocumentMappings, removeDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
+import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const TYPE_OPTIONS = ['TDS', 'Test Certificate', 'Stripping', 'Installation', 'Other']
@@ -82,9 +82,11 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
     setSaving(true); setStatus('Saving...')
     try {
       if (!isNew && original.current && original.current !== HIDDEN_PATTERN) {
-        await removeDocumentMappings([original.current])
+        // Atomic: delete old + add new in one commit (avoids SHA race condition)
+        await editDocumentMappings([original.current], [{ pattern: val, type, name, path }])
+      } else {
+        await addDocumentMappings([{ pattern: val, type, name, path }])
       }
-      await addDocumentMappings([{ pattern: val, type, name, path }])
       const oldVal = original.current
       original.current = val
       setPattern(val)
