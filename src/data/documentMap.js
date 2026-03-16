@@ -46,6 +46,18 @@ export function _setDocumentMapCache(entries) {
   _documentMapCache = entries
 }
 
+/**
+ * Clear the cached document map so the next loadDocumentMap() call re-fetches.
+ * Also accepts an optional new value to set directly (for optimistic updates).
+ */
+export function invalidateDocumentMapCache(newEntries) {
+  if (newEntries) {
+    _documentMapCache = newEntries
+  } else {
+    _documentMapCache = null
+  }
+}
+
 // ============================================================================
 // PATTERN MATCHING
 // ============================================================================
