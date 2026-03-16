@@ -72,12 +72,6 @@
     "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "LMJ**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "LMK**********",
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
