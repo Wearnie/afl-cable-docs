@@ -8,6 +8,18 @@ const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const TYPE_OPTIONS = ['TDS', 'Test Certificate', 'Stripping', 'Installation']
 const DOC_TYPE_MAP = { TDS: 'tds', 'Test Certificate': 'test-certificates', Stripping: 'stripping', Installation: 'installation' }
 const HIDDEN_PATTERN = '1111111111111'
+const REVIEWED_KEY = 'audit-reviewed-docs'
+
+function getReviewedDocs() {
+  try { return JSON.parse(localStorage.getItem(REVIEWED_KEY) || '{}') } catch { return {} }
+}
+
+function setDocReviewed(path, reviewed) {
+  const data = getReviewedDocs()
+  if (reviewed) data[path] = Date.now()
+  else delete data[path]
+  localStorage.setItem(REVIEWED_KEY, JSON.stringify(data))
+}
 
 function isAlphanumeric(ch) {
   const c = ch.charCodeAt(0)
@@ -139,10 +151,19 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
 }
 
 // Single document card
-function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen }) {
+function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange }) {
   const [open, setOpen] = useState(defaultOpen || false)
   const [toast, setToast] = useState(null)
-  const [extraPatterns, setExtraPatterns] = useState([]) // newly added patterns
+  const [extraPatterns, setExtraPatterns] = useState([])
+  const [reviewed, setReviewed] = useState(() => !!getReviewedDocs()[doc.path])
+
+  const toggleReviewed = (e) => {
+    e.stopPropagation()
+    const next = !reviewed
+    setReviewed(next)
+    setDocReviewed(doc.path, next)
+    if (onReviewChange) onReviewChange()
+  }
 
   const { matched, nearMisses } = useMemo(() => {
     const matched = []
@@ -169,11 +190,24 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen }) {
     nearMisses.length > 0 ? `${matched.length} matched, ${nearMisses.length} near-miss` : `${matched.length} matched`
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 mb-3 overflow-hidden">
+    <div className={`rounded-xl border mb-3 overflow-hidden transition-colors ${reviewed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-white border-gray-200'}`}>
       {toast && <Toast message={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
-      <div className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => setOpen(!open)}>
+      <div className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50/80 transition-colors" onClick={() => setOpen(!open)}>
+        <button
+          onClick={toggleReviewed}
+          title={reviewed ? 'Mark as not reviewed' : 'Mark as reviewed'}
+          className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+            reviewed
+              ? 'bg-emerald-500 border-emerald-500 text-white'
+              : 'border-gray-300 hover:border-emerald-400 text-transparent hover:text-emerald-300'
+          }`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
         <span className={`text-xs transition-transform ${open ? 'rotate-90' : ''}`}>&#9654;</span>
-        <span className="font-semibold text-sm flex-1 truncate">{doc.name}</span>
+        <span className={`font-semibold text-sm flex-1 truncate ${reviewed ? 'text-emerald-800' : ''}`}>{doc.name}</span>
         <span className={`text-[11px] font-bold rounded-full px-2.5 py-0.5 border ${statusClass}`}>{statusLabel}</span>
         <span className="text-[11px] font-bold rounded-full px-2.5 py-0.5 border border-gray-200 bg-gray-50 text-gray-500">{doc.patterns.length} pattern{doc.patterns.length > 1 ? 's' : ''}</span>
       </div>
@@ -380,13 +414,20 @@ export default function AuditPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  const [reviewFilter, setReviewFilter] = useState('') // '' | 'pending' | 'reviewed'
   const [toast, setToast] = useState(null)
+  const [reviewCount, setReviewCount] = useState(0)
+
+  const recountReviewed = useCallback(() => {
+    setReviewCount(Object.keys(getReviewedDocs()).length)
+  }, [])
 
   useEffect(() => {
     Promise.all([loadDocumentMap(), loadDJMapping()]).then(([docMap, djMap]) => {
       setDocumentMap(docMap)
       setDjMapping(djMap)
       setLoading(false)
+      recountReviewed()
     })
   }, [])
 
@@ -449,11 +490,15 @@ export default function AuditPage() {
     if (query && /^\d+$/.test(query) && djMapping?.[query]) {
       resolvedCode = djMapping[query].toUpperCase()
     }
+    const reviewedDocs = getReviewedDocs()
 
     const result = {}
     for (const type of TYPE_OPTIONS) {
       if (typeFilter && typeFilter !== type) continue
       result[type] = (byType[type] || []).filter(doc => {
+        // Review filter
+        if (reviewFilter === 'reviewed' && !reviewedDocs[doc.path]) return false
+        if (reviewFilter === 'pending' && reviewedDocs[doc.path]) return false
         if (!query) return true
         const searchTarget = resolvedCode || query
         // Check matched codes
@@ -477,7 +522,7 @@ export default function AuditPage() {
       })
     }
     return result
-  }, [search, typeFilter, byType, allProductCodes, djEntries, djMapping])
+  }, [search, typeFilter, reviewFilter, reviewCount, byType, allProductCodes, djEntries, djMapping])
 
   const totalVisible = useMemo(() =>
     TYPE_OPTIONS.reduce((s, t) => s + (filtered[t]?.length || 0), 0),
@@ -512,7 +557,7 @@ export default function AuditPage() {
 
       <main className="max-w-7xl mx-auto px-6 -mt-8 pb-12">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-7 gap-3 mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-8 gap-3 mb-5">
           <StatCard label="Unique PDFs" value={stats.uniquePDFs} color="bg-blue-800" />
           <StatCard label="Patterns" value={stats.totalPatterns} color="bg-blue-700" />
           <StatCard label="DJ Numbers" value={stats.totalDJs} color="bg-blue-700" />
@@ -520,6 +565,7 @@ export default function AuditPage() {
           <StatCard label="Coverage" value={`${stats.coverage}%`} color={parseFloat(stats.coverage) >= 80 ? 'bg-emerald-600' : 'bg-amber-600'} />
           <StatCard label="Codes Matched" value={stats.coveredCodes} color="bg-emerald-600" />
           <StatCard label="Orphaned" value={stats.orphaned} color={stats.orphaned === 0 ? 'bg-emerald-600' : 'bg-red-600'} />
+          <StatCard label="Reviewed" value={`${reviewCount}/${stats.uniquePDFs}`} color={reviewCount === stats.uniquePDFs ? 'bg-emerald-600' : 'bg-amber-600'} />
         </div>
 
         {/* Search & Filter */}
@@ -538,7 +584,16 @@ export default function AuditPage() {
                 {TYPE_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
-            <button onClick={() => { setSearch(''); setTypeFilter('') }}
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 block mb-1">Review Status</label>
+              <select value={reviewFilter} onChange={e => setReviewFilter(e.target.value)}
+                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="reviewed">Reviewed</option>
+              </select>
+            </div>
+            <button onClick={() => { setSearch(''); setTypeFilter(''); setReviewFilter('') }}
               className="px-4 py-2.5 rounded-xl text-sm font-heading font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
               Clear
             </button>
@@ -568,7 +623,7 @@ export default function AuditPage() {
                 {type} <span className="text-gray-400 font-normal text-sm">({docs.length} of {allDocs.length} PDFs, {allDocs.reduce((s, d) => s + d.patterns.length, 0)} patterns)</span>
               </h2>
               {docs.map(doc => (
-                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} />
+                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} onReviewChange={recountReviewed} />
               ))}
             </div>
           )
