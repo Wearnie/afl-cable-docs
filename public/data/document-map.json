@@ -1012,5 +1012,11 @@
     "type": "TDS",
     "name": "Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath",
     "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf"
+  },
+  {
+    "pattern": "L*K**********",
+    "type": "Stripping",
+    "name": "LMHx Cable Stripping Instructions",
+    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
