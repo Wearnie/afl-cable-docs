@@ -113,7 +113,7 @@ function AdminPageInner() {
                         <td className="px-4 py-2 font-mono text-[13px] text-afl-text tracking-wide">{code}</td>
                         <td className="px-4 py-2">
                           <div className="flex gap-1">
-                            {['TDS', 'Stripping', 'Test Certificate'].map(type => {
+                            {['TDS', 'Stripping'].map(type => {
                               const has = docs.some(d => d.type === type)
                               return (
                                 <span
@@ -122,7 +122,7 @@ function AdminPageInner() {
                                     has ? 'bg-emerald-100 text-emerald-700' : 'bg-red-50 text-red-400'
                                   }`}
                                 >
-                                  {type === 'Test Certificate' ? 'CERT' : type === 'Stripping' ? 'STRIP' : type}
+                                  {type === 'Stripping' ? 'STRIP' : type}
                                 </span>
                               )
                             })}

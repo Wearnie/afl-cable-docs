@@ -5,8 +5,8 @@ import { loadDJMapping } from '../data/djLookup'
 import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
-const TYPE_OPTIONS = ['TDS', 'Test Certificate', 'Stripping', 'Installation', 'Other']
-const DOC_TYPE_MAP = { TDS: 'tds', 'Test Certificate': 'test-certificates', Stripping: 'stripping', Installation: 'installation', Other: 'other' }
+const TYPE_OPTIONS = ['TDS', 'Stripping', 'Installation', 'Other']
+const DOC_TYPE_MAP = { TDS: 'tds', Stripping: 'stripping', Installation: 'installation', Other: 'other' }
 const HIDDEN_PATTERN = '1111111111111'
 const REVIEWED_KEY = 'audit-reviewed-docs'
 
@@ -403,7 +403,6 @@ function UploadSection({ onToast }) {
           <select value={docType} onChange={e => setDocType(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
             <option value="tds">TDS</option>
-            <option value="test-certificates">Test Certificate</option>
             <option value="stripping">Stripping Instructions</option>
             <option value="installation">Installation Guide</option>
             <option value="other">Other</option>

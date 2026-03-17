@@ -300,7 +300,6 @@ export default function GeneratePage() {
                       className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
                       <option value="">All Types</option>
                       <option value="TDS">TDS</option>
-                      <option value="Test Certificate">Test Certificate</option>
                       <option value="Stripping">Stripping</option>
                       <option value="Installation">Installation</option>
                       <option value="Other">Other</option>

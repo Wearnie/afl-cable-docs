@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, getDocumentMap, decodeProductCode, docTypeInfo, patternMatches, loadDocumentMap } from '../data/documentMap'
 
-const DOC_TYPES = ['TDS', 'Stripping', 'Test Certificate', 'Installation']
-const PRIMARY_TYPES = ['TDS', 'Stripping', 'Test Certificate']
+const DOC_TYPES = ['TDS', 'Stripping', 'Installation']
+const PRIMARY_TYPES = ['TDS', 'Stripping']
 
 // Doc types that don't apply to certain families
 const NOT_APPLICABLE = {
@@ -244,7 +244,6 @@ export default function ReviewPage() {
           <StatCard label="Fully Covered" value={stats.fullyCovered} color="bg-emerald-600" />
           <StatCard label="With Gaps" value={stats.withGaps} sub={`${stats.gapDJs} DJs`} color="bg-amber-600" />
           <StatCard label="Missing TDS" value={stats.byType.TDS} sub={`${stats.byTypeDJs.TDS} DJs`} color="bg-red-600" />
-          <StatCard label="Missing Cert" value={stats.byType['Test Certificate']} sub={`${stats.byTypeDJs['Test Certificate']} DJs`} color="bg-red-600" />
         </div>
 
         {/* Assignments bar */}
@@ -306,7 +305,6 @@ export default function ReviewPage() {
               { key: 'all', label: 'All' },
               { key: 'TDS', label: `TDS (${stats.byType.TDS})` },
               { key: 'Stripping', label: `Strip (${stats.byType.Stripping})` },
-              { key: 'Test Certificate', label: `Cert (${stats.byType['Test Certificate']})` },
             ].map(f => (
               <button
                 key={f.key}
@@ -344,7 +342,6 @@ export default function ReviewPage() {
                   <Th>DJs</Th>
                   <Th>TDS</Th>
                   <Th>Strip</Th>
-                  <Th>Cert</Th>
                   <Th className="hidden lg:table-cell">Install</Th>
                 </tr>
               </thead>
@@ -364,7 +361,7 @@ export default function ReviewPage() {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-afl-muted">
+                    <td colSpan={7} className="px-4 py-12 text-center text-afl-muted">
                       No results match your filters.
                     </td>
                   </tr>
@@ -426,7 +423,7 @@ function CodeRow({ row, expandedCode, expandedType, toggleExpand, candidates, as
       </tr>
       {isExpanded && (
         <tr className="bg-amber-50/60">
-          <td colSpan={8} className="px-4 py-4">
+          <td colSpan={7} className="px-4 py-4">
             <AssignPanel
               row={row}
               type={expandedType}

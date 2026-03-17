@@ -56,20 +56,20 @@ describe('patternMatches', () => {
 // ============================================================================
 
 describe('findDocuments', () => {
-  it('LMDC1DPA144BE returns exactly 4 documents', () => {
+  it('LMDC1DPA144BE returns exactly 3 documents (Test Certificate excluded)', () => {
     const docs = findDocuments('LMDC1DPA144BE')
+    expect(docs).toHaveLength(3)
+  })
+
+  it('SMM41DLB048BK returns exactly 4 documents (incl. 2x Installation, Test Certificate excluded)', () => {
+    const docs = findDocuments('SMM41DLB048BK')
     expect(docs).toHaveLength(4)
   })
 
-  it('SMM41DLB048BK returns exactly 5 documents (incl. 2x Installation)', () => {
-    const docs = findDocuments('SMM41DLB048BK')
-    expect(docs).toHaveLength(5)
-  })
-
-  it('returns correct document types in order (TDS first)', () => {
+  it('returns correct document types in order (TDS first, no Test Certificate)', () => {
     const docs = findDocuments('LMDC1DPA144BE')
     const types = docs.map(d => d.type)
-    expect(types).toEqual(['TDS', 'Stripping', 'Test Certificate', 'Installation'])
+    expect(types).toEqual(['TDS', 'Stripping', 'Installation'])
   })
 
   it('invalid code (wrong length) returns empty array', () => {

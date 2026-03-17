@@ -91,8 +91,10 @@ export function patternMatches(code, pattern) {
 
 /**
  * Find all matching documents for a product code.
- * Returns first match per type for primary types (TDS, Stripping, Test Certificate),
+ * Returns first match per type for primary types (TDS, Stripping),
  * plus ALL Installation matches and any additional matches as "Other".
+ * Note: Standard Test Certificates (pattern-matched) are excluded from results.
+ * Final Test Certificates are added separately in DJDocumentPage.
  */
 export function findDocuments(productCode) {
   const code = productCode.toUpperCase().trim()
@@ -103,13 +105,13 @@ export function findDocuments(productCode) {
   const found = {
     TDS: null,
     Stripping: null,
-    'Test Certificate': null,
   }
   const installationDocs = []
   const otherDocs = []
 
   for (const entry of map) {
     if (!patternMatches(code, entry.pattern)) continue
+    if (entry.type === 'Test Certificate') continue // hidden for now
 
     if (entry.type === 'Installation') {
       installationDocs.push({ ...entry })
@@ -124,7 +126,6 @@ export function findDocuments(productCode) {
   const results = []
   if (found.TDS) results.push(found.TDS)
   if (found.Stripping) results.push(found.Stripping)
-  if (found['Test Certificate']) results.push(found['Test Certificate'])
   results.push(...installationDocs)
   results.push(...otherDocs)
 
