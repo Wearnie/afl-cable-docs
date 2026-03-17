@@ -29,15 +29,42 @@ export default function DJDocumentPage() {
   const documents = productCode ? applyOverrides(dj, findDocuments(productCode)) : []
   const finalTestCert = findFinalTestCert(dj) || findFinalTestCert('DJ' + dj)
   const finalTestDoc = finalTestCert
-    ? { type: 'Final Test Certificate', name: `Final Test Certificate — ${dj}`, url: finalTestCert.url }
+    ? { type: 'Final Test Certificate', name: `Test Certificate — ${dj}`, url: finalTestCert.url }
     : null
   const allDocs = finalTestDoc ? [...documents, finalTestDoc] : documents
   const hasDjButNoCert = !finalTestCert
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-afl-light">
-        <p className="text-afl-muted font-heading">Loading...</p>
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 160px, #F0F4F8 160px)' }}>
+        <header className="px-6 pt-5 pb-14">
+          <div className="max-w-lg mx-auto flex items-center justify-between">
+            <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
+            <div className="bg-white/15 backdrop-blur-sm rounded-lg px-3.5 py-1.5">
+              <span className="font-mono text-[13px] text-white tracking-[0.2em] font-medium">
+                DJ {dj}
+              </span>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-lg mx-auto px-4 -mt-6 pb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-afl-border overflow-hidden">
+            <div className="px-5 pt-5 pb-3">
+              <div className="h-3 w-28 bg-gray-200 rounded animate-pulse" />
+            </div>
+            <div className="px-3 pb-3 space-y-1.5">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="flex items-center gap-4 px-4 py-4 rounded-xl">
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-36 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-3 w-48 bg-gray-100 rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     )
   }
@@ -125,7 +152,7 @@ export default function DJDocumentPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="text-[16px] font-bold text-afl-navy leading-tight">
-                        Final Test Certificate
+                        Test Certificate
                       </span>
                       <p className="text-amber-600 text-[12px] leading-snug mt-0.5">
                         {dj} — pending upload

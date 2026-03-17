@@ -66,10 +66,10 @@ describe('findDocuments', () => {
     expect(docs).toHaveLength(4)
   })
 
-  it('returns correct document types in order (TDS first, no Test Certificate)', () => {
+  it('returns correct document types in order (Stripping first, no Test Certificate)', () => {
     const docs = findDocuments('LMDC1DPA144BE')
     const types = docs.map(d => d.type)
-    expect(types).toEqual(['TDS', 'Stripping', 'Installation'])
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
   })
 
   it('invalid code (wrong length) returns empty array', () => {
@@ -87,6 +87,199 @@ describe('findDocuments', () => {
     const docs = findDocuments('TVBQ1DAA012BE')
     const tds = docs.find(d => d.type === 'TDS')
     expect(tds.name).toBe('TVBQ - Indoor Outdoor Premise Tight Buffered Cable')
+  })
+})
+
+// ============================================================================
+// findDocuments — per cable family coverage
+// ============================================================================
+
+describe('findDocuments — every cable family', () => {
+  // --- L: Loose Tube ---
+  it('L (Loose Tube) — LMDC1DPA144BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('LMDC1DPA144BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('LMDx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('144F Stranded LT Cable')
+    expect(docs.find(d => d.type === 'Installation').name).toBe('Loose Tube Installation & Application Instructions')
+  })
+
+  it('L (Loose Tube, sacrificial sheath variant) — LMH61DPA072BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('LMH61DPA072BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('LMHx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72F Stranded LT Cable with Sacrificial Sheath')
+  })
+
+  it('L (Loose Tube, axial mini) — LQD11DPA012BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('LQD11DPA012BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('LQDx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('Mini Axial LT Cable')
+  })
+
+  it('L (Loose Tube, high strength) — LMJ61DJA072BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('LMJ61DJA072BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72F High Strength Stranded LT Cable')
+  })
+
+  // --- N: Non-Metallic Armour ---
+  it('N (NMA) — NMD61DPB048BK → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('NMD61DPB048BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('NMDx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72F Stranded NMA LT Cable')
+    expect(docs.find(d => d.type === 'Installation').name).toBe('Loose Tube Installation & Application Instructions')
+  })
+
+  it('N (NMA, LSZH sheath) — NMD61DPM072BK → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('NMD61DPM072BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72 Stranded NMA LTC LSZH Sheath')
+  })
+
+  it('N (NMA, high strength) — NMJ61DJB072BK → TDS + Installation (no NMJ stripping pattern)', () => {
+    const docs = findDocuments('NMJ61DJB072BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72F High Strength Stranded NMA Loose Tube Cable')
+  })
+
+  it('N (NMA, axial) — NLD11DEB006BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('NLD11DEB006BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('NLDx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('Axial NMA LT Cable')
+  })
+
+  // --- R: FRP Flat Rod Armour ---
+  it('R (FRP Rod) — RLD11DFB012BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('RLD11DFB012BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('RLD Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('Axial Non-Metallic Flat FRP Armoured LTC')
+    expect(docs.find(d => d.type === 'Installation').name).toBe('Loose Tube Installation & Application Instructions')
+  })
+
+  it('R (FRP Rod, LSZH) — RLD11DFM012BE → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('RLD11DFM012BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath')
+  })
+
+  it('R (FRP Rod, stranded) — RMD81DPB096BK → Stripping + TDS + Installation', () => {
+    const docs = findDocuments('RMD81DPB096BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('96F NM Flat Rod Armoured LT Cable - RMD8')
+  })
+
+  // --- U: Microcore ---
+  it('U (Microcore) — UTE61DFA144BE → Stripping + TDS + 2x Installation', () => {
+    const docs = findDocuments('UTE61DFA144BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('UTEx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('144F MicroCore Stranded LT Cable')
+    const installs = docs.filter(d => d.type === 'Installation')
+    expect(installs.map(d => d.name)).toContain('MicroCore Installation & Application Instructions')
+    expect(installs.map(d => d.name)).toContain('MicroCore Cable Installation - Handling Tips')
+  })
+
+  it('U (Microcore, sacrificial sheath) — UTN61DFD144BE → Stripping + TDS + 2x Installation', () => {
+    const docs = findDocuments('UTN61DFD144BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('UTNx Cable Stripping Instructions')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('144F MicroCore Stranded LTC with Sacrificial Sheath')
+  })
+
+  // --- T: Tight Buffer / Premise ---
+  it('T (Premise) — TVBQ1DAA012BE → TDS + Installation (no stripping docs)', () => {
+    const docs = findDocuments('TVBQ1DAA012BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'TDS').name).toBe('TVBQ - Indoor Outdoor Premise Tight Buffered Cable')
+    expect(docs.find(d => d.type === 'Installation').name).toBe('Premise Cable Installation & Application Instructions')
+  })
+
+  // --- S: Aerial (ADSS) ---
+  it('S (ADSS, short span) — SMM41DLB048BK → Stripping + TDS + 2x Installation', () => {
+    const docs = findDocuments('SMM41DLB048BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('SMMx Cable Stripping Instructions (Single Jacket)')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('48 Fibre Short Span ADSS Cable')
+    const installs = docs.filter(d => d.type === 'Installation')
+    expect(installs.map(d => d.name)).toContain('ADSS Installation Instruction - Quick Reference Guide')
+    expect(installs.map(d => d.name)).toContain('ADSS Installation Instructions')
+  })
+
+  it('S (ADSS, long span double jacket) — SMJ61DLE072BK → Stripping + TDS + 2x Installation', () => {
+    const docs = findDocuments('SMJ61DLE072BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('SMJx Cable Stripping Instructions (Double Jacket)')
+    expect(docs.find(d => d.type === 'TDS').name).toBe('72 Fibre Long Span ADSS Cable')
+  })
+
+  // --- B: (no family decode, but has installation pattern) ---
+  it('B — BMMC1DLC144BK → Installation only (no TDS or Stripping patterns)', () => {
+    const docs = findDocuments('BMMC1DLC144BK')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Installation'])
+    expect(docs[0].name).toBe('Loose Tube Installation & Application Instructions')
+  })
+
+  // --- K3M: specialty cable with stripping only ---
+  it('K3M — K3M11DPA144BE → Stripping only (no TDS or Installation patterns)', () => {
+    const docs = findDocuments('K3M11DPA144BE')
+    const types = docs.map(d => d.type)
+    expect(types).toEqual(['Stripping'])
+    expect(docs[0].name).toBe('K3Mx CABLE STRIPPING INSTRUCTIONS')
+  })
+
+  // --- Test Certificate exclusion across all families ---
+  it('no family returns Test Certificate type in results', () => {
+    const codes = [
+      'LMDC1DPA144BE', // L
+      'NMD61DPB048BK', // N
+      'RLD11DFB012BE', // R
+      'UTE61DFA144BE', // U
+      'TVBQ1DAA012BE', // T
+      'SMM41DLB048BK', // S
+      'BMMC1DLC144BK', // B
+    ]
+    for (const code of codes) {
+      const docs = findDocuments(code)
+      const certDocs = docs.filter(d => d.type === 'Test Certificate')
+      expect(certDocs, `${code} should have no Test Certificate docs`).toHaveLength(0)
+    }
+  })
+
+  // --- Stripping always first when present ---
+  it('Stripping is always the first document when present', () => {
+    const codesWithStripping = [
+      'LMDC1DPA144BE', // L
+      'NMD61DPB048BK', // N
+      'RLD11DFB012BE', // R
+      'UTE61DFA144BE', // U
+      'SMM41DLB048BK', // S
+    ]
+    for (const code of codesWithStripping) {
+      const docs = findDocuments(code)
+      expect(docs[0].type, `${code} should have Stripping first`).toBe('Stripping')
+    }
   })
 })
 

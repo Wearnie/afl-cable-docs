@@ -4,6 +4,7 @@ import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments, getDocumentMap, loadDocumentMap, docTypeInfo } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import { loadDJOverrides, getDJOverrides, applyOverrides, reloadDJOverrides } from '../data/djOverrides'
+import { saveDJOverrides } from '../lib/adminApi'
 import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
@@ -73,13 +74,7 @@ export default function GeneratePage() {
   const saveOverrides = async (exclude, include) => {
     setSaving(true)
     try {
-      const res = await fetch('/api/dj-overrides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ djNumber, exclude, include }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'API error')
+      const data = await saveDJOverrides(djNumber, exclude, include)
       await reloadDJOverrides()
       setRefreshKey(k => k + 1)
       return data
@@ -247,7 +242,7 @@ export default function GeneratePage() {
                   {djNumber && (
                     <div className="flex items-center gap-3">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
-                        Final Test Cert
+                        Test Cert
                       </span>
                       <span className="text-afl-text truncate text-[13px] flex-1">
                         {finalTestCert ? finalTestCert.name : `${djNumber} — pending upload`}

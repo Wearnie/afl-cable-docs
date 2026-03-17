@@ -28,6 +28,11 @@ async function apiCall(path, options = {}) {
     },
   })
 
+  if (res.status === 401) {
+    localStorage.removeItem(ADMIN_KEY_STORAGE)
+    throw new Error('Admin key is invalid or expired. Please refresh and re-enter.')
+  }
+
   const data = await res.json()
 
   if (!res.ok) {
@@ -103,6 +108,15 @@ export async function editDocumentMappings(remove, add) {
 
 // Final Test Certificate API
 // The server extracts DJ number and product code from the PDF automatically
+
+// DJ Override API
+
+export async function saveDJOverrides(djNumber, exclude, include) {
+  return apiCall('/api/dj-overrides', {
+    method: 'POST',
+    body: JSON.stringify({ djNumber, exclude, include }),
+  })
+}
 
 export async function uploadFinalTestCert(file) {
   const base64 = await new Promise((resolve, reject) => {

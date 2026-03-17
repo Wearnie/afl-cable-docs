@@ -23,7 +23,7 @@ export default function DocumentPage() {
   // Build the final test cert document object for DocumentCard
   const finalTestDoc = djNumber
     ? finalTestCert
-      ? { type: 'Final Test Certificate', name: `Final Test Certificate — ${djNumber}`, url: finalTestCert.url }
+      ? { type: 'Final Test Certificate', name: `Test Certificate — ${djNumber}`, url: finalTestCert.url }
       : null // DJ number present but cert not uploaded yet
     : null // No DJ number in URL
 
@@ -109,7 +109,7 @@ export default function DocumentPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="text-[16px] font-bold text-afl-navy leading-tight">
-                        Final Test Certificate
+                        Test Certificate
                       </span>
                       <p className="text-amber-600 text-[12px] leading-snug mt-0.5">
                         {djNumber} — pending upload

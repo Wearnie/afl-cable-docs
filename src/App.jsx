@@ -24,7 +24,7 @@ function HomePage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 -mt-10 pb-12">
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <Link
             to="/generate"
             className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-cyan/40 transition-all duration-200"

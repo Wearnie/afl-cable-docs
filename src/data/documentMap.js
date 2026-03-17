@@ -124,8 +124,8 @@ export function findDocuments(productCode) {
   }
 
   const results = []
-  if (found.TDS) results.push(found.TDS)
   if (found.Stripping) results.push(found.Stripping)
+  if (found.TDS) results.push(found.TDS)
   results.push(...installationDocs)
   results.push(...otherDocs)
 
@@ -345,7 +345,7 @@ export const docTypeInfo = {
   TDS: { label: 'Technical Data Sheet', color: '#003366', abbr: 'TDS' },
   Stripping: { label: 'Stripping Instructions', color: '#003366', abbr: 'STRIP' },
   'Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'CERT' },
-  'Final Test Certificate': { label: 'Final Test Certificate', color: '#003366', abbr: 'FTC' },
+  'Final Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'FTC' },
   Installation: { label: 'Installation Guide', color: '#003366', abbr: 'INST' },
   Other: { label: 'Other Document', color: '#003366', abbr: 'DOC' },
 }
