@@ -61,6 +61,25 @@ async function commitFileToGithub(filePath, contentBase64, sha, message) {
   return githubRequest(`contents/${filePath}`, { method: 'PUT', body: JSON.stringify(body) })
 }
 
+async function updateJsonFile(filePath, updateFn, message, retries = 1) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const { content, sha } = await getFileFromGithub(filePath)
+      const updated = updateFn(content)
+      await commitFileToGithub(
+        filePath,
+        Buffer.from(JSON.stringify(updated, null, 2)).toString('base64'),
+        sha,
+        message
+      )
+      return
+    } catch (err) {
+      if (attempt < retries && err.message.includes('409')) continue
+      throw err
+    }
+  }
+}
+
 /**
  * Extract Job Number and Item Code from page 1 of a Final Test Certificate PDF.
  * Template fields:
@@ -99,12 +118,18 @@ export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Admin key required for uploads
+  const adminKey = req.headers['x-admin-key']
+  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' })
   }
 
   try {
@@ -141,34 +166,24 @@ export default async function handler(req, res) {
       `Upload final test cert for DJ ${djNumber} (${productCode})`
     )
 
-    // 3. Update the certs JSON index
-    const { content: certsIndex, sha: certsSha } = await getFileFromGithub(CERTS_JSON_PATH)
+    // 3. Update the certs JSON index (with retry on SHA conflict)
+    await updateJsonFile(CERTS_JSON_PATH, (certsIndex) => {
+      certsIndex[djNumber] = {
+        url: `/docs/final-test-certs/${djNumber}.pdf`,
+        name: certName,
+        productCode,
+        uploadedAt: new Date().toISOString(),
+      }
+      return certsIndex
+    }, `Register final test cert for DJ ${djNumber}`)
 
-    certsIndex[djNumber] = {
-      url: `/docs/final-test-certs/${djNumber}.pdf`,
-      name: certName,
-      productCode,
-      uploadedAt: new Date().toISOString(),
-    }
-
-    await commitFileToGithub(
-      CERTS_JSON_PATH,
-      Buffer.from(JSON.stringify(certsIndex, null, 2)).toString('base64'),
-      certsSha,
-      `Register final test cert for DJ ${djNumber}`
-    )
-
-    // 4. Update DJ → Product Code mapping
-    const { content: djMapping, sha: djSha } = await getFileFromGithub(DJ_MAPPING_PATH)
-    const isNew = !djMapping[djNumber]
-    djMapping[djNumber] = productCode
-
-    await commitFileToGithub(
-      DJ_MAPPING_PATH,
-      Buffer.from(JSON.stringify(djMapping, null, 2)).toString('base64'),
-      djSha,
-      `${isNew ? 'Add' : 'Update'} DJ mapping ${djNumber} → ${productCode} (from cert upload)`
-    )
+    // 4. Update DJ → Product Code mapping (with retry on SHA conflict)
+    let isNew = false
+    await updateJsonFile(DJ_MAPPING_PATH, (djMapping) => {
+      isNew = !djMapping[djNumber]
+      djMapping[djNumber] = productCode
+      return djMapping
+    }, `${isNew ? 'Add' : 'Update'} DJ mapping ${djNumber} → ${productCode} (from cert upload)`)
 
     return res.json({
       success: true,

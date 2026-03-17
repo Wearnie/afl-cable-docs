@@ -11,13 +11,19 @@ export default function DJDocumentPage() {
   const { djNumber } = useParams()
   const dj = djNumber.replace(/\D/g, '') // digits only
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [productCode, setProductCode] = useState(null)
 
   useEffect(() => {
-    Promise.all([loadDJMapping(), loadFinalTestCerts(), loadDJOverrides()]).then(() => {
-      setProductCode(lookupProductCode(dj))
-      setLoading(false)
-    })
+    Promise.all([loadDJMapping(), loadFinalTestCerts(), loadDJOverrides()])
+      .then(() => {
+        setProductCode(lookupProductCode(dj))
+        setLoading(false)
+      })
+      .catch(() => {
+        setError(true)
+        setLoading(false)
+      })
   }, [dj])
 
   const documents = productCode ? applyOverrides(dj, findDocuments(productCode)) : []
@@ -32,6 +38,30 @@ export default function DJDocumentPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-afl-light">
         <p className="text-afl-muted font-heading">Loading...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-8 text-center max-w-sm">
+          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-afl-text font-heading">Unable to Load</h2>
+          <p className="text-afl-muted mt-2 text-sm">
+            We couldn't load the documents right now. Please try again in a moment.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-2.5 bg-afl-navy text-white rounded-xl text-sm font-semibold font-heading hover:bg-afl-navy/90 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     )
   }

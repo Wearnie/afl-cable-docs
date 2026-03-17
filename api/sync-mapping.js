@@ -180,11 +180,20 @@ async function commitMapping(mapping) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' })
+  }
+
+  // Allow either CRON_SECRET (Vercel cron) or ADMIN_KEY (manual trigger)
+  const cronSecret = req.headers['authorization']?.replace('Bearer ', '')
+  const adminKey = req.headers['x-admin-key']
+  const isAuthorizedCron = process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET
+  const isAuthorizedAdmin = process.env.ADMIN_KEY && adminKey === process.env.ADMIN_KEY
+  if (!isAuthorizedCron && !isAuthorizedAdmin) {
+    return res.status(401).json({ error: 'Unauthorized' })
   }
 
   try {
