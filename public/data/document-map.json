@@ -918,12 +918,6 @@
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "L*J**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "T************",
     "type": "Installation",
     "name": "Premise Cable Installation & Application Instructions",
@@ -950,5 +944,12 @@
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "LQD**********"
+  },
+  {
+    "pattern": "L*J**********",
+    "type": "Stripping",
+    "name": "LMDx Cable Stripping Instructions",
+    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "LQJ**********"
   }
 ]
