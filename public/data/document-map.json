@@ -102,12 +102,6 @@
     "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "NOD**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "SM8**********",
     "type": "Stripping",
     "name": "SMMx Cable Stripping Instructions (Single Jacket)",
