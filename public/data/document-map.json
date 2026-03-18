@@ -132,12 +132,6 @@
     "path": "/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
   },
   {
-    "pattern": "SMJ8**LA0**BK",
-    "type": "TDS",
-    "name": "96 Fibre Long Span ADSS Cable",
-    "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
-  },
-  {
     "pattern": "LQB1**PA0****",
     "type": "TDS",
     "name": "Mini Axial LT Cable LSZH",
@@ -953,5 +947,11 @@
     "type": "TDS",
     "name": "72 Fibre Short Span ADSS Cable",
     "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J8**LA0**BK",
+    "type": "TDS",
+    "name": "96 Fibre Long Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
   }
 ]
