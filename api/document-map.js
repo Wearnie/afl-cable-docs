@@ -49,6 +49,7 @@ async function writeDocumentMap(entries, sha, message) {
 
 function validateEntry(entry) {
   if (!entry.pattern || entry.pattern.length !== 13) return 'Pattern must be exactly 13 characters'
+  if (entry.exclude && entry.exclude.length !== 13) return 'Exclude pattern must be exactly 13 characters'
   if (!entry.type) return 'Type is required'
   if (!entry.name) return 'Name is required'
   if (!entry.path) return 'Path is required'

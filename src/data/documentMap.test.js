@@ -145,10 +145,11 @@ describe('findDocuments — every cable family', () => {
     expect(docs.find(d => d.type === 'TDS').name).toBe('72 Stranded NMA LTC LSZH Sheath')
   })
 
-  it('N (NMA, high strength) — NMJ61DJB072BK → TDS + Installation (no NMJ stripping pattern)', () => {
+  it('N (NMA, high strength) — NMJ61DJB072BK → Stripping + TDS + Installation (now caught by N*J)', () => {
     const docs = findDocuments('NMJ61DJB072BK')
     const types = docs.map(d => d.type)
-    expect(types).toEqual(['TDS', 'Installation'])
+    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(docs.find(d => d.type === 'Stripping').name).toBe('NMDx Cable Stripping Instructions')
     expect(docs.find(d => d.type === 'TDS').name).toBe('72F High Strength Stranded NMA Loose Tube Cable')
   })
 
@@ -247,6 +248,34 @@ describe('findDocuments — every cable family', () => {
     const types = docs.map(d => d.type)
     expect(types).toEqual(['Stripping'])
     expect(docs[0].name).toBe('K3Mx CABLE STRIPPING INSTRUCTIONS')
+  })
+
+  // --- Exclude pattern support ---
+  it('NLD gets NLDx stripping (not NMDx) — exclude prevents N*D from matching NLD', () => {
+    const docs = findDocuments('NLD11DEB006BE')
+    const stripping = docs.find(d => d.type === 'Stripping')
+    expect(stripping.name).toBe('NLDx Cable Stripping Instructions')
+  })
+
+  it('NKD gets NMDx stripping via N*D wildcard (previously specific pattern)', () => {
+    const docs = findDocuments('NKD61DPB048BK')
+    const stripping = docs.find(d => d.type === 'Stripping')
+    expect(stripping).toBeTruthy()
+    expect(stripping.name).toBe('NMDx Cable Stripping Instructions')
+  })
+
+  it('NKJ gets NMDx stripping via N*J wildcard', () => {
+    const docs = findDocuments('NKJ61DJB048BK')
+    const stripping = docs.find(d => d.type === 'Stripping')
+    expect(stripping).toBeTruthy()
+    expect(stripping.name).toBe('NMDx Cable Stripping Instructions')
+  })
+
+  it('ADSS S*M wildcard catches non-SMM codes', () => {
+    // S8M would also match S*M
+    const docs = findDocuments('SMM41DLB048BK')
+    const stripping = docs.find(d => d.type === 'Stripping')
+    expect(stripping.name).toBe('SMMx Cable Stripping Instructions (Single Jacket)')
   })
 
   // --- Test Certificate exclusion across all families ---

@@ -111,6 +111,7 @@ export function findDocuments(productCode) {
 
   for (const entry of map) {
     if (!patternMatches(code, entry.pattern)) continue
+    if (entry.exclude && patternMatches(code, entry.exclude)) continue
     if (entry.type === 'Test Certificate') continue // hidden for now
 
     if (entry.type === 'Installation') {
