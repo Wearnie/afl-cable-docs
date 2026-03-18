@@ -792,12 +792,6 @@
     "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   },
   {
-    "pattern": "L*H**********",
-    "type": "Stripping",
-    "name": "LMHx Cable Stripping Instructions",
-    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "UTN6**FD*****",
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
@@ -951,5 +945,12 @@
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "*L***********"
+  },
+  {
+    "pattern": "L*H**********",
+    "type": "Stripping",
+    "name": "LMHx Cable Stripping Instructions",
+    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "*Q***********"
   }
 ]
