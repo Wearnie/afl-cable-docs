@@ -42,12 +42,6 @@
     "path": "/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf"
   },
   {
-    "pattern": "SMM**********",
-    "type": "Stripping",
-    "name": "SMMx Cable Stripping Instructions (Single Jacket)",
-    "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
-  },
-  {
     "pattern": "UTE**********",
     "type": "Stripping",
     "name": "UTEx Cable Stripping Instructions",
@@ -970,5 +964,11 @@
     "type": "TDS",
     "name": "96 Fibre Mid Span ADSS Cable",
     "path": "/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M**********",
+    "type": "Stripping",
+    "name": "SMMx Cable Stripping Instructions (Single Jacket)",
+    "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
   }
 ]
