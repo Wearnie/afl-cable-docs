@@ -36,12 +36,6 @@
     "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "SMJ**********",
-    "type": "Stripping",
-    "name": "SMJx Cable Stripping Instructions (Double Jacket)",
-    "path": "/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf"
-  },
-  {
     "pattern": "UTE**********",
     "type": "Stripping",
     "name": "UTEx Cable Stripping Instructions",
@@ -970,5 +964,11 @@
     "type": "Stripping",
     "name": "SMMx Cable Stripping Instructions (Single Jacket)",
     "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
+  },
+  {
+    "pattern": "S*J**********",
+    "type": "Stripping",
+    "name": "SMJx Cable Stripping Instructions (Double Jacket)",
+    "path": "/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf"
   }
 ]
