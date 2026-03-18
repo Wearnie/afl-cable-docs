@@ -54,12 +54,6 @@
     "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "RTF**********",
-    "type": "Stripping",
-    "name": "RLD Cable Stripping Instructions",
-    "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "S************",
     "type": "Installation",
     "name": "ADSS Installation Instruction - Quick Reference Guide",
