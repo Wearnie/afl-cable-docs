@@ -918,12 +918,6 @@
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "N*J**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "L*D**********",
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
@@ -948,5 +942,12 @@
     "name": "NMDx Cable Stripping Instructions",
     "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "NLD**********"
+  },
+  {
+    "pattern": "N*J**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "NLJ**********"
   }
 ]
