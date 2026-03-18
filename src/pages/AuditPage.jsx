@@ -68,32 +68,44 @@ function Toast({ message, type, onDone }) {
 }
 
 // Editable pattern row
-function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved, onToast, onDeleted, onEdited }) {
+function padExclude(val) {
+  const v = val.toUpperCase().replace(/[^A-Z0-9*]/g, '')
+  if (!v) return ''
+  return v.length >= 13 ? v.slice(0, 13) : v + '*'.repeat(13 - v.length)
+}
+
+function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, name, path, isNew, onSaved, onToast, onDeleted, onEdited }) {
   const [pattern, setPattern] = useState(initialPattern)
+  const [exclude, setExclude] = useState(initialExclude || '')
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState('')
   const [deleted, setDeleted] = useState(false)
-  const original = useRef(initialPattern)
+  const original = useRef({ pattern: initialPattern, exclude: initialExclude || '' })
 
   const handleSave = async () => {
     const val = pattern.toUpperCase().trim()
     if (val.length !== 13) { setStatus('Must be 13 chars'); return }
-    if (!isNew && val === original.current) { setStatus('No change'); return }
+    const excludeVal = padExclude(exclude)
+    if (excludeVal && excludeVal.length !== 13) { setStatus('Exclude must be 13 chars'); return }
+    const noChange = !isNew && val === original.current.pattern && excludeVal === original.current.exclude
+    if (noChange) { setStatus('No change'); return }
     setSaving(true); setStatus('Saving...')
     try {
-      if (!isNew && original.current && original.current !== HIDDEN_PATTERN) {
-        // Atomic: delete old + add new in one commit (avoids SHA race condition)
-        await editDocumentMappings([original.current], [{ pattern: val, type, name, path }])
+      const entry = { pattern: val, type, name, path }
+      if (excludeVal) entry.exclude = excludeVal
+      if (!isNew && original.current.pattern && original.current.pattern !== HIDDEN_PATTERN) {
+        await editDocumentMappings([original.current.pattern], [entry])
       } else {
-        await addDocumentMappings([{ pattern: val, type, name, path }])
+        await addDocumentMappings([entry])
       }
-      const oldVal = original.current
-      original.current = val
+      const oldPattern = original.current.pattern
+      original.current = { pattern: val, exclude: excludeVal }
       setPattern(val)
+      setExclude(excludeVal)
       setStatus('Saved!')
-      onToast(`Pattern ${isNew ? 'added' : 'updated'}: ${val}`, 'success')
+      onToast(`Pattern ${isNew ? 'added' : 'updated'}: ${val}${excludeVal ? ' (with exclusion)' : ''}`, 'success')
       if (isNew && onSaved) onSaved(val)
-      if (!isNew && onEdited && oldVal !== val) onEdited(oldVal, val)
+      if (!isNew && onEdited && oldPattern !== val) onEdited(oldPattern, val)
       setTimeout(() => setStatus(''), 2000)
     } catch (err) {
       setStatus(err.message)
@@ -102,22 +114,22 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
   }
 
   const handleHide = async () => {
-    if (original.current === HIDDEN_PATTERN) return
-    if (!confirm(`Hide this pattern?\n\nOriginal: ${original.current}\nIt will be set to ${HIDDEN_PATTERN} so it never matches.`)) return
+    if (original.current.pattern === HIDDEN_PATTERN) return
+    if (!confirm(`Hide this pattern?\n\nOriginal: ${original.current.pattern}\nIt will be set to ${HIDDEN_PATTERN} so it never matches.`)) return
     setPattern(HIDDEN_PATTERN)
     setTimeout(() => handleSave(), 0)
   }
 
   const handleDelete = async () => {
-    if (!original.current) return
-    if (!confirm(`Delete pattern "${original.current}"?\n\nThis permanently removes it from document-map.json.`)) return
+    if (!original.current.pattern) return
+    if (!confirm(`Delete pattern "${original.current.pattern}"?\n\nThis permanently removes it from document-map.json.`)) return
     setSaving(true); setStatus('Deleting...')
     try {
-      await removeDocumentMappings([original.current])
+      await removeDocumentMappings([original.current.pattern])
       setDeleted(true)
       setStatus('Deleted')
-      onToast(`Pattern deleted: ${original.current}`, 'success')
-      if (onDeleted) onDeleted(original.current)
+      onToast(`Pattern deleted: ${original.current.pattern}`, 'success')
+      if (onDeleted) onDeleted(original.current.pattern)
     } catch (err) {
       setStatus(err.message)
       onToast('Error: ' + err.message, 'error')
@@ -129,7 +141,7 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
   // For new rows, only show Add button
   if (isNew) {
     return (
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         <input
           type="text"
           value={pattern}
@@ -137,6 +149,16 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
           maxLength={13}
           placeholder="New pattern..."
           className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-44 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        />
+        <input
+          type="text"
+          value={exclude}
+          onChange={e => setExclude(e.target.value.toUpperCase())}
+          onBlur={() => { if (exclude.trim()) setExclude(padExclude(exclude)) }}
+          maxLength={13}
+          placeholder="Exclude..."
+          title="Codes matching this won't get this document (e.g. NL to skip NLD)"
+          className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-amber-700 placeholder:text-gray-300"
         />
         <button onClick={handleSave} disabled={saving}
           className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 disabled:opacity-50 transition-colors">
@@ -150,7 +172,7 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
   const isHidden = pattern === HIDDEN_PATTERN
 
   return (
-    <div className="flex items-center gap-2 mb-2">
+    <div className="flex items-center gap-2 mb-2 flex-wrap">
       <input
         type="text"
         value={pattern}
@@ -158,6 +180,18 @@ function PatternRow({ pattern: initialPattern, type, name, path, isNew, onSaved,
         maxLength={13}
         className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-44 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors ${
           isHidden ? 'border-gray-300 bg-gray-100 text-gray-400 line-through' : 'border-gray-300'
+        }`}
+      />
+      <input
+        type="text"
+        value={exclude}
+        onChange={e => setExclude(e.target.value.toUpperCase())}
+        onBlur={() => { if (exclude.trim()) setExclude(padExclude(exclude)) }}
+        maxLength={13}
+        placeholder="Exclude..."
+        title="Codes matching this won't get this document (e.g. NL to skip NLD)"
+        className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-colors ${
+          exclude ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-gray-300 text-amber-700 placeholder:text-gray-300'
         }`}
       />
       <button onClick={handleSave} disabled={saving}
@@ -267,7 +301,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 
           <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 mt-4 mb-2">Patterns</h4>
           {doc.patterns.map((p, i) => (
-            <PatternRow key={`${p}-${i}`} pattern={p} type={doc.type} name={doc.name} path={doc.path}
+            <PatternRow key={`${p}-${i}`} pattern={p} exclude={doc.excludes?.[p]} type={doc.type} name={doc.name} path={doc.path}
               onToast={(msg, type) => setToast({ msg, type })} onDeleted={handlePatternDeleted} onEdited={handlePatternEdited} />
           ))}
           {extraPatterns.map((p, i) => (
@@ -491,9 +525,10 @@ export default function AuditPage() {
     for (const entry of documentMap) {
       const key = entry.path
       if (!groups[key]) {
-        groups[key] = { name: entry.name, type: entry.type, path: entry.path, patterns: [] }
+        groups[key] = { name: entry.name, type: entry.type, path: entry.path, patterns: [], excludes: {} }
       }
       groups[key].patterns.push(entry.pattern)
+      if (entry.exclude) groups[key].excludes[entry.pattern] = entry.exclude
     }
 
     const matchedCodes = new Set()
