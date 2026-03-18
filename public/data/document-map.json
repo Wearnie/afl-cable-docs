@@ -30,12 +30,6 @@
     "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "NTE**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "S************",
     "type": "Installation",
     "name": "ADSS Installation Instruction - Quick Reference Guide",
