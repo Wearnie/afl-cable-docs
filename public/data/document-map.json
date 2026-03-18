@@ -84,12 +84,6 @@
     "path": "/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
   },
   {
-    "pattern": "SMMC**PA***BK",
-    "type": "TDS",
-    "name": "144 Fibre Short Span ADSS Cable",
-    "path": "/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
-  },
-  {
     "pattern": "S*M5**LL0**BK",
     "type": "TDS",
     "name": "60 Fibre Mid Span ADSS Cable",
@@ -940,5 +934,11 @@
     "type": "TDS",
     "name": "144 Fibre Mid Span ADSS Cable",
     "path": "/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**PA***BK",
+    "type": "TDS",
+    "name": "144 Fibre Short Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
   }
 ]
