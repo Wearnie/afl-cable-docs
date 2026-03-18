@@ -939,17 +939,17 @@
     "exclude": "NLJ**********"
   },
   {
-    "pattern": "L*D**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "LLD**********"
-  },
-  {
     "pattern": "L*J**********",
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "*Q***********"
+  },
+  {
+    "pattern": "L*D**********",
+    "type": "Stripping",
+    "name": "LMDx Cable Stripping Instructions",
+    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "*L***********"
   }
 ]
