@@ -906,12 +906,6 @@
     "path": "/tds/Axial%20Non-Metallic%20Flat%20FRP%20Armoured%20LTC%20-%20LSZH%20Sheath.pdf"
   },
   {
-    "pattern": "L*K**********",
-    "type": "Stripping",
-    "name": "LMHx Cable Stripping Instructions",
-    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "T************",
     "type": "Installation",
     "name": "Premise Cable Installation & Application Instructions",
@@ -952,5 +946,12 @@
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "*Q***********"
+  },
+  {
+    "pattern": "L*K**********",
+    "type": "Stripping",
+    "name": "LMHx Cable Stripping Instructions",
+    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "*L***********"
   }
 ]
