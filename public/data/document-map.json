@@ -42,12 +42,6 @@
     "path": "/stripping/UTEx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "UTN**********",
-    "type": "Stripping",
-    "name": "UTNx Cable Stripping Instructions",
-    "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "NKD**********",
     "type": "Stripping",
     "name": "NMDx Cable Stripping Instructions",
@@ -964,5 +958,11 @@
     "type": "Stripping",
     "name": "SMJx Cable Stripping Instructions (Double Jacket)",
     "path": "/stripping/SMJx%20Cable%20Stripping%20Instructions%20%28Double%20Jacket%29.pdf"
+  },
+  {
+    "pattern": "U*N**********",
+    "type": "Stripping",
+    "name": "UTNx Cable Stripping Instructions",
+    "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
