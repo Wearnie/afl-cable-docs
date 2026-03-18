@@ -60,24 +60,6 @@
     "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "LKD**********",
-    "type": "Stripping",
-    "name": "LQDx Cable Stripping Instructions",
-    "path": "/stripping/LQDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
-    "pattern": "LKH**********",
-    "type": "Stripping",
-    "name": "LQHx Cable Stripping Instructions",
-    "path": "/stripping/LQHx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
-    "pattern": "LLB**********",
-    "type": "Stripping",
-    "name": "LQDx Cable Stripping Instructions",
-    "path": "/stripping/LQDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "RMF**********",
     "type": "Stripping",
     "name": "RLD Cable Stripping Instructions",

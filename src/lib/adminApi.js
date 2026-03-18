@@ -1,37 +1,16 @@
 // Admin API client
 // Handles API calls to Vercel serverless functions
 
-const ADMIN_KEY_STORAGE = 'afl-admin-key'
-
-export function hasAdminKey() {
-  return !!localStorage.getItem(ADMIN_KEY_STORAGE)
-}
-
-export function setAdminKey(key) {
-  localStorage.setItem(ADMIN_KEY_STORAGE, key)
-}
-
-export function getAdminKey() {
-  return localStorage.getItem(ADMIN_KEY_STORAGE)
-}
-
 async function apiCall(path, options = {}) {
   // Cache-bust GET requests to avoid stale browser/CDN responses
   const url = (options.method && options.method !== 'GET') ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
-  const adminKey = getAdminKey()
   const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(adminKey ? { 'x-admin-key': adminKey } : {}),
       ...options.headers,
     },
   })
-
-  if (res.status === 401) {
-    localStorage.removeItem(ADMIN_KEY_STORAGE)
-    throw new Error('Admin key is invalid or expired. Please refresh and re-enter.')
-  }
 
   const data = await res.json()
 
@@ -106,9 +85,6 @@ export async function editDocumentMappings(remove, add) {
   })
 }
 
-// Final Test Certificate API
-// The server extracts DJ number and product code from the PDF automatically
-
 // DJ Override API
 
 export async function saveDJOverrides(djNumber, exclude, include) {
@@ -117,6 +93,9 @@ export async function saveDJOverrides(djNumber, exclude, include) {
     body: JSON.stringify({ djNumber, exclude, include }),
   })
 }
+
+// Final Test Certificate API
+// The server extracts DJ number and product code from the PDF automatically
 
 export async function uploadFinalTestCert(file) {
   const base64 = await new Promise((resolve, reject) => {
