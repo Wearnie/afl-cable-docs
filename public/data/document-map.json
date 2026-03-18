@@ -168,12 +168,6 @@
     "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
   },
   {
-    "pattern": "SMJC**LE***BK",
-    "type": "TDS",
-    "name": "144 Fibre Long Span ADSS Cable",
-    "path": "/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
-  },
-  {
     "pattern": "LQB1**PA0****",
     "type": "TDS",
     "name": "Mini Axial LT Cable LSZH",
@@ -953,5 +947,11 @@
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": "*L***********"
+  },
+  {
+    "pattern": "S*JC**LE***BK",
+    "type": "TDS",
+    "name": "144 Fibre Long Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
   }
 ]
