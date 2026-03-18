@@ -78,12 +78,6 @@
     "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "SM8**********",
-    "type": "Stripping",
-    "name": "SMMx Cable Stripping Instructions (Single Jacket)",
-    "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
-  },
-  {
     "pattern": "S************",
     "type": "Installation",
     "name": "ADSS Installation Instruction - Quick Reference Guide",
@@ -967,6 +961,12 @@
   },
   {
     "pattern": "S*M**********",
+    "type": "Stripping",
+    "name": "SMMx Cable Stripping Instructions (Single Jacket)",
+    "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
+  },
+  {
+    "pattern": "S*8**********",
     "type": "Stripping",
     "name": "SMMx Cable Stripping Instructions (Single Jacket)",
     "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
