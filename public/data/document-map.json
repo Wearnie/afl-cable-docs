@@ -943,7 +943,7 @@
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "LQD**********"
+    "exclude": "LLD**********"
   },
   {
     "pattern": "L*J**********",
