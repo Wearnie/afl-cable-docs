@@ -24,13 +24,6 @@
     "path": "/stripping/NLDx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "N*D**********",
-    "type": "Stripping",
-    "exclude": "NL***********",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "N*J**********",
     "type": "Stripping",
     "exclude": "NL***********",
@@ -972,5 +965,11 @@
     "type": "Installation",
     "name": "Premise Cable Installation & Application Instructions",
     "path": "/installation/Premise%20%28Tight%20Buffered%29%20Cable%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
+    "pattern": "N*D**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
