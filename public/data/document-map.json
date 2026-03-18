@@ -30,12 +30,6 @@
     "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "NKJ**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "N2D**********",
     "type": "Stripping",
     "name": "NMDx Cable Stripping Instructions",
