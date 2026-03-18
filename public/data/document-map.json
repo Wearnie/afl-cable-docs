@@ -150,12 +150,6 @@
     "path": "/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
   },
   {
-    "pattern": "SMM6**PA0**BK",
-    "type": "TDS",
-    "name": "72 Fibre Short Span ADSS Cable",
-    "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
-  },
-  {
     "pattern": "SMM8**PA0**BK",
     "type": "TDS",
     "name": "96 Fibre Short Span ADSS Cable",
@@ -970,5 +964,11 @@
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
+  },
+  {
+    "pattern": "S*M6**PA0**BK",
+    "type": "TDS",
+    "name": "72 Fibre Short Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
   }
 ]
