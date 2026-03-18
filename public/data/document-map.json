@@ -140,12 +140,6 @@
     "path": "/installation/MicroCore%20Cable%20Installation%20-%20Handling%20Tips.pdf"
   },
   {
-    "pattern": "T************",
-    "type": "Installation",
-    "name": "Premise Cable Installation & Application Instructions",
-    "path": "/installation/Premise%20%28Tight%20Buffered%29%20Cable%20Installation%20%26%20Application%20Instructions.pdf"
-  },
-  {
     "pattern": "S*M4**LB0**BK",
     "type": "TDS",
     "name": "48 Fibre Short Span ADSS Cable",
@@ -972,5 +966,11 @@
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf"
+  },
+  {
+    "pattern": "T************",
+    "type": "Installation",
+    "name": "Premise Cable Installation & Application Instructions",
+    "path": "/installation/Premise%20%28Tight%20Buffered%29%20Cable%20Installation%20%26%20Application%20Instructions.pdf"
   }
 ]
