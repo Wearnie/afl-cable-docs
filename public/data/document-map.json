@@ -816,12 +816,6 @@
     "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   },
   {
-    "pattern": "L*J**********",
-    "type": "Stripping",
-    "name": "LMDx Cable Stripping Instructions",
-    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "L*H**********",
     "type": "Stripping",
     "name": "LMHx Cable Stripping Instructions",
@@ -967,6 +961,12 @@
   },
   {
     "pattern": "L*D**********",
+    "type": "Stripping",
+    "name": "LMDx Cable Stripping Instructions",
+    "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
+  },
+  {
+    "pattern": "L*J**********",
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf"
