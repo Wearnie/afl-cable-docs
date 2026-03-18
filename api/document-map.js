@@ -88,11 +88,13 @@ export default async function handler(req, res) {
       // Add new entries (replace if same pattern+type exists)
       const updated = [...existing]
       for (const newEntry of newEntries) {
+        const entry = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+        if (newEntry.exclude) entry.exclude = newEntry.exclude
         const idx = updated.findIndex(e => e.pattern === newEntry.pattern && e.type === newEntry.type)
         if (idx >= 0) {
-          updated[idx] = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+          updated[idx] = entry
         } else {
-          updated.push({ pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path })
+          updated.push(entry)
         }
       }
 
@@ -129,11 +131,13 @@ export default async function handler(req, res) {
       // Add
       if (add) {
         for (const newEntry of add) {
+          const entry = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+          if (newEntry.exclude) entry.exclude = newEntry.exclude
           const idx = updated.findIndex(e => e.pattern === newEntry.pattern && e.type === newEntry.type)
           if (idx >= 0) {
-            updated[idx] = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
+            updated[idx] = entry
           } else {
-            updated.push({ pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path })
+            updated.push(entry)
           }
         }
       }
