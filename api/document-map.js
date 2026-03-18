@@ -57,6 +57,13 @@ function validateEntry(entry) {
   return null
 }
 
+// Build a clean entry object, preserving all known fields
+function cleanEntry(e) {
+  const entry = { pattern: e.pattern, type: e.type, name: e.name, path: e.path }
+  if (e.exclude) entry.exclude = e.exclude
+  return entry
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
@@ -88,8 +95,7 @@ export default async function handler(req, res) {
       // Add new entries (replace if same pattern+type exists)
       const updated = [...existing]
       for (const newEntry of newEntries) {
-        const entry = { pattern: newEntry.pattern, type: newEntry.type, name: newEntry.name, path: newEntry.path }
-        if (newEntry.exclude) entry.exclude = newEntry.exclude
+        const entry = cleanEntry(newEntry)
         const idx = updated.findIndex(e => e.pattern === newEntry.pattern && e.type === newEntry.type)
         if (idx >= 0) {
           updated[idx] = entry
