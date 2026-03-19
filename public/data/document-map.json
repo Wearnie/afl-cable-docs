@@ -972,5 +972,17 @@
     "type": "Installation",
     "name": "SWR Application Guide",
     "path": "/installation/SWR Cable Stripping Instructions.pdf"
+  },
+  {
+    "pattern": "NTE4**JL*****",
+    "type": "Installation",
+    "name": "Downhole and Vertical Installation Instructions",
+    "path": "/installation/Downhole and Vertical Installation Instructions.pdf"
+  },
+  {
+    "pattern": "NME4**JL*****",
+    "type": "Installation",
+    "name": "Downhole and Vertical Installation Instructions",
+    "path": "/installation/Downhole and Vertical Installation Instructions.pdf"
   }
 ]
