@@ -960,5 +960,17 @@
     "type": "Stripping",
     "name": "SWR Cable Stripping Instruction",
     "path": "/stripping/SWR Cable Stripping Instructions.pdf"
+  },
+  {
+    "pattern": "W5***********",
+    "type": "Installation",
+    "name": "SWR Application Guide",
+    "path": "/installation/SWR Cable Stripping Instructions.pdf"
+  },
+  {
+    "pattern": "N5***********",
+    "type": "Installation",
+    "name": "SWR Application Guide",
+    "path": "/installation/SWR Cable Stripping Instructions.pdf"
   }
 ]
