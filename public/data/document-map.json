@@ -72,12 +72,6 @@
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
   },
   {
-    "pattern": "N************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
-  },
-  {
     "pattern": "R************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -947,5 +941,12 @@
     "type": "TDS",
     "name": "96 Fibre Short Span ADSS Cable",
     "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "N************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
+    "exclude": "N2***********"
   }
 ]
