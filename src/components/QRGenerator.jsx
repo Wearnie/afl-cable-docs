@@ -1,10 +1,10 @@
 import { useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 
-export default function QRGenerator({ djNumber, productCode, baseUrl }) {
+export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj' }) {
   const printRef = useRef(null)
-  const dj = djNumber.replace(/\D/g, '')
-  const url = `${baseUrl}/dj/${dj}`
+  const dj = djNumber ? djNumber.replace(/\D/g, '') : ''
+  const url = mode === 'product' ? `${baseUrl}/${productCode}` : `${baseUrl}/dj/${dj}`
 
   const handlePrint = () => {
     const printContent = printRef.current
@@ -51,7 +51,7 @@ export default function QRGenerator({ djNumber, productCode, baseUrl }) {
         <body>
           <div class="label">
             ${printContent.querySelector('svg').outerHTML}
-            <div class="dj">DJ ${dj}</div>
+            ${dj ? `<div class="dj">DJ ${dj}</div>` : ''}
             ${productCode ? `<div class="code">${productCode}</div>` : ''}
             <div class="brand">AFL Cable Docs</div>
           </div>

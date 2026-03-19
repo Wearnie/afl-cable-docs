@@ -9,6 +9,7 @@ import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
   const [djInput, setDjInput] = useState('')
+  const [productInput, setProductInput] = useState('')
   const [mappingLoaded, setMappingLoaded] = useState(false)
   const [toast, setToast] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -17,6 +18,8 @@ export default function GeneratePage() {
   const [addTypeFilter, setAddTypeFilter] = useState('')
   const [saving, setSaving] = useState(false)
   const djNumber = djInput.replace(/\D/g, '')
+  const directCode = productInput.toUpperCase().trim()
+  const directCodeValid = directCode.length === 13
 
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap(), loadFinalTestCerts(), loadDJOverrides()])
@@ -62,6 +65,8 @@ export default function GeneratePage() {
       return true
     }).sort((a, b) => a.name.localeCompare(b.name))
   }, [productCode, showAddDoc, documents, addSearch, addTypeFilter])
+
+  const directDocuments = useMemo(() => (directCodeValid ? findDocuments(directCode) : []), [directCode, directCodeValid])
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'
 
@@ -332,6 +337,78 @@ export default function GeneratePage() {
             <div className="text-center">
               <Link
                 to={`/dj/${djNumber}`}
+                className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
+              >
+                Preview customer page →
+              </Link>
+            </div>
+          </>
+        )}
+        {/* Divider */}
+        <div className="flex items-center gap-3 pt-4">
+          <div className="flex-1 border-t border-afl-border" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or generate by product code</span>
+          <div className="flex-1 border-t border-afl-border" />
+        </div>
+
+        {/* Product Code Input */}
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Product Code</label>
+              <input
+                type="text" value={productInput} onChange={(e) => setProductInput(e.target.value)}
+                placeholder="e.g. LMDC1DPA144BE" maxLength={13}
+                className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
+              />
+              <div className="flex items-center justify-between mt-2">
+                <span className={`text-xs font-medium ${directCodeValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                  {directCode.length}/13 characters
+                </span>
+                {directCode.length > 0 && !directCodeValid && (
+                  <span className="text-xs text-amber-500 font-medium">{13 - directCode.length} more needed</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {directCodeValid && (
+          <>
+            <QRGenerator productCode={directCode} baseUrl={baseUrl} mode="product" />
+
+            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
+                Documents that will appear ({directDocuments.length})
+              </h3>
+              {directDocuments.length > 0 ? (
+                <div className="space-y-2">
+                  {directDocuments.map((doc, i) => {
+                    const info = docTypeInfo[doc.type] || docTypeInfo.Other
+                    return (
+                      <div key={`${doc.path}-${i}`} className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                          {info.label}
+                        </span>
+                        <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
+                      </div>
+                    )
+                  })}
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ minWidth: '110px' }}>
+                      Test Cert
+                    </span>
+                    <span className="text-[13px]">No DJ number — no test certificate attached</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-afl-muted text-sm">No documents match this product code.</p>
+              )}
+            </div>
+
+            <div className="text-center">
+              <Link
+                to={`/${directCode}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →
