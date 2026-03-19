@@ -948,5 +948,17 @@
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
     "exclude": "N2***********"
+  },
+  {
+    "pattern": "W5***********",
+    "type": "Stripping",
+    "name": "SWR Cable Stripping Instruction",
+    "path": "/stripping/SWR Cable Stripping Instructions.pdf"
+  },
+  {
+    "pattern": "N5***********",
+    "type": "Stripping",
+    "name": "SWR Cable Stripping Instruction",
+    "path": "/stripping/SWR Cable Stripping Instructions.pdf"
   }
 ]
