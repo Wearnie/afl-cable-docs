@@ -639,18 +639,6 @@
     "path": "/tds/72%20Stranded%20NMA%20LTC%20LSZH%20Sheath.pdf"
   },
   {
-    "pattern": "LMK6**J*0****",
-    "type": "TDS",
-    "name": "72F High Strength Stranded Loose Tube Cable SS",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
-    "pattern": "LKK6**J*0****",
-    "type": "TDS",
-    "name": "72F High Strength Stranded Loose Tube Cable SS",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
     "pattern": "LMD6**PA0**BE",
     "type": "TDS",
     "name": "72F Stranded LT Cable",
@@ -977,14 +965,15 @@
   },
   {
     "pattern": "LMK6**J******",
-    "type": "Installation",
+    "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
-    "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
+    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   },
   {
     "pattern": "LKK6**J******",
-    "type": "Installation",
+    "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
+<<<<<<< Updated upstream
     "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
   },
   {
@@ -993,5 +982,8 @@
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
     "exclude": "L2***********"
+=======
+    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+>>>>>>> Stashed changes
   }
 ]
