@@ -147,12 +147,6 @@
     "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMDQ**PA312BE",
-    "type": "TDS",
-    "name": "312F Stranded LT Cable",
-    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LTDQ**LA624BE",
     "type": "TDS",
     "name": "624F Stranded LT Cable",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "288F Stranded LT Cable",
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*DQ**PA312BE",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
   }
 ]
