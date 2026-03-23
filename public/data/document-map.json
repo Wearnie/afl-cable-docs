@@ -147,12 +147,6 @@
     "path": "/tds/624F%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NMD6**PB0****",
-    "type": "TDS",
-    "name": "72F Stranded NMA LT Cable",
-    "path": "/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "NKD6**PB0****",
     "type": "TDS",
     "name": "72F Stranded NMA LT Cable",
@@ -944,5 +938,11 @@
     "type": "TDS",
     "name": "72F Stranded LT Cable with Sacrificial Sheath",
     "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf"
+  },
+  {
+    "pattern": "N*D6**PB0****",
+    "type": "TDS",
+    "name": "72F Stranded NMA LT Cable",
+    "path": "/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf"
   }
 ]
