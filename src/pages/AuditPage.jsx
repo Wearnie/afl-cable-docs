@@ -434,7 +434,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 
 // Upload section
 function UploadSection({ onToast }) {
-  const [docType, setDocType] = useState('test-certificates')
+  const [docType, setDocType] = useState('tds')
   const [docName, setDocName] = useState('')
   const [file, setFile] = useState(null)
   const [patterns, setPatterns] = useState([''])

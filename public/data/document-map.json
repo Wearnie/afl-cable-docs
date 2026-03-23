@@ -965,14 +965,14 @@
   },
   {
     "pattern": "K3MQ*TPA*****",
-    "type": "test-certificates",
+    "type": "TDS",
     "name": "External Hybrid Fibre - 2xCu Conductor Cable",
-    "path": "/test-certificates/External Hybrid Fibre - 2xCu Conductor Cable.pdf"
+    "path": "/tds/External Hybrid Fibre - 2xCu Conductor Cable.pdf"
   },
   {
     "pattern": "K3M5*THA*****",
-    "type": "test-certificates",
+    "type": "TDS",
     "name": "External Hybrid Fibre - 4xCu Conductor Cable",
-    "path": "/test-certificates/External Hybrid Fibre - 4xCu Conductor Cable.pdf"
+    "path": "/tds/External Hybrid Fibre - 4xCu Conductor Cable.pdf"
   }
 ]
