@@ -12,7 +12,14 @@ async function apiCall(path, options = {}) {
     },
   })
 
-  const data = await res.json()
+  let data
+  try {
+    data = await res.json()
+  } catch {
+    if (res.status === 413) throw new Error('File too large — try a smaller PDF (max ~10MB)')
+    if (res.status === 504 || res.status === 502) throw new Error('Upload timed out — the file may be too large. Try a smaller PDF.')
+    throw new Error(`Server error (${res.status}) — the request may have timed out. Try again or use a smaller file.`)
+  }
 
   if (!res.ok) {
     throw new Error(data.error || `API error ${res.status}`)
