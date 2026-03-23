@@ -693,12 +693,6 @@
     "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
   },
   {
-    "pattern": "UKN6**FD0****",
-    "type": "TDS",
-    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
-    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
-  },
-  {
     "pattern": "UMN6**FD0****",
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "144 NMA Stranded LTC LSZH Sheath",
     "path": "/tds/144%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
+  },
+  {
+    "pattern": "UKN6**FD*****",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LTC%20with%20Sacrifical%20Sheath.pdf"
   }
 ]
