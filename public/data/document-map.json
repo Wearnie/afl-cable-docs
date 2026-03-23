@@ -986,5 +986,17 @@
     "type": "Installation",
     "name": "SWR Application Guide",
     "path": "/installation/SWR Application Guide.pdf"
+  },
+  {
+    "pattern": "LMK6**J******",
+    "type": "Installation",
+    "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
+    "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
+  },
+  {
+    "pattern": "LKK6**J******",
+    "type": "Installation",
+    "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
+    "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
   }
 ]
