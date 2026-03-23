@@ -63,11 +63,13 @@ export function invalidateDocumentMapCache(newEntries) {
 // ============================================================================
 
 /**
- * Strip product code suffixes like -FP, -AG, -TMC, -SYDT, -ESS, -SH2, -ANT, -TMR, -SIE.
- * Returns the base code before the first hyphen.
+ * Strip known packaging/project suffixes from the end of a product code.
+ * Only removes known all-letter suffixes like -FP, -AG, -TMC, -SYDT.
+ * Leaves hyphens that are part of the code (e.g. 12-12 fibre counts).
  */
+const KNOWN_SUFFIXES = /(?:-(?:FP|AG|TMC|TMR|SYDT|ESS|SH2|ANT|SIE))+$/i
 export function stripSuffix(code) {
-  return code.replace(/-.*$/, '')
+  return code.replace(KNOWN_SUFFIXES, '')
 }
 
 /**
