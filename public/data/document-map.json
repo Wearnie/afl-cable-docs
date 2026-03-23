@@ -705,12 +705,6 @@
     "path": "/tds/Axial%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMKC**J*144**",
-    "type": "TDS",
-    "name": "144F High Strength Stranded Loose Tube Cable SS",
-    "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
     "pattern": "UTN6**FD*****",
     "type": "TDS",
     "name": "144F MicroCore Stranded LTC with Sacrificial Sheath",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "72F High Strength Stranded LT Cable",
     "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*KC**J*144**",
+    "type": "TDS",
+    "name": "144F High Strength Stranded Loose Tube Cable SS",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   }
 ]
