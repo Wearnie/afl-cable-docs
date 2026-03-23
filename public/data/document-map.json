@@ -913,6 +913,7 @@
     "pattern": "L*D1**EA***BE",
     "type": "TDS",
     "name": "Axial LT Cable",
-    "path": "/tds/Axial%20LT%20Cable.pdf"
+    "path": "/tds/Axial%20LT%20Cable.pdf",
+    "exclude": "L2D**********"
   }
 ]
