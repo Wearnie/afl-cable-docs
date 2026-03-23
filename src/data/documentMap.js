@@ -82,18 +82,21 @@ function isAlphanumeric(ch) {
 }
 
 /**
- * Match a 13-character product code against a 13-character pattern.
+ * Match a product code against a pattern.
  * Non-alphanumeric characters in the pattern are wildcards (match anything).
+ * If the code is longer than the pattern, extra characters are treated as wildcards.
+ * If the code is shorter than the pattern, no match.
  * Comparison is case-insensitive.
  */
 export function patternMatches(code, pattern) {
-  if (code.length !== pattern.length) return false
+  if (code.length < pattern.length) return false
 
   for (let i = 0; i < pattern.length; i++) {
     const pc = pattern[i]
     if (!isAlphanumeric(pc)) continue // wildcard
     if (pc.toUpperCase() !== code[i].toUpperCase()) return false
   }
+  // Extra chars beyond pattern length are accepted (wildcard)
   return true
 }
 

@@ -33,12 +33,16 @@ describe('patternMatches', () => {
     expect(patternMatches('LMDC1DPA144', 'LMDC**PA144BE')).toBe(false)
   })
 
-  it('rejects code longer than 13 chars', () => {
-    expect(patternMatches('LMDC1DPA144BEX', 'LMDC**PA144BE')).toBe(false)
+  it('longer code matches shorter pattern (extra chars treated as wildcard)', () => {
+    expect(patternMatches('LMDC1DPA144BEX', 'LMDC**PA144BE')).toBe(true)
+    expect(patternMatches('K3M5DTHA4-12BK', 'K3M**********')).toBe(true)
+    expect(patternMatches('LMD6D3PA12-12BE', 'LMD6**PA*****')).toBe(true) // extra chars beyond pattern are wildcard
+    expect(patternMatches('LMD6D3PA12-12BE', 'SMD6**PA*****')).toBe(false) // mismatch at pos 1
   })
 
-  it('rejects pattern shorter than 13 chars', () => {
-    expect(patternMatches('LMDC1DPA144BE', 'LMDC**PA')).toBe(false)
+  it('rejects code shorter than pattern', () => {
+    expect(patternMatches('LMDC1DPA144BE', 'LMDC**PA144BEXX')).toBe(false)
+    expect(patternMatches('LMDC**PA', 'LMDC1DPA144BE')).toBe(false)
   })
 
   it('all-wildcard pattern matches any valid 13-char code', () => {
