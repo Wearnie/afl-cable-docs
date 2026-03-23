@@ -940,12 +940,6 @@
     "path": "/installation/SWR Application Guide.pdf"
   },
   {
-    "pattern": "LMK6**J******",
-    "type": "TDS",
-    "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
     "pattern": "LKK6**J******",
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "144F High Strength Stranded NMA Loose Tube Cable",
     "path": "/tds/144F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
+  },
+  {
+    "pattern": "L*K6**J******",
+    "type": "TDS",
+    "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
+    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
   }
 ]
