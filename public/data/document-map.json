@@ -213,12 +213,6 @@
     "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NKJ6**JB0****",
-    "type": "TDS",
-    "name": "72F High Strength Stranded NMA Loose Tube Cable",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
-  },
-  {
     "pattern": "NMJ8**JB096**",
     "type": "TDS",
     "name": "96F High Strength Stranded NMA Loose Tube Cable",
