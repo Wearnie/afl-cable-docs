@@ -153,12 +153,6 @@
     "path": "/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NMD8**PM096**",
-    "type": "TDS",
-    "name": "96 NMA Stranded LTC LSZH Sheath",
-    "path": "/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
-  },
-  {
     "pattern": "NKD8**PM048**",
     "type": "TDS",
     "name": "96 NMA Stranded LTC LSZH Sheath",
@@ -938,5 +932,11 @@
     "type": "TDS",
     "name": "96 Fibre Mid Span ADSS Cable",
     "path": "/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "N*D8**PM*****",
+    "type": "TDS",
+    "name": "96 NMA Stranded LTC LSZH Sheath",
+    "path": "/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
   }
 ]
