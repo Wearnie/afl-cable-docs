@@ -177,12 +177,6 @@
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "RMD8**PB096**",
-    "type": "TDS",
-    "name": "96F NM Flat Rod Armoured LT Cable - RMD8",
-    "path": "/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf"
-  },
-  {
     "pattern": "RKD8**PB048**",
     "type": "TDS",
     "name": "96F NM Flat Rod Armoured LT Cable - RMD8",
@@ -926,5 +920,11 @@
     "type": "TDS",
     "name": "96F High Strength Stranded NMA Loose Tube Cable",
     "path": "/tds/96F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
+  },
+  {
+    "pattern": "R*D8**PB*****",
+    "type": "TDS",
+    "name": "96F NM Flat Rod Armoured LT Cable - RMD8",
+    "path": "/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf"
   }
 ]
