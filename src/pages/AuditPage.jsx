@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { loadDocumentMap, patternMatches } from '../data/documentMap'
+import { loadDocumentMap, patternMatches, stripSuffix } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
 import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
 
@@ -662,7 +662,20 @@ export default function AuditPage() {
         if (reviewFilter === 'pending' && reviewedDocs[doc.path]) return false
         if (!query) return true
         const searchTarget = resolvedCode || query
-        // Check matched codes
+        // Try matching the search text directly as a product code (with suffix stripping)
+        const strippedSearch = stripSuffix(searchTarget)
+        for (const p of doc.patterns) {
+          if (patternMatches(strippedSearch, p)) {
+            // Check excludes
+            const entry = documentMap?.find(e => e.pattern === p && e.path === doc.path)
+            if (entry?.exclude) {
+              const excludes = Array.isArray(entry.exclude) ? entry.exclude : [entry.exclude]
+              if (excludes.some(ex => patternMatches(strippedSearch, ex))) continue
+            }
+            return true
+          }
+        }
+        // Check codes in DJ mapping
         for (const code of allProductCodes) {
           if (!code.toUpperCase().includes(searchTarget)) continue
           for (const p of doc.patterns) {
