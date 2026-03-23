@@ -102,15 +102,19 @@ async function extractFromPdf(base64Data) {
     throw new Error('Could not find "Job Number" on page 1 of the PDF. Expected format: "Job Number: 12345678"')
   }
 
-  // Extract Item Code (13 alphanumeric chars after "Item Code:")
-  const itemMatch = text.match(/Item\s*Code\s*:\s*([A-Z0-9]{13})/i)
+  // Extract Item Code (alphanumeric chars, possibly with hyphen suffix like -FP, -SYDT)
+  const itemMatch = text.match(/Item\s*Code\s*:\s*([A-Z0-9][-A-Z0-9]*)/i)
   if (!itemMatch) {
     throw new Error('Could not find "Item Code" on page 1 of the PDF. Expected format: "Item Code: TVBQ55AA024AQ"')
   }
 
+  // Strip suffix (e.g. -FP, -AG, -SYDT) to get the base product code
+  const rawCode = itemMatch[1].toUpperCase()
+  const productCode = rawCode.replace(/-.*$/, '')
+
   return {
     djNumber: jobMatch[1],
-    productCode: itemMatch[1].toUpperCase(),
+    productCode,
   }
 }
 

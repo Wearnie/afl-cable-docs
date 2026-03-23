@@ -63,6 +63,14 @@ export function invalidateDocumentMapCache(newEntries) {
 // ============================================================================
 
 /**
+ * Strip product code suffixes like -FP, -AG, -TMC, -SYDT, -ESS, -SH2, -ANT, -TMR, -SIE.
+ * Returns the base code before the first hyphen.
+ */
+export function stripSuffix(code) {
+  return code.replace(/-.*$/, '')
+}
+
+/**
  * Check if a character is alphanumeric (A-Z, a-z, 0-9).
  * Non-alphanumeric characters in patterns act as wildcards.
  */
@@ -97,7 +105,7 @@ export function patternMatches(code, pattern) {
  * Final Test Certificates are added separately in DJDocumentPage.
  */
 export function findDocuments(productCode) {
-  const code = productCode.toUpperCase().trim()
+  const code = stripSuffix(productCode.toUpperCase().trim())
   if (code.length < 1) return []
 
   const map = getDocumentMap()
@@ -279,7 +287,7 @@ const jacketColour = {
  * Returns an array of { label, positions, code, description } objects.
  */
 export function decodeProductCode(productCode) {
-  const code = productCode.toUpperCase().trim()
+  const code = stripSuffix(productCode.toUpperCase().trim())
   if (code.length !== 13) return []
 
   const family = code[0]
