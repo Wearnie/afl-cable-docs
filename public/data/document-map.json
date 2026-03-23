@@ -135,12 +135,6 @@
     "path": "/tds/Axial%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMD8**PA096BE",
-    "type": "TDS",
-    "name": "96F Stranded LT Cable",
-    "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LTDQ**LA624BE",
     "type": "TDS",
     "name": "624F Stranded LT Cable",
@@ -920,5 +914,11 @@
     "type": "TDS",
     "name": "96F NM Flat Rod Armoured LT Cable - RMD8",
     "path": "/tds/96F%20NM%20Flat%20Rod%20Armoured%20LT%20Cable%20%20-%20RMD8.pdf"
+  },
+  {
+    "pattern": "L*D8**PA***BE",
+    "type": "TDS",
+    "name": "96F Stranded LT Cable",
+    "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
   }
 ]
