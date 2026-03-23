@@ -66,12 +66,6 @@
     "path": "/installation/ADSS%20Installation%20Instructions.pdf"
   },
   {
-    "pattern": "L************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
-  },
-  {
     "pattern": "N************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -992,5 +986,12 @@
     "type": "Installation",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
     "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
+  },
+  {
+    "pattern": "L************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
+    "exclude": "L2***********"
   }
 ]
