@@ -279,12 +279,6 @@
     "path": "/tds/96F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
   },
   {
-    "pattern": "NMJC**JB144**",
-    "type": "TDS",
-    "name": "144F High Strength Stranded NMA Loose Tube Cable",
-    "path": "/tds/144F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
-  },
-  {
     "pattern": "RMD8**PB096**",
     "type": "TDS",
     "name": "96F NM Flat Rod Armoured LT Cable - RMD8",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "144F High Strength Stranded LT Cable",
     "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "N*JC**JB144**",
+    "type": "TDS",
+    "name": "144F High Strength Stranded NMA Loose Tube Cable",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
   }
 ]
