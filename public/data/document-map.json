@@ -962,5 +962,11 @@
     "type": "TDS",
     "name": "96 Fibre Short Span ADSS Cable",
     "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "K3MQ*TPA*****",
+    "type": "test-certificates",
+    "name": "External Hybrid Fibre - 2xCu Conductor Cable",
+    "path": "/test-certificates/External Hybrid Fibre - 2xCu Conductor Cable.pdf"
   }
 ]
