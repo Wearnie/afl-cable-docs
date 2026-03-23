@@ -567,12 +567,6 @@
     "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20LSZH%20Sheath.pdf"
   },
   {
-    "pattern": "NKD6**PM0****",
-    "type": "TDS",
-    "name": "72 Stranded NMA LTC LSZH Sheath",
-    "path": "/tds/72%20Stranded%20NMA%20LTC%20LSZH%20Sheath.pdf"
-  },
-  {
     "pattern": "LMD6**PA0**BE",
     "type": "TDS",
     "name": "72F Stranded LT Cable",
