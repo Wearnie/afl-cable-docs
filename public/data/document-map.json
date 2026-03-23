@@ -153,12 +153,6 @@
     "path": "/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NKD8**PM048**",
-    "type": "TDS",
-    "name": "96 NMA Stranded LTC LSZH Sheath",
-    "path": "/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
-  },
-  {
     "pattern": "UTE6**FA***BE",
     "type": "TDS",
     "name": "144F MicroCore Stranded LT Cable",
