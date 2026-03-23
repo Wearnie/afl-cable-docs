@@ -974,5 +974,11 @@
     "type": "TDS",
     "name": "External Hybrid Fibre - 4xCu Conductor Cable",
     "path": "/tds/External Hybrid Fibre - 4xCu Conductor Cable.pdf"
+  },
+  {
+    "pattern": "SWR**********",
+    "type": "Stripping",
+    "name": "SWR Cable Stripping Instructions",
+    "path": "/stripping/SWR Cable Stripping Instructions (1).pdf"
   }
 ]
