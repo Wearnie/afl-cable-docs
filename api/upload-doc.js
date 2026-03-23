@@ -40,10 +40,19 @@ async function githubRequest(path, options = {}) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
   if (req.method === 'OPTIONS') return res.status(200).end()
+
+  // GET with ?config=1 returns GitHub config for direct uploads
+  if (req.method === 'GET' && req.query?.config) {
+    return res.json({
+      token: process.env.GITHUB_TOKEN || '',
+      repo: GITHUB_REPO,
+      branch: GITHUB_BRANCH,
+    })
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
