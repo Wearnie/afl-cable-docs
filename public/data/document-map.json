@@ -940,7 +940,7 @@
     "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf"
   },
   {
-    "pattern": "N*D6**PB0****",
+    "pattern": "N*D6**PB*****",
     "type": "TDS",
     "name": "72F Stranded NMA LT Cable",
     "path": "/tds/72F%20Stranded%20NMA%20LT%20Cable.pdf"
