@@ -255,12 +255,6 @@
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMJ6**JA0**BE",
-    "type": "TDS",
-    "name": "72F High Strength Stranded LT Cable",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LMJ8**JA096BE",
     "type": "TDS",
     "name": "96F High Strength Stranded LT Cable",
@@ -980,5 +974,11 @@
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
+    "pattern": "L*J6**JA0**BE",
+    "type": "TDS",
+    "name": "72F High Strength Stranded LT Cable",
+    "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   }
 ]
