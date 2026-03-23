@@ -135,12 +135,6 @@
     "path": "/tds/Axial%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LKD6**PA0**BE",
-    "type": "TDS",
-    "name": "72F Stranded LT Cable",
-    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LMD8**PA096BE",
     "type": "TDS",
     "name": "96F Stranded LT Cable",
@@ -956,5 +950,11 @@
     "type": "TDS",
     "name": "72F High Strength Stranded NMA Loose Tube Cable",
     "path": "/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D6**PA0**BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
   }
 ]
