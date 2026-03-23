@@ -4,6 +4,8 @@
 // POST /api/dj-mapping         → add/update entries, commits to GitHub
 // DELETE /api/dj-mapping       → remove an entry, commits to GitHub
 
+import { requireAdmin } from './lib/auth.js'
+
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
 const FILE_PATH = 'public/data/dj-mapping.json'
@@ -48,12 +50,16 @@ async function commitFile(content, sha, message) {
 }
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
+  const isWriteMethod = ['POST', 'PUT', 'DELETE'].includes(req.method)
+  res.setHeader('Access-Control-Allow-Origin', isWriteMethod ? ALLOWED_ORIGIN : '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
-  if (req.method === 'OPTIONS') return res.status(200).end()
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
+    return res.status(200).end()
+  }
 
   try {
     if (req.method === 'GET') {
@@ -66,6 +72,11 @@ export default async function handler(req, res) {
         return res.json({ djNumber: key, productCode })
       }
       return res.json(content)
+    }
+
+    // Auth required for all write operations
+    try { requireAdmin(req) } catch (err) {
+      return res.status(err.status || 500).json({ error: err.message })
     }
 
     if (req.method === 'POST') {

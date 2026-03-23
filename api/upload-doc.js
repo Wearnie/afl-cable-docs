@@ -6,6 +6,8 @@
 //   - fileName: original filename (e.g. "288F Stranded LT Cable.pdf")
 //   - fileBase64: base64-encoded PDF content
 
+import { requireAdmin } from './lib/auth.js'
+
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
 
@@ -39,14 +41,19 @@ async function githubRequest(path, options = {}) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try { requireAdmin(req) } catch (err) {
+    return res.status(err.status || 500).json({ error: err.message })
   }
 
   try {

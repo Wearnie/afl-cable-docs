@@ -1,13 +1,29 @@
 // Admin API client
 // Handles API calls to Vercel serverless functions
 
+const ADMIN_KEY_STORAGE = 'afl_admin_key'
+
+export function hasAdminKey() {
+  return !!localStorage.getItem(ADMIN_KEY_STORAGE)
+}
+
+export function setAdminKey(key) {
+  localStorage.setItem(ADMIN_KEY_STORAGE, key)
+}
+
+function getAdminKey() {
+  return localStorage.getItem(ADMIN_KEY_STORAGE) || ''
+}
+
 async function apiCall(path, options = {}) {
   // Cache-bust GET requests to avoid stale browser/CDN responses
-  const url = (options.method && options.method !== 'GET') ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
+  const isWrite = options.method && options.method !== 'GET'
+  const url = isWrite ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
   const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(isWrite ? { 'x-admin-key': getAdminKey() } : {}),
       ...options.headers,
     },
   })
@@ -78,10 +94,13 @@ export async function addDocumentMappings(entries) {
   })
 }
 
-export async function removeDocumentMappings(patterns) {
+export async function removeDocumentMappings(patterns, type) {
+  const body = type
+    ? { entries: patterns.map(p => ({ pattern: p, type })) }
+    : { patterns }
   return apiCall('/api/document-map', {
     method: 'DELETE',
-    body: JSON.stringify({ patterns }),
+    body: JSON.stringify(body),
   })
 }
 

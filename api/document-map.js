@@ -3,6 +3,8 @@
 // POST   /api/document-map          → add entries { entries: [{ pattern, type, name, path }] }
 // DELETE /api/document-map          → remove entries { patterns: ["K3M**********"] }
 
+import { requireAdmin } from './lib/auth.js'
+
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
 const FILE_PATH = 'public/data/document-map.json'
@@ -70,17 +72,27 @@ function cleanEntry(e) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
+  const isWriteMethod = ['POST', 'PUT', 'DELETE'].includes(req.method)
+  res.setHeader('Access-Control-Allow-Origin', isWriteMethod ? ALLOWED_ORIGIN : '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
-  if (req.method === 'OPTIONS') return res.status(200).end()
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
+    return res.status(200).end()
+  }
 
   try {
     // GET — public, no auth needed
     if (req.method === 'GET') {
       const { entries } = await readDocumentMap()
       return res.json({ entries, count: entries.length })
+    }
+
+    // Auth required for all write operations
+    try { requireAdmin(req) } catch (err) {
+      return res.status(err.status || 500).json({ error: err.message })
     }
 
     if (req.method === 'POST') {
@@ -135,9 +147,16 @@ export default async function handler(req, res) {
 
       const { entries: existing, sha } = await readDocumentMap()
 
-      // Remove
-      const removeSet = new Set(remove || [])
-      let updated = existing.filter(e => !removeSet.has(e.pattern))
+      // Remove — supports both [{pattern, type}] objects and plain [string] patterns
+      const removeItems = remove || []
+      let updated
+      if (removeItems.length > 0 && typeof removeItems[0] === 'object') {
+        const removeSet = new Set(removeItems.map(r => `${r.pattern}::${r.type}`))
+        updated = existing.filter(e => !removeSet.has(`${e.pattern}::${e.type}`))
+      } else {
+        const removeSet = new Set(removeItems)
+        updated = existing.filter(e => !removeSet.has(e.pattern))
+      }
 
       // Add
       if (add) {
@@ -154,11 +173,11 @@ export default async function handler(req, res) {
       }
 
       const removedCount = existing.length - (updated.length - (add || []).length)
-      await writeDocumentMap(updated, sha, `Edit document mapping(s): -${removeSet.size} +${(add || []).length}`)
+      await writeDocumentMap(updated, sha, `Edit document mapping(s): -${removeItems.length} +${(add || []).length}`)
 
       return res.json({
         success: true,
-        removed: removeSet.size,
+        removed: removeItems.length,
         added: (add || []).length,
         total: updated.length,
         message: `Mapping(s) updated. Site will redeploy in ~60 seconds.`,
@@ -166,14 +185,21 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const { patterns } = req.body
-      if (!Array.isArray(patterns) || patterns.length === 0) {
-        return res.status(400).json({ error: 'Required: patterns array' })
+      const { patterns, entries: deleteEntries } = req.body
+
+      if (!deleteEntries && (!Array.isArray(patterns) || patterns.length === 0)) {
+        return res.status(400).json({ error: 'Required: entries [{pattern, type}] or patterns [string]' })
       }
 
       const { entries: existing, sha } = await readDocumentMap()
-      const patternSet = new Set(patterns)
-      const updated = existing.filter(e => !patternSet.has(e.pattern))
+      let updated
+      if (deleteEntries && Array.isArray(deleteEntries)) {
+        const deleteSet = new Set(deleteEntries.map(e => `${e.pattern}::${e.type}`))
+        updated = existing.filter(e => !deleteSet.has(`${e.pattern}::${e.type}`))
+      } else {
+        const patternSet = new Set(patterns)
+        updated = existing.filter(e => !patternSet.has(e.pattern))
+      }
       const removed = existing.length - updated.length
 
       if (removed === 0) {

@@ -107,7 +107,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
       const entry = { pattern: val, type, name, path }
       if (excludeVal) entry.exclude = excludeVal
       if (!isNew && original.current.pattern && original.current.pattern !== HIDDEN_PATTERN) {
-        await editDocumentMappings([original.current.pattern], [entry])
+        await editDocumentMappings([{ pattern: original.current.pattern, type }], [entry])
       } else {
         await addDocumentMappings([entry])
       }
@@ -138,7 +138,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
     if (!confirm(`Delete pattern "${original.current.pattern}"?\n\nThis permanently removes it from document-map.json.`)) return
     setSaving(true); setStatus('Deleting...')
     try {
-      await removeDocumentMappings([original.current.pattern])
+      await removeDocumentMappings([original.current.pattern], type)
       setDeleted(true)
       setStatus('Deleted')
       onToast(`Pattern deleted: ${original.current.pattern}`, 'success')

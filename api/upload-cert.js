@@ -8,6 +8,7 @@
 //
 // Stores the PDF at public/docs/final-test-certs/{djNumber}.pdf
 
+import { requireAdmin } from './lib/auth.js'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 const pdf = require('pdf-parse/lib/pdf-parse.js')
@@ -119,15 +120,19 @@ async function extractFromPdf(base64Data) {
 }
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try { requireAdmin(req) } catch (err) {
+    return res.status(err.status || 500).json({ error: err.message })
   }
 
   try {
