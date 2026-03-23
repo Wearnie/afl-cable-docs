@@ -178,10 +178,10 @@ describe('findDocuments — every cable family', () => {
     expect(docs.find(d => d.type === 'TDS').name).toBe('Axial Non-Metallic Flat FRP Armoured LTC - LSZH Sheath')
   })
 
-  it('R (FRP Rod, stranded) — RMD81DPB096BK → Stripping + TDS + Installation', () => {
+  it('R (FRP Rod, stranded) — RMD81DPB096BK → TDS + Installation (no RMD stripping pattern)', () => {
     const docs = findDocuments('RMD81DPB096BK')
     const types = docs.map(d => d.type)
-    expect(types).toEqual(['Stripping', 'TDS', 'Installation'])
+    expect(types).toEqual(['TDS', 'Installation'])
     expect(docs.find(d => d.type === 'TDS').name).toBe('96F NM Flat Rod Armoured LT Cable - RMD8')
   })
 

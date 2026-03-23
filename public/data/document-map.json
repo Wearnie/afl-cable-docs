@@ -72,7 +72,22 @@
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
   },
   {
+    "pattern": "N************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
+    "exclude": [
+      "N5***********"
+    ]
+  },
+  {
     "pattern": "R************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
+    "pattern": "B************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
@@ -851,14 +866,20 @@
     "type": "Stripping",
     "name": "NMDx Cable Stripping Instructions",
     "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "NLD**********"
+    "exclude": [
+      "NLD**********",
+      "N5***********"
+    ]
   },
   {
     "pattern": "N*J**********",
     "type": "Stripping",
     "name": "NMDx Cable Stripping Instructions",
     "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "NLJ**********"
+    "exclude": [
+      "NLJ**********",
+      "N5***********"
+    ]
   },
   {
     "pattern": "L*J**********",
@@ -941,48 +962,5 @@
     "type": "TDS",
     "name": "96 Fibre Short Span ADSS Cable",
     "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
-  },
-  {
-    "pattern": "N************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
-    "exclude": "N2***********"
-  },
-  {
-    "pattern": "W5***********",
-    "type": "Stripping",
-    "name": "SWR Cable Stripping Instruction",
-    "path": "/stripping/SWR Cable Stripping Instructions.pdf"
-  },
-  {
-    "pattern": "N5***********",
-    "type": "Stripping",
-    "name": "SWR Cable Stripping Instruction",
-    "path": "/stripping/SWR Cable Stripping Instructions.pdf"
-  },
-  {
-    "pattern": "W5***********",
-    "type": "Installation",
-    "name": "SWR Application Guide",
-    "path": "/installation/SWR Cable Stripping Instructions.pdf"
-  },
-  {
-    "pattern": "N5***********",
-    "type": "Installation",
-    "name": "SWR Application Guide",
-    "path": "/installation/SWR Cable Stripping Instructions.pdf"
-  },
-  {
-    "pattern": "NTE4**JL*****",
-    "type": "Installation",
-    "name": "Downhole and Vertical Installation Instructions",
-    "path": "/installation/Downhole and Vertical Installation Instructions.pdf"
-  },
-  {
-    "pattern": "NME4**JL*****",
-    "type": "Installation",
-    "name": "Downhole and Vertical Installation Instructions",
-    "path": "/installation/Downhole and Vertical Installation Instructions.pdf"
   }
 ]

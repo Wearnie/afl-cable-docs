@@ -74,20 +74,33 @@ function padExclude(val) {
   return v.length >= 13 ? v.slice(0, 13) : v + '*'.repeat(13 - v.length)
 }
 
+function parseExcludeInput(val) {
+  const parts = val.split(',').map(s => s.trim()).filter(Boolean)
+  if (parts.length === 0) return null
+  const padded = parts.map(padExclude).filter(Boolean)
+  return padded.length === 0 ? null : padded.length === 1 ? padded[0] : padded
+}
+
+function formatExclude(exclude) {
+  if (!exclude) return ''
+  const arr = Array.isArray(exclude) ? exclude : [exclude]
+  return arr.map(ex => ex.replace(/\*+$/, '')).join(', ')
+}
+
 function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, name, path, isNew, onSaved, onToast, onDeleted, onEdited }) {
   const [pattern, setPattern] = useState(initialPattern)
-  const [exclude, setExclude] = useState(initialExclude || '')
+  const [exclude, setExclude] = useState(formatExclude(initialExclude))
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState('')
   const [deleted, setDeleted] = useState(false)
-  const original = useRef({ pattern: initialPattern, exclude: initialExclude || '' })
+  const original = useRef({ pattern: initialPattern, excludeDisplay: formatExclude(initialExclude) })
 
   const handleSave = async () => {
     const val = pattern.toUpperCase().trim()
     if (val.length !== 13) { setStatus('Must be 13 chars'); return }
-    const excludeVal = padExclude(exclude)
-    if (excludeVal && excludeVal.length !== 13) { setStatus('Exclude must be 13 chars'); return }
-    const noChange = !isNew && val === original.current.pattern && excludeVal === original.current.exclude
+    const excludeVal = parseExcludeInput(exclude)
+    const excludeDisplay = formatExclude(excludeVal)
+    const noChange = !isNew && val === original.current.pattern && excludeDisplay === original.current.excludeDisplay
     if (noChange) { setStatus('No change'); return }
     setSaving(true); setStatus('Saving...')
     try {
@@ -99,9 +112,9 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
         await addDocumentMappings([entry])
       }
       const oldPattern = original.current.pattern
-      original.current = { pattern: val, exclude: excludeVal }
+      original.current = { pattern: val, excludeDisplay: excludeDisplay }
       setPattern(val)
-      setExclude(excludeVal)
+      setExclude(excludeDisplay)
       setStatus('Saved!')
       onToast(`Pattern ${isNew ? 'added' : 'updated'}: ${val}${excludeVal ? ' (with exclusion)' : ''}`, 'success')
       if (isNew && onSaved) onSaved(val)
@@ -154,10 +167,10 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
           type="text"
           value={exclude}
           onChange={e => setExclude(e.target.value.toUpperCase())}
-          onBlur={() => { if (exclude.trim()) setExclude(padExclude(exclude)) }}
-          maxLength={13}
+          onBlur={() => { if (exclude.trim()) setExclude(formatExclude(parseExcludeInput(exclude))) }}
+          maxLength={40}
           placeholder="Exclude..."
-          title="Codes matching this won't get this document (e.g. NL to skip NLD)"
+          title="Comma-separated prefixes to exclude (e.g. NL, N5)"
           className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-amber-700 placeholder:text-gray-300"
         />
         <button onClick={handleSave} disabled={saving}
@@ -187,7 +200,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
         value={exclude}
         onChange={e => setExclude(e.target.value.toUpperCase())}
         onBlur={() => { if (exclude.trim()) setExclude(padExclude(exclude)) }}
-        maxLength={13}
+        maxLength={40}
         placeholder="Exclude..."
         title="Codes matching this won't get this document (e.g. NL to skip NLD)"
         className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-colors ${
