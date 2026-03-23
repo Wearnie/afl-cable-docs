@@ -973,17 +973,6 @@
     "pattern": "LKK6**J******",
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
-<<<<<<< Updated upstream
-    "path": "/installation/72F High Strength Stranded Loose Tube Cable SS.pdf"
-  },
-  {
-    "pattern": "L************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
-    "exclude": "L2***********"
-=======
     "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
->>>>>>> Stashed changes
   }
 ]
