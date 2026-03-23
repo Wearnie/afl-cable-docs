@@ -141,12 +141,6 @@
     "path": "/tds/624F%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "NMD8**PB096**",
-    "type": "TDS",
-    "name": "96F Stranded NMA LT Cable",
-    "path": "/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "UTE6**FA***BE",
     "type": "TDS",
     "name": "144F MicroCore Stranded LT Cable",
@@ -920,5 +914,11 @@
     "type": "TDS",
     "name": "96F Stranded LT Cable with Sacrificial sheath",
     "path": "/tds/96F%20Stranded%20LT%20Cable%20with%20Sacrificial%20sheath.pdf"
+  },
+  {
+    "pattern": "N*D8**PB*****",
+    "type": "TDS",
+    "name": "96F Stranded NMA LT Cable",
+    "path": "/tds/96F%20Stranded%20NMA%20LT%20Cable.pdf"
   }
 ]
