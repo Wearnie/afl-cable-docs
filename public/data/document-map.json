@@ -225,12 +225,6 @@
     "path": "/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
   },
   {
-    "pattern": "NMDC**PM144**",
-    "type": "TDS",
-    "name": "144 NMA Stranded LTC LSZH Sheath",
-    "path": "/tds/144%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
-  },
-  {
     "pattern": "UTE6**FA***BE",
     "type": "TDS",
     "name": "144F MicroCore Stranded LT Cable",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
     "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+  },
+  {
+    "pattern": "N*DC**PM144**",
+    "type": "TDS",
+    "name": "144 NMA Stranded LTC LSZH Sheath",
+    "path": "/tds/144%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
   }
 ]
