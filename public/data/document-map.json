@@ -501,12 +501,6 @@
     "path": "/test-certificates/240331%20RLD1xxF%20Test%20Certificate.pdf"
   },
   {
-    "pattern": "NKJ8**JB048**",
-    "type": "TDS",
-    "name": "96F High Strength Stranded NMA Loose Tube Cable",
-    "path": "/tds/96F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
-  },
-  {
     "pattern": "LMB8**PA096**",
     "type": "TDS",
     "name": "96F Stranded LT Cable with LSZH Sheath",
