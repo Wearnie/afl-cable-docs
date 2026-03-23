@@ -110,4 +110,5 @@ export const config = {
       sizeLimit: '15mb',
     },
   },
+  maxDuration: 60,
 }
