@@ -225,13 +225,16 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
 }
 
 // Single document card
-function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange }) {
+function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange, onDocReplaced }) {
   const [open, setOpen] = useState(defaultOpen || false)
   const [toast, setToast] = useState(null)
   const [extraPatterns, setExtraPatterns] = useState([])
   const [deletedPatterns, setDeletedPatterns] = useState(new Set())
   const [editedPatterns, setEditedPatterns] = useState(new Map())
   const [reviewed, setReviewed] = useState(() => !!getReviewedDocs()[doc.path])
+  const [replacing, setReplacing] = useState(false)
+  const [currentPath, setCurrentPath] = useState(doc.path)
+  const replaceInputRef = useRef(null)
 
   const toggleReviewed = (e) => {
     e.stopPropagation()
@@ -251,6 +254,42 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     // which remounts PatternRows and creates visual duplicates.
     setEditedPatterns(prev => new Map([...prev, [oldPattern, newPattern]]))
   }, [])
+
+  const handleReplacePDF = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file || !file.name.toLowerCase().endsWith('.pdf')) return
+    if (!confirm(`Replace "${doc.name}" PDF with "${file.name}"?\n\nAll ${doc.patterns.length} pattern(s) will point to the new file.`)) {
+      e.target.value = ''
+      return
+    }
+    setReplacing(true)
+    try {
+      const docTypeKey = DOC_TYPE_MAP[doc.type] || 'other'
+      const result = await uploadStaticDoc(docTypeKey, file)
+      const newPath = result.path.replace(/^\/docs/, '')
+
+      // Update all patterns to point to new path
+      const allPatterns = doc.patterns.filter(p => !deletedPatterns.has(p))
+      if (allPatterns.length > 0) {
+        const entries = allPatterns.map(p => {
+          const entry = { pattern: p, type: doc.type, name: doc.name, path: newPath }
+          const ex = doc.excludes?.[p]
+          if (ex) entry.exclude = ex
+          return entry
+        })
+        await addDocumentMappings(entries)
+      }
+
+      setCurrentPath(newPath)
+      setToast({ msg: `PDF replaced — ${allPatterns.length} pattern(s) updated`, type: 'success' })
+      if (onDocReplaced) onDocReplaced()
+    } catch (err) {
+      setToast({ msg: 'Error: ' + err.message, type: 'error' })
+    } finally {
+      setReplacing(false)
+      e.target.value = ''
+    }
+  }
 
   // Active patterns = original (with edits applied, minus deleted), plus newly added
   const activePatterns = useMemo(() => {
@@ -309,8 +348,18 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 
       {open && (
         <div className="px-4 pb-4 border-t border-gray-100">
-          <a href={`${DOC_BASE_URL}${doc.path}`} target="_blank" rel="noopener noreferrer"
-            className="text-blue-600 hover:underline text-sm mt-2 inline-block">{decodeURIComponent(doc.path)}</a>
+          <div className="flex items-center gap-3 mt-2 flex-wrap">
+            <a href={`${DOC_BASE_URL}${currentPath}`} target="_blank" rel="noopener noreferrer"
+              className="text-blue-600 hover:underline text-sm">{decodeURIComponent(currentPath)}</a>
+            <input type="file" accept=".pdf" ref={replaceInputRef} onChange={handleReplacePDF} className="hidden" />
+            <button
+              onClick={() => replaceInputRef.current?.click()}
+              disabled={replacing}
+              className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 disabled:opacity-50 transition-colors shrink-0"
+            >
+              {replacing ? 'Uploading...' : 'Replace PDF'}
+            </button>
+          </div>
 
           <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 mt-4 mb-2">Patterns</h4>
           {doc.patterns.map((p, i) => (
