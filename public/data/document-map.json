@@ -177,12 +177,6 @@
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMJ8**JA096BE",
-    "type": "TDS",
-    "name": "96F High Strength Stranded LT Cable",
-    "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "NMJ8**JB096**",
     "type": "TDS",
     "name": "96F High Strength Stranded NMA Loose Tube Cable",
@@ -932,5 +926,11 @@
     "type": "TDS",
     "name": "96 NMA Stranded LTC LSZH Sheath",
     "path": "/tds/96%20NMA%20Stranded%20LTC%20LSZH%20Sheath.pdf"
+  },
+  {
+    "pattern": "L*J8**JA***BE",
+    "type": "TDS",
+    "name": "96F High Strength Stranded LT Cable",
+    "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   }
 ]
