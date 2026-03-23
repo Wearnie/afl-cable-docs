@@ -261,12 +261,6 @@
     "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMJC**JA144BE",
-    "type": "TDS",
-    "name": "144F High Strength Stranded LT Cable",
-    "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "NMJ6**JB0****",
     "type": "TDS",
     "name": "72F High Strength Stranded NMA Loose Tube Cable",
@@ -980,5 +974,11 @@
     "type": "TDS",
     "name": "144F High Strength Stranded Loose Tube Cable SS",
     "path": "/tds/144F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+  },
+  {
+    "pattern": "L*JC**JA144BE",
+    "type": "TDS",
+    "name": "144F High Strength Stranded LT Cable",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
   }
 ]
