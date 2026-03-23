@@ -27,10 +27,10 @@ function isAlphanumeric(ch) {
 }
 
 function mismatchCount(code, pattern) {
-  if (code.length !== 13 || pattern.length !== 13) return 99
+  if (code.length !== pattern.length) return 99
   const c = code.toUpperCase(), p = pattern.toUpperCase()
   let mm = 0
-  for (let i = 0; i < 13; i++) { if (isAlphanumeric(p[i]) && p[i] !== c[i]) mm++ }
+  for (let i = 0; i < p.length; i++) { if (isAlphanumeric(p[i]) && p[i] !== c[i]) mm++ }
   return mm
 }
 
@@ -45,7 +45,7 @@ function PatternHighlight({ pattern }) {
 }
 
 function CodeVsPattern({ code, pattern }) {
-  if (code.length !== 13 || pattern.length !== 13) return <span className="font-mono text-[12px]">{code}</span>
+  if (code.length !== pattern.length) return <span className="font-mono text-[12px]">{code}</span>
   const c = code.toUpperCase(), p = pattern.toUpperCase()
   return (
     <span className="font-mono text-[12px]">
@@ -97,7 +97,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
 
   const handleSave = async () => {
     const val = pattern.toUpperCase().trim()
-    if (val.length !== 13) { setStatus('Must be 13 chars'); return }
+    if (val.length < 1) { setStatus('Pattern required'); return }
     const excludeVal = parseExcludeInput(exclude)
     const excludeDisplay = formatExclude(excludeVal)
     const noChange = !isNew && val === original.current.pattern && excludeDisplay === original.current.excludeDisplay
@@ -155,24 +155,27 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
   if (isNew) {
     return (
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <input
-          type="text"
-          value={pattern}
-          onChange={e => setPattern(e.target.value.toUpperCase())}
-          maxLength={13}
-          placeholder="New pattern..."
-          className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-44 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
-        <input
-          type="text"
-          value={exclude}
-          onChange={e => setExclude(e.target.value.toUpperCase())}
-          onBlur={() => { if (exclude.trim()) setExclude(formatExclude(parseExcludeInput(exclude))) }}
-          maxLength={40}
-          placeholder="Exclude..."
-          title="Comma-separated prefixes to exclude (e.g. NL, N5)"
-          className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-amber-700 placeholder:text-gray-300"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            value={pattern}
+            onChange={e => setPattern(e.target.value.toUpperCase())}
+            placeholder="New pattern..."
+            className="font-mono text-[13px] tracking-wider px-3 py-1.5 pr-10 border border-gray-300 rounded-lg w-48 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono">{pattern.length}</span>
+        </div>
+        <div className="relative">
+          <input
+            type="text"
+            value={exclude}
+            onChange={e => setExclude(e.target.value.toUpperCase())}
+            onBlur={() => { if (exclude.trim()) setExclude(formatExclude(parseExcludeInput(exclude))) }}
+            placeholder="Exclude..."
+            title="Comma-separated prefixes to exclude (e.g. NL, N5)"
+            className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-amber-700 placeholder:text-gray-300"
+          />
+        </div>
         <button onClick={handleSave} disabled={saving}
           className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 disabled:opacity-50 transition-colors">
           + Add
@@ -186,27 +189,30 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
 
   return (
     <div className="flex items-center gap-2 mb-2 flex-wrap">
-      <input
-        type="text"
-        value={pattern}
-        onChange={e => setPattern(e.target.value.toUpperCase())}
-        maxLength={13}
-        className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-44 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors ${
-          isHidden ? 'border-gray-300 bg-gray-100 text-gray-400 line-through' : 'border-gray-300'
-        }`}
-      />
-      <input
-        type="text"
-        value={exclude}
-        onChange={e => setExclude(e.target.value.toUpperCase())}
-        onBlur={() => { if (exclude.trim()) setExclude(padExclude(exclude)) }}
-        maxLength={40}
-        placeholder="Exclude..."
-        title="Codes matching this won't get this document (e.g. NL to skip NLD)"
-        className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-colors ${
-          exclude ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-gray-300 text-amber-700 placeholder:text-gray-300'
-        }`}
-      />
+      <div className="relative">
+        <input
+          type="text"
+          value={pattern}
+          onChange={e => setPattern(e.target.value.toUpperCase())}
+          className={`font-mono text-[13px] tracking-wider px-3 py-1.5 pr-10 border rounded-lg w-48 uppercase focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-colors ${
+            isHidden ? 'border-gray-300 bg-gray-100 text-gray-400 line-through' : 'border-gray-300'
+          }`}
+        />
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono">{pattern.length}</span>
+      </div>
+      <div className="relative">
+        <input
+          type="text"
+          value={exclude}
+          onChange={e => setExclude(e.target.value.toUpperCase())}
+          onBlur={() => { if (exclude.trim()) setExclude(formatExclude(parseExcludeInput(exclude))) }}
+          placeholder="Exclude..."
+          title="Comma-separated prefixes to exclude (e.g. NL, N5)"
+          className={`font-mono text-[13px] tracking-wider px-3 py-1.5 border rounded-lg w-36 uppercase focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-colors ${
+            exclude ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-gray-300 text-amber-700 placeholder:text-gray-300'
+          }`}
+        />
+      </div>
       <button onClick={handleSave} disabled={saving}
         className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors">
         Save
@@ -457,7 +463,7 @@ function UploadSection({ onToast }) {
     if (!docName.trim()) { onToast('Enter a document name', 'error'); return }
     if (validPatterns.length === 0) { onToast('Add at least one pattern', 'error'); return }
     for (const p of validPatterns) {
-      if (p.length !== 13) { onToast(`Pattern "${p}" must be 13 characters`, 'error'); return }
+      if (p.length < 1) { onToast(`Pattern cannot be empty`, 'error'); return }
     }
 
     setUploading(true)
@@ -525,11 +531,14 @@ function UploadSection({ onToast }) {
       </div>
 
       <div className="mb-4">
-        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 block mb-1">Patterns (13 chars, * = wildcard)</label>
+        <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 block mb-1">Patterns (* = wildcard)</label>
         {patterns.map((p, i) => (
           <div key={i} className="flex items-center gap-2 mb-2">
-            <input type="text" value={p} onChange={e => updatePattern(i, e.target.value)} maxLength={13} placeholder="e.g. LMD6**PA*****"
-              className="font-mono text-[13px] tracking-wider px-3 py-1.5 border border-gray-300 rounded-lg w-44 uppercase focus:ring-2 focus:ring-blue-500 outline-none" />
+            <div className="relative">
+              <input type="text" value={p} onChange={e => updatePattern(i, e.target.value)} placeholder="e.g. LMD6**PA*****"
+                className="font-mono text-[13px] tracking-wider px-3 py-1.5 pr-10 border border-gray-300 rounded-lg w-48 uppercase focus:ring-2 focus:ring-blue-500 outline-none" />
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono">{p.length}</span>
+            </div>
             {patterns.length > 1 && (
               <button onClick={() => removePatternField(i)} className="text-xs text-gray-400 hover:text-red-600">X</button>
             )}

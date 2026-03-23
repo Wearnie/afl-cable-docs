@@ -79,9 +79,9 @@ function isAlphanumeric(ch) {
  * Comparison is case-insensitive.
  */
 export function patternMatches(code, pattern) {
-  if (code.length !== 13 || pattern.length !== 13) return false
+  if (code.length !== pattern.length) return false
 
-  for (let i = 0; i < 13; i++) {
+  for (let i = 0; i < pattern.length; i++) {
     const pc = pattern[i]
     if (!isAlphanumeric(pc)) continue // wildcard
     if (pc.toUpperCase() !== code[i].toUpperCase()) return false
@@ -98,7 +98,7 @@ export function patternMatches(code, pattern) {
  */
 export function findDocuments(productCode) {
   const code = productCode.toUpperCase().trim()
-  if (code.length !== 13) return []
+  if (code.length < 1) return []
 
   const map = getDocumentMap()
 
