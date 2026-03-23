@@ -117,12 +117,6 @@
     "path": "/tds/Mini%20Axial%20LT%20Cable%20LSZH.pdf"
   },
   {
-    "pattern": "LQD1**PA0**BE",
-    "type": "TDS",
-    "name": "Mini Axial LT Cable",
-    "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "LTDQ**LA624BE",
     "type": "TDS",
     "name": "624F Stranded LT Cable",
@@ -915,5 +909,11 @@
     "type": "TDS",
     "name": "Axial LT Cable with Sacrificial sheath",
     "path": "/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf"
+  },
+  {
+    "pattern": "LQD1**PA***BE",
+    "type": "TDS",
+    "name": "Mini Axial LT Cable",
+    "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
   }
 ]
