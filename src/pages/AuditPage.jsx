@@ -513,8 +513,15 @@ function UploadSection({ onToast }) {
 
       <div className="mb-4">
         <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 block mb-1">PDF File</label>
-        <input type="file" accept=".pdf" onChange={handleFileChange} className="text-sm" />
-        {file && <p className="text-xs text-emerald-600 font-semibold mt-1">{file.name} ({(file.size / 1024).toFixed(0)} KB)</p>}
+        <input type="file" accept=".pdf" onChange={handleFileChange} className="hidden" id="upload-pdf-input" />
+        <button
+          type="button"
+          onClick={() => document.getElementById('upload-pdf-input').click()}
+          className="px-4 py-2.5 rounded-xl text-sm font-heading font-semibold bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors cursor-pointer"
+        >
+          {file ? file.name : 'Choose PDF...'}
+        </button>
+        {file && <p className="text-xs text-emerald-600 font-semibold mt-1">{(file.size / 1024).toFixed(0)} KB</p>}
       </div>
 
       <div className="mb-4">
