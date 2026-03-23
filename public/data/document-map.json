@@ -868,12 +868,6 @@
     "path": "/installation/SWR Application Guide.pdf"
   },
   {
-    "pattern": "LKK6**J******",
-    "type": "TDS",
-    "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
-  },
-  {
     "pattern": "L************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
