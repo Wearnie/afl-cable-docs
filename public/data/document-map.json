@@ -42,15 +42,6 @@
     "path": "/stripping/SMMx%20Cable%20Stripping%20Instructions%20%28Single%20Jacket%29.pdf"
   },
   {
-    "pattern": "N************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
-    "exclude": [
-      "N5***********"
-    ]
-  },
-  {
     "pattern": "R************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -955,5 +946,15 @@
     "type": "TDS",
     "name": "288F Stranded LT Cable",
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "N************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf",
+    "exclude": [
+      "N5***********",
+      "N*E4*********"
+    ]
   }
 ]
