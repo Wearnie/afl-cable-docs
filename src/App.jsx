@@ -95,10 +95,10 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/generate" element={<GeneratePage />} />
-      <Route path="/upload" element={<AdminGate><UploadPage /></AdminGate>} />
+      <Route path="/upload" element={<UploadPage />} />
       <Route path="/review" element={<ReviewPage />} />
-      <Route path="/admin" element={<AdminGate><AdminPage /></AdminGate>} />
-      <Route path="/audit" element={<AdminGate><AuditPage /></AdminGate>} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/audit" element={<AuditPage />} />
       <Route path="/review-matches" element={<ReviewMatchesPage />} />
       <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
       <Route path="/:productCode" element={<DocumentPage />} />
