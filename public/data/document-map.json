@@ -596,16 +596,6 @@
     ]
   },
   {
-    "pattern": "N*J**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": [
-      "NLJ**********",
-      "N5***********"
-    ]
-  },
-  {
     "pattern": "L*J**********",
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
@@ -921,5 +911,16 @@
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
+    "pattern": "N*J**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "NLJ**********",
+      "N5***********",
+      "N2D**********"
+    ]
   }
 ]
