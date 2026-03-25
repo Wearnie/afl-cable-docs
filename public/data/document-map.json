@@ -935,5 +935,12 @@
     "type": "Installation",
     "name": "MicroCore Cable Installation - Handling Tips",
     "path": "/installation/MicroCore%20Cable%20Installation%20-%20Handling%20Tips.pdf"
+  },
+  {
+    "pattern": "ST***********",
+    "type": "Installation",
+    "name": "MicroCore Installation & Application Instructions",
+    "path": "/installation/MicroCore%20Installation%20%26%20Application%20Instructions.pdf",
+    "exclude": "STE4*********"
   }
 ]
