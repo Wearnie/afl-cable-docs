@@ -942,5 +942,11 @@
     "name": "MicroCore Installation & Application Instructions",
     "path": "/installation/MicroCore%20Installation%20%26%20Application%20Instructions.pdf",
     "exclude": "STE4*********"
+  },
+  {
+    "pattern": "ST****",
+    "type": "Stripping",
+    "name": "UTNx Cable Stripping Instructions",
+    "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   }
 ]
