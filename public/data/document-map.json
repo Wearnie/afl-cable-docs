@@ -956,5 +956,11 @@
     "type": "TDS",
     "name": "96F Stranded LT Cable",
     "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*DC**PA******BE",
+    "type": "TDS",
+    "name": "144F Stranded LT Cable",
+    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
   }
 ]
