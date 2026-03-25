@@ -54,18 +54,6 @@
     "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "S************",
-    "type": "Installation",
-    "name": "ADSS Installation Instruction - Quick Reference Guide",
-    "path": "/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf"
-  },
-  {
-    "pattern": "S************",
-    "type": "Installation",
-    "name": "ADSS Installation Instructions",
-    "path": "/installation/ADSS%20Installation%20Instructions.pdf"
-  },
-  {
     "pattern": "N************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -934,5 +922,12 @@
     "type": "TDS",
     "name": "96 Fibre High Strength Stranded Loose  Tube Cable with Sacrificial Sheath",
     "path": "/tds/96F High Strength Stranded Loose Tube Cable SS.pdf"
+  },
+  {
+    "pattern": "S************",
+    "type": "Installation",
+    "name": "ADSS Installation Instructions",
+    "path": "/installation/ADSS%20Installation%20Instructions.pdf",
+    "exclude": "ST***********"
   }
 ]
