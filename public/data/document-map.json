@@ -949,5 +949,11 @@
     "type": "TDS",
     "name": "312F Stranded LT Cable",
     "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UMEC**FA288BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   }
 ]
