@@ -792,12 +792,6 @@
     "path": "/tds/72F%20High%20Strength%20Stranded%20NMA%20Loose%20Tube%20Cable.pdf"
   },
   {
-    "pattern": "L*D6**PA0**BE",
-    "type": "TDS",
-    "name": "72F Stranded LT Cable",
-    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "L*B6**PA0****",
     "type": "TDS",
     "name": "72F Stranded LT Cable with LSZH Sheath",
@@ -922,5 +916,11 @@
       "N5***********",
       "N2***********"
     ]
+  },
+  {
+    "pattern": "L*D6**PA***BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
   }
 ]
