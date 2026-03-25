@@ -200,16 +200,43 @@ export default function ReviewMatchesPage() {
     return Object.values(docsByType).flat().find(d => d.name === name && d.path === docPath)
   }, [selectedDoc, docsByType])
 
+  const advanceToNextDoc = useCallback(() => {
+    const docs = docsByType[typeFilter] || []
+    const currentIdx = docs.findIndex(d => d.name + '||' + d.path === selectedDoc)
+    if (currentIdx >= 0 && currentIdx < docs.length - 1) {
+      const next = docs[currentIdx + 1]
+      setSelectedDoc(next.name + '||' + next.path)
+    }
+  }, [docsByType, typeFilter, selectedDoc])
+
   const handleReview = useCallback((code, verdict) => {
     if (!selectedDocInfo) return
     setReviewState(selectedDocInfo.path, code, verdict)
     setReviewStates(getReviewState())
   }, [selectedDocInfo])
 
+  const handleMarkAllCorrect = useCallback(() => {
+    if (!selectedDocInfo || matchedCodes.length === 0) return
+    for (const m of matchedCodes) {
+      setReviewState(selectedDocInfo.path, m.code, 'correct')
+    }
+    setReviewStates(getReviewState())
+    setTimeout(advanceToNextDoc, 300)
+  }, [selectedDocInfo, matchedCodes, advanceToNextDoc])
+
   const docReviewState = selectedDocInfo ? reviewStates[selectedDocInfo.path] || {} : {}
-  const reviewedCount = Object.keys(docReviewState).length
-  const correctCount = Object.values(docReviewState).filter(v => v === 'correct').length
-  const wrongCount = Object.values(docReviewState).filter(v => v === 'wrong').length
+  const reviewedCount = matchedCodes.filter(m => docReviewState[m.code]).length
+  const correctCount = matchedCodes.filter(m => docReviewState[m.code] === 'correct').length
+  const wrongCount = matchedCodes.filter(m => docReviewState[m.code] === 'wrong').length
+  const allReviewed = matchedCodes.length > 0 && reviewedCount === matchedCodes.length
+
+  // Auto-advance when all codes reviewed and no wrongs
+  useEffect(() => {
+    if (allReviewed && wrongCount === 0 && matchedCodes.length > 0) {
+      const timer = setTimeout(advanceToNextDoc, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [allReviewed, wrongCount, matchedCodes.length, advanceToNextDoc])
 
   // Per-doc progress for the dropdown
   const docProgress = useMemo(() => {
@@ -293,7 +320,7 @@ export default function ReviewMatchesPage() {
                   <a href={`${DOC_BASE_URL}${selectedDocInfo.path}`} target="_blank" rel="noopener noreferrer"
                     className="text-blue-500 hover:underline text-xs">{decodeURIComponent(selectedDocInfo.path)}</a>
                 </div>
-                <div className="flex gap-3 text-sm">
+                <div className="flex gap-3 text-sm items-center">
                   <span className="font-heading font-bold text-gray-500">{matchedCodes.length} codes</span>
                   {reviewedCount > 0 && (
                     <>
@@ -301,6 +328,10 @@ export default function ReviewMatchesPage() {
                       {wrongCount > 0 && <span className="font-heading font-bold text-red-600">{wrongCount} ✗</span>}
                     </>
                   )}
+                  <button onClick={handleMarkAllCorrect}
+                    className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                    All Correct →
+                  </button>
                 </div>
               </div>
               <div className="flex gap-2 mt-2">
