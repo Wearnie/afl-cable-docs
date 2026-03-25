@@ -19,7 +19,7 @@ export default function GeneratePage() {
   const [saving, setSaving] = useState(false)
   const djNumber = djInput.replace(/\D/g, '')
   const directCode = productInput.toUpperCase().trim()
-  const directCodeValid = directCode.length === 13
+  const directCodeValid = directCode.length >= 1
 
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap(), loadFinalTestCerts(), loadDJOverrides()])
@@ -358,16 +358,13 @@ export default function GeneratePage() {
               <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Product Code</label>
               <input
                 type="text" value={productInput} onChange={(e) => setProductInput(e.target.value)}
-                placeholder="e.g. LMDC1DPA144BE" maxLength={13}
+                placeholder="e.g. LMDC1DPA144BE"
                 className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
               />
               <div className="flex items-center justify-between mt-2">
-                <span className={`text-xs font-medium ${directCodeValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
-                  {directCode.length}/13 characters
+                <span className="text-xs font-medium text-afl-muted">
+                  {directCode.length} characters
                 </span>
-                {directCode.length > 0 && !directCodeValid && (
-                  <span className="text-xs text-amber-500 font-medium">{13 - directCode.length} more needed</span>
-                )}
               </div>
             </div>
           </div>
