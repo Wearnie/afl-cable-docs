@@ -926,8 +926,8 @@
   {
     "pattern": "S************",
     "type": "Installation",
-    "name": "ADSS Installation Instructions",
-    "path": "/installation/ADSS%20Installation%20Instructions.pdf",
+    "name": "ADSS Installation Instruction - Quick Reference Guide",
+    "path": "/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf",
     "exclude": "ST***********"
   }
 ]
