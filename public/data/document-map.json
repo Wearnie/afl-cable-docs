@@ -750,12 +750,6 @@
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "L*DQ**PA312BE",
-    "type": "TDS",
-    "name": "312F Stranded LT Cable",
-    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "N*D6**PM0****",
     "type": "TDS",
     "name": "72 Stranded NMA LTC LSZH Sheath",
@@ -949,5 +943,11 @@
     "type": "Stripping",
     "name": "UTNx Cable Stripping Instructions",
     "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
+  },
+  {
+    "pattern": "LMDQ**PA312BE",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
   }
 ]
