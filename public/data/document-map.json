@@ -929,5 +929,11 @@
     "name": "ADSS Installation Instruction - Quick Reference Guide",
     "path": "/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf",
     "exclude": "ST***********"
+  },
+  {
+    "pattern": "ST**",
+    "type": "Installation",
+    "name": "MicroCore Cable Installation - Handling Tips",
+    "path": "/installation/MicroCore%20Cable%20Installation%20-%20Handling%20Tips.pdf"
   }
 ]
