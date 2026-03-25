@@ -744,12 +744,6 @@
     "path": "/tds/144F%20Stranded%20NMA%20LT%20Cable.pdf"
   },
   {
-    "pattern": "L*DO**PA288BE",
-    "type": "TDS",
-    "name": "288F Stranded LT Cable",
-    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "N*D6**PM0****",
     "type": "TDS",
     "name": "72 Stranded NMA LTC LSZH Sheath",
@@ -955,5 +949,11 @@
     "type": "TDS",
     "name": "288F MicroCore Stranded LT Cable",
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDO**PA288BE",
+    "type": "TDS",
+    "name": "288F Stranded LT Cable",
+    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
   }
 ]
