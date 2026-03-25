@@ -8,6 +8,7 @@ import UploadPage from './pages/UploadPage'
 import ReviewPage from './pages/ReviewPage'
 import AdminPage from './pages/AdminPage'
 import AuditPage from './pages/AuditPage'
+import ReviewMatchesPage from './pages/ReviewMatchesPage'
 import AdminGate from './components/AdminGate'
 
 function HomePage() {
@@ -98,6 +99,7 @@ export default function App() {
       <Route path="/review" element={<ReviewPage />} />
       <Route path="/admin" element={<AdminGate><AdminPage /></AdminGate>} />
       <Route path="/audit" element={<AdminGate><AuditPage /></AdminGate>} />
+      <Route path="/review-matches" element={<ReviewMatchesPage />} />
       <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
       <Route path="/:productCode" element={<DocumentPage />} />
     </Routes>
