@@ -927,5 +927,11 @@
     "type": "TDS",
     "name": "Mini Axial LT Cable",
     "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "N*E4**JL*****",
+    "type": "Installation",
+    "name": "Downhole and Vertical Installation",
+    "path": "/installation/Downhole and Vertical Installation Instructions (1).pdf"
   }
 ]
