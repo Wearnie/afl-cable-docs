@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDocumentMap, patternMatches, stripSuffix } from '../data/documentMap'
-import { loadDJMapping } from '../data/djLookup'
 import { editDocumentMappings } from '../lib/adminApi'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
@@ -122,18 +121,23 @@ function CodeRow({ code, pattern, exclude, type, docName, docPath, tightness, re
   )
 }
 
+async function loadProductCodes() {
+  const res = await fetch(`/data/product-codes.json?_t=${Date.now()}`)
+  return res.json()
+}
+
 export default function ReviewMatchesPage() {
   const [documentMap, setDocumentMap] = useState(null)
-  const [djMapping, setDjMapping] = useState(null)
+  const [productCodes, setProductCodes] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedDoc, setSelectedDoc] = useState('')
   const [typeFilter, setTypeFilter] = useState('TDS')
   const [reviewStates, setReviewStates] = useState(getReviewState())
 
   useEffect(() => {
-    Promise.all([loadDocumentMap(), loadDJMapping()]).then(([docMap, djMap]) => {
+    Promise.all([loadDocumentMap(), loadProductCodes()]).then(([docMap, codes]) => {
       setDocumentMap(docMap)
-      setDjMapping(djMap)
+      setProductCodes(codes)
       setLoading(false)
     })
   }, [])
@@ -160,11 +164,10 @@ export default function ReviewMatchesPage() {
     return byType
   }, [documentMap])
 
-  // All product codes from DJ mapping
+  // All product codes (from static JSON — combined Excel + DJ mapping)
   const allCodes = useMemo(() => {
-    if (!djMapping) return []
-    return [...new Set(Object.values(djMapping))]
-  }, [djMapping])
+    return productCodes || []
+  }, [productCodes])
 
   // Find all codes matching the selected document
   const matchedCodes = useMemo(() => {
