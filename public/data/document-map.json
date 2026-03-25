@@ -922,5 +922,11 @@
     "type": "TDS",
     "name": "72F Stranded LT Cable with Sacrificial Sheath",
     "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf"
+  },
+  {
+    "pattern": "L*D6**PA*****BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
   }
 ]
