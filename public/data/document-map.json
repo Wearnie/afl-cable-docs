@@ -947,6 +947,7 @@
     "pattern": "ST****",
     "type": "Stripping",
     "name": "UTNx Cable Stripping Instructions",
-    "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf"
+    "path": "/stripping/UTNx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": "STE4*********"
   }
 ]
