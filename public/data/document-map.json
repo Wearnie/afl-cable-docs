@@ -66,12 +66,6 @@
     "path": "/installation/ADSS%20Installation%20Instructions.pdf"
   },
   {
-    "pattern": "L************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
-  },
-  {
     "pattern": "N************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -704,12 +698,6 @@
     "type": "Installation",
     "name": "SWR Application Guide",
     "path": "/installation/SWR Application Guide.pdf"
-  },
-  {
-    "pattern": "L************",
-    "type": "Installation",
-    "name": "Loose Tube Installation & Application Instructions",
-    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
   },
   {
     "pattern": "L*J6**JA0**BE",
