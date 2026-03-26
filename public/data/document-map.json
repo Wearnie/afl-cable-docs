@@ -974,5 +974,11 @@
     "type": "TDS",
     "name": "96 Fibre High Strength Stranded Loose  Tube Cable with Sacrificial Sheath",
     "path": "/tds/96F High Strength Stranded Loose Tube Cable SS.pdf"
+  },
+  {
+    "pattern": "L*H6**PM*****",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable with LSZH Sacrificial Sheath",
+    "path": "/tds/72F Stranded LT Cable with LSZH Sac Sheath.pdf"
   }
 ]
