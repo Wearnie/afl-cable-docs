@@ -992,5 +992,506 @@
     "type": "TDS",
     "name": "144F Stranded LT Cable with LSZH Sacrificial Sheath",
     "path": "/tds/144F Stranded LT Cable with LSZH Sac Sheath.pdf"
+  },
+  {
+    "pattern": "S*M4**LB0***BK",
+    "type": "TDS",
+    "name": "48 Fibre Short Span ADSS Cable",
+    "path": "/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M4**LB0****BK",
+    "type": "TDS",
+    "name": "48 Fibre Short Span ADSS Cable",
+    "path": "/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M4**LB0*****BK",
+    "type": "TDS",
+    "name": "48 Fibre Short Span ADSS Cable",
+    "path": "/tds/48%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M5**LL0***BK",
+    "type": "TDS",
+    "name": "60 Fibre Mid Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M5**LL0****BK",
+    "type": "TDS",
+    "name": "60 Fibre Mid Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M5**LL0*****BK",
+    "type": "TDS",
+    "name": "60 Fibre Mid Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J5**LE0***BK",
+    "type": "TDS",
+    "name": "60 Fibre Long Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J5**LE0****BK",
+    "type": "TDS",
+    "name": "60 Fibre Long Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J5**LE0*****BK",
+    "type": "TDS",
+    "name": "60 Fibre Long Span ADSS Cable",
+    "path": "/tds/60%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "LTDQ**LA624*BE",
+    "type": "TDS",
+    "name": "624F Stranded LT Cable",
+    "path": "/tds/624F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LTDQ**LA624**BE",
+    "type": "TDS",
+    "name": "624F Stranded LT Cable",
+    "path": "/tds/624F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LTDQ**LA624***BE",
+    "type": "TDS",
+    "name": "624F Stranded LT Cable",
+    "path": "/tds/624F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTE6**FA****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTE6**FA*****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTE6**FA******BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UME6**FA0***BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UME6**FA0****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UME6**FA0*****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UKE6**FA0***BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UKE6**FA0****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UKE6**FA0*****BE",
+    "type": "TDS",
+    "name": "144F MicroCore Stranded LT Cable",
+    "path": "/tds/144F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTEC**FA288*BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTEC**FA288**BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UTEC**FA288***BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "S*JC**LE****BK",
+    "type": "TDS",
+    "name": "144 Fibre Long Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*JC**LE*****BK",
+    "type": "TDS",
+    "name": "144 Fibre Long Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*JC**LE******BK",
+    "type": "TDS",
+    "name": "144 Fibre Long Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**LI****BK",
+    "type": "TDS",
+    "name": "144 Fibre Mid Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**LI*****BK",
+    "type": "TDS",
+    "name": "144 Fibre Mid Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**LI******BK",
+    "type": "TDS",
+    "name": "144 Fibre Mid Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**PA****BK",
+    "type": "TDS",
+    "name": "144 Fibre Short Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**PA*****BK",
+    "type": "TDS",
+    "name": "144 Fibre Short Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*MC**PA******BK",
+    "type": "TDS",
+    "name": "144 Fibre Short Span ADSS Cable",
+    "path": "/tds/144%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J6**LE0***BK",
+    "type": "TDS",
+    "name": "72 Fibre Long Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J6**LE0****BK",
+    "type": "TDS",
+    "name": "72 Fibre Long Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J6**LE0*****BK",
+    "type": "TDS",
+    "name": "72 Fibre Long Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**LL0***BK",
+    "type": "TDS",
+    "name": "72 Fibre Mid Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**LL0****BK",
+    "type": "TDS",
+    "name": "72 Fibre Mid Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**LL0*****BK",
+    "type": "TDS",
+    "name": "72 Fibre Mid Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**PA0***BK",
+    "type": "TDS",
+    "name": "72 Fibre Short Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**PA0****BK",
+    "type": "TDS",
+    "name": "72 Fibre Short Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M6**PA0*****BK",
+    "type": "TDS",
+    "name": "72 Fibre Short Span ADSS Cable",
+    "path": "/tds/72%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PA0***BK",
+    "type": "TDS",
+    "name": "96 Fibre Short Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PA0****BK",
+    "type": "TDS",
+    "name": "96 Fibre Short Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PA0*****BK",
+    "type": "TDS",
+    "name": "96 Fibre Short Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Short%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J6**JA0***BE",
+    "type": "TDS",
+    "name": "72F High Strength Stranded LT Cable",
+    "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J6**JA0****BE",
+    "type": "TDS",
+    "name": "72F High Strength Stranded LT Cable",
+    "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J6**JA0*****BE",
+    "type": "TDS",
+    "name": "72F High Strength Stranded LT Cable",
+    "path": "/tds/72F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*JC**JA144*BE",
+    "type": "TDS",
+    "name": "144F High Strength Stranded LT Cable",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*JC**JA144**BE",
+    "type": "TDS",
+    "name": "144F High Strength Stranded LT Cable",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*JC**JA144***BE",
+    "type": "TDS",
+    "name": "144F High Strength Stranded LT Cable",
+    "path": "/tds/144F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*DC**PA144*BE",
+    "type": "TDS",
+    "name": "144F Stranded LT Cable",
+    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*DC**PA144**BE",
+    "type": "TDS",
+    "name": "144F Stranded LT Cable",
+    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*DC**PA144***BE",
+    "type": "TDS",
+    "name": "144F Stranded LT Cable",
+    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J8**LA****BK",
+    "type": "TDS",
+    "name": "96 Fibre Long Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J8**LA*****BK",
+    "type": "TDS",
+    "name": "96 Fibre Long Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*J8**LA******BK",
+    "type": "TDS",
+    "name": "96 Fibre Long Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Long%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PE****BK",
+    "type": "TDS",
+    "name": "96 Fibre Mid Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PE*****BK",
+    "type": "TDS",
+    "name": "96 Fibre Mid Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "S*M8**PE******BK",
+    "type": "TDS",
+    "name": "96 Fibre Mid Span ADSS Cable",
+    "path": "/tds/96%20Fibre%20Mid%20Span%20ADSS%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J8**JA****BE",
+    "type": "TDS",
+    "name": "96F High Strength Stranded LT Cable",
+    "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J8**JA*****BE",
+    "type": "TDS",
+    "name": "96F High Strength Stranded LT Cable",
+    "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*J8**JA******BE",
+    "type": "TDS",
+    "name": "96F High Strength Stranded LT Cable",
+    "path": "/tds/96F%20High%20Strength%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D8**PA****BE",
+    "type": "TDS",
+    "name": "96F Stranded LT Cable",
+    "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D8**PA******BE",
+    "type": "TDS",
+    "name": "96F Stranded LT Cable",
+    "path": "/tds/96F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D1**EA****BE",
+    "type": "TDS",
+    "name": "Axial LT Cable",
+    "path": "/tds/Axial%20LT%20Cable.pdf",
+    "exclude": "L2D**********"
+  },
+  {
+    "pattern": "L*D1**EA*****BE",
+    "type": "TDS",
+    "name": "Axial LT Cable",
+    "path": "/tds/Axial%20LT%20Cable.pdf",
+    "exclude": "L2D**********"
+  },
+  {
+    "pattern": "L*D1**EA******BE",
+    "type": "TDS",
+    "name": "Axial LT Cable",
+    "path": "/tds/Axial%20LT%20Cable.pdf",
+    "exclude": "L2D**********"
+  },
+  {
+    "pattern": "LQD1**PA****BE",
+    "type": "TDS",
+    "name": "Mini Axial LT Cable",
+    "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LQD1**PA*****BE",
+    "type": "TDS",
+    "name": "Mini Axial LT Cable",
+    "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LQD1**PA******BE",
+    "type": "TDS",
+    "name": "Mini Axial LT Cable",
+    "path": "/tds/Mini%20Axial%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D6**PA****BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D6**PA*****BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*D6**PA******BE",
+    "type": "TDS",
+    "name": "72F Stranded LT Cable",
+    "path": "/tds/72F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDQ**PA312*BE",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDQ**PA312**BE",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDQ**PA312***BE",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UMEC**FA288*BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UMEC**FA288**BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "UMEC**FA288***BE",
+    "type": "TDS",
+    "name": "288F MicroCore Stranded LT Cable",
+    "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDO**PA288*BE",
+    "type": "TDS",
+    "name": "288F Stranded LT Cable",
+    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDO**PA288**BE",
+    "type": "TDS",
+    "name": "288F Stranded LT Cable",
+    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDO**PA288***BE",
+    "type": "TDS",
+    "name": "288F Stranded LT Cable",
+    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
   }
 ]
