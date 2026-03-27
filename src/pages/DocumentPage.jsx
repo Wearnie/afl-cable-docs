@@ -87,7 +87,7 @@ export default function DocumentPage() {
                   Your Documents
                 </h2>
                 <span className="text-[11px] font-bold text-afl-cyan uppercase tracking-wider font-heading">
-                  {allDocs.length + (hasDjButNoCert ? 1 : 0)} {allDocs.length + (hasDjButNoCert ? 1 : 0) === 1 ? 'file' : 'files'}
+                  {allDocs.length} {allDocs.length === 1 ? 'file' : 'files'}
                 </span>
               </div>
               <div className="px-3 pb-3 space-y-1.5">
@@ -95,28 +95,6 @@ export default function DocumentPage() {
                   <DocumentCard key={`${doc.type}-${i}`} document={doc} index={i} />
                 ))}
 
-                {/* DJ number present but cert not uploaded yet */}
-                {hasDjButNoCert && (
-                  <div
-                    className="card-enter flex items-center gap-4 px-4 py-4 rounded-xl border border-dashed border-afl-border bg-afl-light/50"
-                    style={{ animationDelay: `${allDocs.length * 60}ms` }}
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-amber-500">
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[16px] font-bold text-afl-navy leading-tight">
-                        Test Certificate
-                      </span>
-                      <p className="text-amber-600 text-[12px] leading-snug mt-0.5">
-                        {djNumber} — pending upload
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
