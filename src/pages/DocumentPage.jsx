@@ -2,7 +2,6 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { findDocuments } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
-import CableBreakdown from '../components/CableBreakdown'
 import DocumentCard from '../components/DocumentCard'
 
 export default function DocumentPage() {
@@ -76,7 +75,6 @@ export default function DocumentPage() {
                 This code may not be in our database yet. Contact AFL for assistance.
               </p>
             </div>
-            <CableBreakdown productCode={code} defaultOpen />
           </div>
         ) : (
           <div className="space-y-3">
@@ -107,7 +105,6 @@ export default function DocumentPage() {
             )}
 
             {/* Cable breakdown — collapsed */}
-            <CableBreakdown productCode={code} />
 
             <p className="text-[11px] text-afl-muted text-center pt-2 pb-1">
               Documents provided by AFL. For queries contact your AFL representative.

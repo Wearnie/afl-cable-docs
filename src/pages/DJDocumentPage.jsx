@@ -4,7 +4,6 @@ import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import { loadDJOverrides, applyOverrides } from '../data/djOverrides'
-import CableBreakdown from '../components/CableBreakdown'
 import DocumentCard from '../components/DocumentCard'
 
 export default function DJDocumentPage() {
@@ -155,7 +154,6 @@ export default function DJDocumentPage() {
             </div>
 
             {/* Cable breakdown */}
-            <CableBreakdown productCode={productCode} />
 
             <p className="text-[11px] text-afl-muted text-center pt-2 pb-1">
               Documents provided by AFL. For queries contact your AFL representative.
