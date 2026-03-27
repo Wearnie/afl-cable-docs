@@ -63,13 +63,30 @@ export function invalidateDocumentMapCache(newEntries) {
 // ============================================================================
 
 /**
- * Strip known packaging/project suffixes from the end of a product code.
- * Only removes known all-letter suffixes like -FP, -AG, -TMC, -SYDT.
- * Leaves hyphens that are part of the code (e.g. 12-12 fibre counts).
+ * Suffixes that are safe to strip — same cable, same docs for all types.
  */
-const KNOWN_SUFFIXES = /(?:-(?:FP|AG|TMC|TMR|SYDT|ESS|SH2|ANT|SIE))+$/i
+const STRIP_SUFFIXES = /(?:-(?:FP|ESS|SH2|ANT|TMC))+$/i
+
+/**
+ * Customer-specific suffixes — need their own TDS, but Stripping & Installation
+ * are the same as the base code.
+ */
+const CUSTOMER_SUFFIXES = /(?:-(?:SYDT|TMR|AG|SIE|FLH|EM))+$/i
+
+/**
+ * Strip ALL known suffixes from a product code (for decode, cert upload, etc.)
+ */
 export function stripSuffix(code) {
-  return code.replace(KNOWN_SUFFIXES, '')
+  return code.replace(STRIP_SUFFIXES, '').replace(CUSTOMER_SUFFIXES, '')
+}
+
+/**
+ * Check if a code has a customer-specific suffix.
+ * Returns the suffix (e.g. "-SYDT") or null.
+ */
+export function getCustomerSuffix(code) {
+  const match = code.match(CUSTOMER_SUFFIXES)
+  return match ? match[0] : null
 }
 
 /**
@@ -110,8 +127,13 @@ export function patternMatches(code, pattern) {
  * Final Test Certificates are added separately in DJDocumentPage.
  */
 export function findDocuments(productCode) {
-  const code = stripSuffix(productCode.toUpperCase().trim())
-  if (code.length < 1) return []
+  const raw = productCode.toUpperCase().trim()
+  const baseCode = stripSuffix(raw)
+  const customerSuffix = getCustomerSuffix(raw)
+  // Code with only safe suffixes stripped (keeps customer suffix for TDS matching)
+  const codeForTDS = customerSuffix ? raw.replace(STRIP_SUFFIXES, '') : baseCode
+
+  if (baseCode.length < 1) return []
 
   const map = getDocumentMap()
 
@@ -123,12 +145,26 @@ export function findDocuments(productCode) {
   const otherDocs = []
 
   for (const entry of map) {
-    if (!patternMatches(code, entry.pattern)) continue
+    if (entry.type === 'Test Certificate') continue // hidden for now
+
+    // For customer suffix codes: TDS only matches if the pattern explicitly
+    // covers the suffix (i.e. pattern length >= full code length).
+    // Standard TDS patterns (13 chars) won't match the longer suffixed code.
+    // Stripping & Installation always use the base code.
+    let matchCode
+    if (entry.type === 'TDS' && customerSuffix) {
+      matchCode = codeForTDS
+      // Require the pattern to be long enough to cover the suffix
+      if (entry.pattern.length < matchCode.length) continue
+    } else {
+      matchCode = entry.type === 'TDS' ? codeForTDS : baseCode
+    }
+
+    if (!patternMatches(matchCode, entry.pattern)) continue
     if (entry.exclude) {
       const excludes = Array.isArray(entry.exclude) ? entry.exclude : [entry.exclude]
-      if (excludes.some(ex => patternMatches(code, ex))) continue
+      if (excludes.some(ex => patternMatches(matchCode, ex))) continue
     }
-    if (entry.type === 'Test Certificate') continue // hidden for now
 
     if (entry.type === 'Installation') {
       installationDocs.push({ ...entry })
@@ -138,6 +174,12 @@ export function findDocuments(productCode) {
       found[entry.type] = { ...entry }
     }
     // skip duplicates of already-found primary types
+  }
+
+  // For customer suffix codes with no customer-specific TDS: show nothing
+  // (don't fall back to standard TDS — it doesn't apply)
+  if (customerSuffix && found.TDS === null) {
+    // TDS stays null — intentional gap
   }
 
   const results = []

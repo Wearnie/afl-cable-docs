@@ -882,6 +882,18 @@
     "exclude": "ST***********"
   },
   {
+    "pattern": "S************",
+    "type": "Installation",
+    "name": "ADSS Installation Instructions",
+    "path": "/installation/ADSS%20Installation%20Instructions.pdf"
+  },
+  {
+    "pattern": "B************",
+    "type": "Installation",
+    "name": "Loose Tube Installation & Application Instructions",
+    "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
     "pattern": "ST**",
     "type": "Installation",
     "name": "MicroCore Cable Installation - Handling Tips",

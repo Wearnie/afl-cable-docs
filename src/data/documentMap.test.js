@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
-import { patternMatches, findDocuments, decodeProductCode, _setDocumentMapCache } from './documentMap.js'
+import { patternMatches, findDocuments, decodeProductCode, stripSuffix, getCustomerSuffix, _setDocumentMapCache } from './documentMap.js'
 
 // Load the JSON document map and inject it before tests run
 beforeAll(() => {
@@ -313,6 +313,78 @@ describe('findDocuments — every cable family', () => {
       const docs = findDocuments(code)
       expect(docs[0].type, `${code} should have Stripping first`).toBe('Stripping')
     }
+  })
+})
+
+// ============================================================================
+// Customer suffix handling
+// ============================================================================
+
+describe('customer suffix handling', () => {
+  it('stripSuffix removes safe suffixes (-FP, -ESS, -TMC)', () => {
+    expect(stripSuffix('NMD61DPB048BE-FP')).toBe('NMD61DPB048BE')
+    expect(stripSuffix('NMD61DPB048BE-ESS')).toBe('NMD61DPB048BE')
+    expect(stripSuffix('NMD61DPB048BE-TMC')).toBe('NMD61DPB048BE')
+  })
+
+  it('stripSuffix removes customer suffixes (-SYDT, -TMR, -AG)', () => {
+    expect(stripSuffix('NMD61DPB048BE-SYDT')).toBe('NMD61DPB048BE')
+    expect(stripSuffix('NMD61DPB048BE-AG')).toBe('NMD61DPB048BE')
+    expect(stripSuffix('NMD61DPB048BE-TMR')).toBe('NMD61DPB048BE')
+  })
+
+  it('stripSuffix removes chained suffixes (-SYDT-FP)', () => {
+    expect(stripSuffix('NMD81DPB096BE-SYDT-FP')).toBe('NMD81DPB096BE')
+  })
+
+  it('stripSuffix preserves code hyphens (composite fibre counts)', () => {
+    expect(stripSuffix('LMD6D3PA12-12BE')).toBe('LMD6D3PA12-12BE')
+    expect(stripSuffix('K3M5DTHA4-12BK')).toBe('K3M5DTHA4-12BK')
+  })
+
+  it('getCustomerSuffix detects customer suffixes', () => {
+    expect(getCustomerSuffix('NMD61DPB048BE-SYDT')).toBe('-SYDT')
+    expect(getCustomerSuffix('NMD61DPB048BE-AG')).toBe('-AG')
+    expect(getCustomerSuffix('NMD61DPB048BE-TMR')).toBe('-TMR')
+    expect(getCustomerSuffix('SMJ61FLE072BK-SIE')).toBe('-SIE')
+  })
+
+  it('getCustomerSuffix returns null for safe suffixes', () => {
+    expect(getCustomerSuffix('NMD61DPB048BE-FP')).toBe(null)
+    expect(getCustomerSuffix('NMD61DPB048BE-ESS')).toBe(null)
+    expect(getCustomerSuffix('NMD61DPB048BE')).toBe(null)
+  })
+
+  it('-FP code gets standard TDS (safe suffix stripped)', () => {
+    const docs = findDocuments('NMD61DPB048BE-FP')
+    const types = docs.map(d => d.type)
+    expect(types).toContain('TDS')
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
+  })
+
+  it('-SYDT code gets Stripping + Installation but NO standard TDS', () => {
+    const docs = findDocuments('NMD61DPB048BE-SYDT')
+    const types = docs.map(d => d.type)
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
+    expect(types).not.toContain('TDS')
+  })
+
+  it('-AG code gets Stripping + Installation but NO standard TDS', () => {
+    const docs = findDocuments('NMDC1FPB144BK-AG')
+    const types = docs.map(d => d.type)
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
+    expect(types).not.toContain('TDS')
+  })
+
+  it('standard code (no suffix) gets full docs as before', () => {
+    const docs = findDocuments('NMD61DPB048BE')
+    const types = docs.map(d => d.type)
+    expect(types).toContain('TDS')
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
   })
 })
 
