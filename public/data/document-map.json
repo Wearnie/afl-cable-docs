@@ -684,7 +684,8 @@
     "pattern": "L*K6**J******",
     "type": "TDS",
     "name": "72F High Strength Stranded Loose Tube with Sacrificial Sheath",
-    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf"
+    "path": "/tds/72F%20High%20Strength%20Stranded%20Loose%20Tube%20Cable%20SS.pdf",
+    "exclude": "L*K6**JM*****"
   },
   {
     "pattern": "N*DC**PM144**",
@@ -830,7 +831,8 @@
     "pattern": "L*H1**E*0****",
     "type": "TDS",
     "name": "Axial LT Cable with Sacrificial sheath",
-    "path": "/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf"
+    "path": "/tds/Axial%20LT%20Cable%20with%20Sacrifical%20sheath.pdf",
+    "exclude": "L*H1**EM0****"
   },
   {
     "pattern": "LQD1**PA***BE",
@@ -988,7 +990,8 @@
     "pattern": "L*K8**J******",
     "type": "TDS",
     "name": "96 Fibre High Strength Stranded Loose  Tube Cable with Sacrificial Sheath",
-    "path": "/tds/96F High Strength Stranded Loose Tube Cable SS.pdf"
+    "path": "/tds/96F High Strength Stranded Loose Tube Cable SS.pdf",
+    "exclude": "L*K8**JM*****"
   },
   {
     "pattern": "L*H6**PM*****",
