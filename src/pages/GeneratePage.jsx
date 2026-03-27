@@ -4,7 +4,7 @@ import { loadDJMapping, lookupProductCode } from '../data/djLookup'
 import { findDocuments, getDocumentMap, loadDocumentMap, docTypeInfo } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import { loadDJOverrides, getDJOverrides, applyOverrides, reloadDJOverrides } from '../data/djOverrides'
-import { saveDJOverrides } from '../lib/adminApi'
+import { saveDJOverrides, uploadFinalTestCert } from '../lib/adminApi'
 import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
@@ -20,6 +20,9 @@ export default function GeneratePage() {
   const djNumber = djInput.replace(/\D/g, '')
   const directCode = productInput.toUpperCase().trim()
   const directCodeValid = directCode.length >= 1
+  const [certUploading, setCertUploading] = useState(false)
+  const [certResult, setCertResult] = useState(null) // { djNumber, productCode }
+  const [certError, setCertError] = useState(null)
 
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap(), loadFinalTestCerts(), loadDJOverrides()])
@@ -67,6 +70,29 @@ export default function GeneratePage() {
   }, [productCode, showAddDoc, documents, addSearch, addTypeFilter])
 
   const directDocuments = useMemo(() => (directCodeValid ? findDocuments(directCode) : []), [directCode, directCodeValid])
+
+  const certDocuments = useMemo(() => (certResult ? findDocuments(certResult.productCode) : []), [certResult])
+
+  const handleCertUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCertUploading(true)
+    setCertError(null)
+    setCertResult(null)
+    try {
+      const result = await uploadFinalTestCert(file)
+      setCertResult({ djNumber: result.djNumber, productCode: result.productCode })
+      // Reload data so the cert and DJ mapping are available
+      await Promise.all([loadDJMapping(), loadFinalTestCerts()])
+      showToast(`Cert uploaded — DJ ${result.djNumber} → ${result.productCode}`, 'success')
+    } catch (err) {
+      setCertError(err.message)
+      showToast('Error: ' + err.message, 'error')
+    } finally {
+      setCertUploading(false)
+      e.target.value = ''
+    }
+  }
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'
 
@@ -406,6 +432,77 @@ export default function GeneratePage() {
             <div className="text-center">
               <Link
                 to={`/${directCode}`}
+                className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
+              >
+                Preview customer page →
+              </Link>
+            </div>
+          </>
+        )}
+        {/* Divider */}
+        <div className="flex items-center gap-3 pt-4">
+          <div className="flex-1 border-t border-afl-border" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or upload a Final Test Certificate</span>
+          <div className="flex-1 border-t border-afl-border" />
+        </div>
+
+        {/* Cert Upload */}
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+          <p className="text-afl-muted text-sm mb-3">Upload a Final Test Certificate PDF — DJ number and product code will be extracted automatically.</p>
+          <input type="file" accept=".pdf" onChange={handleCertUpload} className="hidden" id="cert-upload-input" />
+          <button
+            onClick={() => document.getElementById('cert-upload-input').click()}
+            disabled={certUploading}
+            className="px-5 py-2.5 rounded-xl text-sm font-heading font-semibold bg-emerald-500 text-white hover:bg-emerald-600 disabled:bg-gray-300 transition-colors cursor-pointer"
+          >
+            {certUploading ? 'Uploading & Processing...' : 'Upload Certificate PDF'}
+          </button>
+          {certError && <p className="text-red-600 text-sm mt-2">{certError}</p>}
+        </div>
+
+        {certResult && (
+          <>
+            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ Number</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.djNumber}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Product Code</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.productCode}</span>
+              </div>
+            </div>
+
+            <QRGenerator djNumber={certResult.djNumber} productCode={certResult.productCode} baseUrl={baseUrl} />
+
+            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
+                Documents that will appear ({certDocuments.length + 1})
+              </h3>
+              <div className="space-y-2">
+                {certDocuments.map((doc, i) => {
+                  const info = docTypeInfo[doc.type] || docTypeInfo.Other
+                  return (
+                    <div key={`${doc.path}-${i}`} className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                        {info.label}
+                      </span>
+                      <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
+                    </div>
+                  )
+                })}
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 shrink-0" style={{ minWidth: '110px' }}>
+                    Test Cert
+                  </span>
+                  <span className="text-emerald-600 text-[13px] font-medium">Uploaded ✓</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link
+                to={`/dj/${certResult.djNumber}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →
