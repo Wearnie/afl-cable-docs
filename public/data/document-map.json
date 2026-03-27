@@ -877,19 +877,6 @@
     "exclude": "L*H6**PM*****"
   },
   {
-    "pattern": "S************",
-    "type": "Installation",
-    "name": "ADSS Installation Instruction - Quick Reference Guide",
-    "path": "/installation/ADSS%20Installation%20Instruction%20-%20Quick%20Reference%20Guide.pdf",
-    "exclude": "ST***********"
-  },
-  {
-    "pattern": "S************",
-    "type": "Installation",
-    "name": "ADSS Installation Instructions",
-    "path": "/installation/ADSS%20Installation%20Instructions.pdf"
-  },
-  {
     "pattern": "B************",
     "type": "Installation",
     "name": "ADSS Installation Instruction - Quick Reference Guide",
@@ -1517,5 +1504,12 @@
     "type": "TDS",
     "name": "312F Stranded LT Cable",
     "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "S************",
+    "type": "Installation",
+    "name": "ADSS Installation Instructions",
+    "path": "/installation/ADSS%20Installation%20Instructions.pdf",
+    "exclude": "STI**********"
   }
 ]
