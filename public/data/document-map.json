@@ -1511,5 +1511,11 @@
     "type": "TDS",
     "name": "288F Stranded LT Cable",
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "LMDQRDPA*****",
+    "type": "TDS",
+    "name": "312F Stranded LT Cable",
+    "path": "/tds/312F%20Stranded%20LT%20Cable.pdf"
   }
 ]
