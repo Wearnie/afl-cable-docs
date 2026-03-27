@@ -81,7 +81,7 @@ export default function GeneratePage() {
     setCertResult(null)
     try {
       const result = await uploadFinalTestCert(file)
-      setCertResult({ djNumber: result.djNumber, productCode: result.productCode })
+      setCertResult({ djNumber: result.djNumber, productCode: result.productCode, name: `Test Certificate — ${result.djNumber}` })
       // Reload data so the cert and DJ mapping are available
       await Promise.all([loadDJMapping(), loadFinalTestCerts()])
       showToast(`Cert uploaded — DJ ${result.djNumber} → ${result.productCode}`, 'success')
@@ -492,10 +492,10 @@ export default function GeneratePage() {
                   )
                 })}
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 shrink-0" style={{ minWidth: '110px' }}>
-                    Test Cert
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                    Test Certificate
                   </span>
-                  <span className="text-emerald-600 text-[13px] font-medium">Uploaded ✓</span>
+                  <span className="text-afl-text truncate text-[13px] flex-1">{certResult.name}</span>
                 </div>
               </div>
             </div>
