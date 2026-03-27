@@ -644,6 +644,20 @@ export default function AuditPage() {
     return grouped
   }, [docGroups])
 
+  // Partial match: does a search string (treated as a partial product code)
+  // overlap with a pattern? Compares up to the shorter length.
+  const partialMatch = useCallback((search, pattern) => {
+    const len = Math.min(search.length, pattern.length)
+    for (let i = 0; i < len; i++) {
+      const sc = search[i], pc = pattern[i]
+      const sWild = !isAlphanumeric(sc)
+      const pWild = !isAlphanumeric(pc)
+      if (sWild || pWild) continue
+      if (sc.toUpperCase() !== pc.toUpperCase()) return false
+    }
+    return true
+  }, [])
+
   // Filter
   const filtered = useMemo(() => {
     const query = search.trim().toUpperCase()
@@ -662,15 +676,15 @@ export default function AuditPage() {
         if (reviewFilter === 'pending' && reviewedDocs[doc.path]) return false
         if (!query) return true
         const searchTarget = resolvedCode || query
-        // Try matching the search text directly as a product code (with suffix stripping)
         const strippedSearch = stripSuffix(searchTarget)
+        // Partial product code match — shows ALL docs that could match
         for (const p of doc.patterns) {
-          if (patternMatches(strippedSearch, p)) {
+          if (partialMatch(strippedSearch, p)) {
             // Check excludes
             const entry = documentMap?.find(e => e.pattern === p && e.path === doc.path)
             if (entry?.exclude) {
               const excludes = Array.isArray(entry.exclude) ? entry.exclude : [entry.exclude]
-              if (excludes.some(ex => patternMatches(strippedSearch, ex))) continue
+              if (excludes.some(ex => partialMatch(strippedSearch, ex))) continue
             }
             return true
           }
@@ -696,7 +710,7 @@ export default function AuditPage() {
       })
     }
     return result
-  }, [search, typeFilter, reviewFilter, reviewCount, byType, allProductCodes, djEntries, djMapping])
+  }, [search, typeFilter, reviewFilter, reviewCount, byType, allProductCodes, djEntries, djMapping, partialMatch])
 
   const totalVisible = useMemo(() =>
     TYPE_OPTIONS.reduce((s, t) => s + (filtered[t]?.length || 0), 0),
