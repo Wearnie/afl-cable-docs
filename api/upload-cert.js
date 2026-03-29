@@ -109,9 +109,10 @@ async function extractFromPdf(base64Data) {
     throw new Error('Could not find "Item Code" on page 1 of the PDF. Expected format: "Item Code: TVBQ55AA024AQ"')
   }
 
-  // Strip known suffixes (e.g. -FP, -AG, -SYDT) but keep hyphens that are part of the code
+  // Only strip safe suffixes (packaging variants) — keep customer suffixes like -SYDT, -TMR, -AG
+  // so the DJ mapping preserves the customer-specific code
   const rawCode = itemMatch[1].toUpperCase()
-  const productCode = rawCode.replace(/(?:-(?:FP|AG|TMC|TMR|SYDT|ESS|SH2|ANT|SIE))+$/i, '')
+  const productCode = rawCode.replace(/(?:-(?:FP|ESS|SH2|ANT|TMC))+$/i, '')
 
   return {
     djNumber: jobMatch[1],
