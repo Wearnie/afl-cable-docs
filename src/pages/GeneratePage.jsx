@@ -23,6 +23,7 @@ export default function GeneratePage() {
   const [certUploading, setCertUploading] = useState(false)
   const [certResult, setCertResult] = useState(null) // { djNumber, productCode }
   const [certError, setCertError] = useState(null)
+  const [certStep, setCertStep] = useState(0) // 0=idle, 1=reading, 2=uploading, 3=linking, 4=done
 
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap(), loadFinalTestCerts(), loadDJOverrides()])
@@ -79,14 +80,21 @@ export default function GeneratePage() {
     setCertUploading(true)
     setCertError(null)
     setCertResult(null)
+    setCertStep(1) // Reading PDF
     try {
+      // Simulate step progression while API processes
+      const stepTimer = setTimeout(() => setCertStep(2), 1500) // Uploading
+      const stepTimer2 = setTimeout(() => setCertStep(3), 4000) // Linking
       const result = await uploadFinalTestCert(file)
+      clearTimeout(stepTimer)
+      clearTimeout(stepTimer2)
+      setCertStep(4) // Done
       setCertResult({ djNumber: result.djNumber, productCode: result.productCode, name: `Test Certificate — ${result.djNumber}` })
-      // Reload data so the cert and DJ mapping are available
       await Promise.all([loadDJMapping(), loadFinalTestCerts()])
-      showToast(`Cert uploaded — DJ ${result.djNumber} → ${result.productCode}`, 'success')
+      showToast(`QR ready — DJ ${result.djNumber}`, 'success')
     } catch (err) {
       setCertError(err.message)
+      setCertStep(0)
       showToast('Error: ' + err.message, 'error')
     } finally {
       setCertUploading(false)
@@ -196,13 +204,48 @@ export default function GeneratePage() {
           <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Upload Final Test Certificate</label>
           <p className="text-afl-muted text-sm mb-3">Drop a PDF — DJ number and product code extracted automatically.</p>
           <input type="file" accept=".pdf" onChange={handleCertUpload} className="hidden" id="cert-upload-input" />
-          <button
-            onClick={() => document.getElementById('cert-upload-input').click()}
-            disabled={certUploading}
-            className="px-5 py-2.5 rounded-xl text-sm font-heading font-semibold bg-emerald-500 text-white hover:bg-emerald-600 disabled:bg-gray-300 transition-colors cursor-pointer"
-          >
-            {certUploading ? 'Uploading & Processing...' : 'Upload Certificate PDF'}
-          </button>
+          {!certUploading && (
+            <button
+              onClick={() => document.getElementById('cert-upload-input').click()}
+              className="px-5 py-2.5 rounded-xl text-sm font-heading font-semibold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors cursor-pointer"
+            >
+              Upload Certificate PDF
+            </button>
+          )}
+          {certUploading && (
+            <div className="space-y-2 mt-2">
+              {[
+                { step: 1, label: 'Reading PDF...' },
+                { step: 2, label: 'Uploading certificate to server...' },
+                { step: 3, label: 'Linking DJ number & product code...' },
+                { step: 4, label: 'QR code ready!' },
+              ].map(({ step, label }) => (
+                <div key={step} className={`flex items-center gap-3 text-sm transition-all duration-300 ${
+                  certStep >= step ? 'opacity-100' : 'opacity-30'
+                }`}>
+                  {certStep > step ? (
+                    <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  ) : certStep === step ? (
+                    <span className="w-6 h-6 rounded-full bg-afl-cyan flex items-center justify-center shrink-0">
+                      <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
+                    </span>
+                  ) : (
+                    <span className="w-6 h-6 rounded-full bg-gray-200 shrink-0" />
+                  )}
+                  <span className={certStep > step ? 'text-emerald-600 font-medium' : certStep === step ? 'text-afl-navy font-semibold' : 'text-gray-400'}>
+                    {label}
+                  </span>
+                </div>
+              ))}
+              {/* Progress bar */}
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
+                <div
+                  className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${Math.min(certStep * 25, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
           {certError && <p className="text-red-600 text-sm mt-2">{certError}</p>}
         </div>
 
