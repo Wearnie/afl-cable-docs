@@ -166,7 +166,7 @@ export function findDocuments(productCode) {
       if (excludes.some(ex => patternMatches(matchCode, ex))) continue
     }
 
-    if (entry.type === 'Installation') {
+    if (entry.type === 'Installation' || entry.type === 'Storage & Handling') {
       installationDocs.push({ ...entry })
     } else if (found[entry.type] === undefined) {
       otherDocs.push({ ...entry })
@@ -406,5 +406,6 @@ export const docTypeInfo = {
   'Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'CERT' },
   'Final Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'FTC' },
   Installation: { label: 'Installation Guide', color: '#003366', abbr: 'INST' },
+  'Storage & Handling': { label: 'Storage & Handling', color: '#003366', abbr: 'S&H' },
   Other: { label: 'Other Document', color: '#003366', abbr: 'DOC' },
 }

@@ -16,6 +16,7 @@ const VALID_DOC_TYPES = {
   stripping: 'stripping',
   'test-certificates': 'test-certificates',
   installation: 'installation',
+  'storage-handling': 'storage-handling',
   other: 'other',
 }
 
