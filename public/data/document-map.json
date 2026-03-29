@@ -806,7 +806,10 @@
     "type": "TDS",
     "name": "96F Stranded LT Cable with Sacrificial sheath",
     "path": "/tds/96F%20Stranded%20LT%20Cable%20with%20Sacrificial%20sheath.pdf",
-    "exclude": "L*H8**PM*****"
+    "exclude": [
+      "L*H8**PM*****",
+      "L*H8**PZ*****"
+    ]
   },
   {
     "pattern": "N*D8**PB*****",
@@ -874,7 +877,10 @@
     "type": "TDS",
     "name": "72F Stranded LT Cable with Sacrificial Sheath",
     "path": "/tds/72F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf",
-    "exclude": "L*H6**PM*****"
+    "exclude": [
+      "L*H6**PM*****",
+      "L*H6**PZ*****"
+    ]
   },
   {
     "pattern": "B************",
@@ -971,7 +977,10 @@
     "type": "TDS",
     "name": "144F Stranded LT Cable with Sacrificial Sheath",
     "path": "/tds/144F%20Stranded%20LT%20Cable%20with%20Sacrificial%20Sheath.pdf",
-    "exclude": "L*HC**PM*****"
+    "exclude": [
+      "L*HC**PM*****",
+      "L*HC**PZ*****"
+    ]
   },
   {
     "pattern": "L*K8**J******",
