@@ -1511,5 +1511,11 @@
     "name": "ADSS Installation Instructions",
     "path": "/installation/ADSS%20Installation%20Instructions.pdf",
     "exclude": "STI**********"
+  },
+  {
+    "pattern": "*************",
+    "type": "Storage & Handling",
+    "name": "Cable Storage and Handling Guide",
+    "path": "/storage-handling/Cable Storage and Handling Guide_08.25.pdf"
   }
 ]
