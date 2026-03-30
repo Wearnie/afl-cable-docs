@@ -1,22 +1,60 @@
-import { useState } from 'react'
-import { hasAdminKey, setAdminKey } from '../lib/adminApi'
+import { useState, useEffect } from 'react'
+import { hasAdminKey, setAdminKey, clearAdminKey, verifyAdminKey } from '../lib/adminApi'
 
 export default function AdminGate({ children }) {
-  const [authenticated, setAuthenticated] = useState(hasAdminKey())
+  const [state, setState] = useState('checking') // checking | login | authenticated
   const [key, setKey] = useState('')
   const [error, setError] = useState('')
+  const [verifying, setVerifying] = useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!key.trim()) {
-      setError('Enter the admin key')
+  // On mount: check if saved key is still valid
+  useEffect(() => {
+    if (!hasAdminKey()) {
+      setState('login')
       return
     }
-    setAdminKey(key.trim())
-    setAuthenticated(true)
+    verifyAdminKey()
+      .then(valid => {
+        setState(valid ? 'authenticated' : 'login')
+        if (!valid) clearAdminKey()
+      })
+      .catch(() => {
+        // Network error or no ADMIN_KEY set — allow through (dev mode)
+        setState('authenticated')
+      })
+  }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!key.trim()) { setError('Enter the admin key'); return }
+    setVerifying(true)
+    setError('')
+    try {
+      const valid = await verifyAdminKey(key.trim())
+      if (valid) {
+        setAdminKey(key.trim())
+        setState('authenticated')
+      } else {
+        setError('Invalid admin key')
+      }
+    } catch {
+      // If verify endpoint doesn't exist or network error, allow through
+      setAdminKey(key.trim())
+      setState('authenticated')
+    } finally {
+      setVerifying(false)
+    }
   }
 
-  if (authenticated) return children
+  if (state === 'checking') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-afl-light">
+        <p className="text-afl-muted font-heading">Verifying access...</p>
+      </div>
+    )
+  }
+
+  if (state === 'authenticated') return children
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
@@ -33,13 +71,14 @@ export default function AdminGate({ children }) {
           autoFocus
         />
 
-        {error && <p className="text-red-600 text-xs mt-2">{error}</p>}
+        {error && <p className="text-red-600 text-xs mt-2 font-medium">{error}</p>}
 
         <button
           type="submit"
-          className="w-full mt-4 px-4 py-3 bg-afl-navy text-white rounded-xl text-sm font-semibold font-heading hover:bg-afl-navy/90 transition-colors"
+          disabled={verifying}
+          className="w-full mt-4 px-4 py-3 bg-afl-navy text-white rounded-xl text-sm font-semibold font-heading hover:bg-afl-navy/90 disabled:bg-gray-300 transition-colors"
         >
-          Continue
+          {verifying ? 'Checking...' : 'Continue'}
         </button>
       </form>
     </div>

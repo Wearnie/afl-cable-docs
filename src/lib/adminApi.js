@@ -11,19 +11,38 @@ export function setAdminKey(key) {
   localStorage.setItem(ADMIN_KEY_STORAGE, key)
 }
 
+export function clearAdminKey() {
+  localStorage.removeItem(ADMIN_KEY_STORAGE)
+}
+
 function getAdminKey() {
   return localStorage.getItem(ADMIN_KEY_STORAGE) || ''
+}
+
+// Verify admin key against server — returns true/false
+export async function verifyAdminKey(keyOverride) {
+  const key = keyOverride || getAdminKey()
+  if (!key) return false
+  try {
+    const res = await fetch('/api/verify-admin', {
+      headers: { 'x-admin-key': key },
+    })
+    return res.ok
+  } catch {
+    return false
+  }
 }
 
 async function apiCall(path, options = {}) {
   // Cache-bust GET requests to avoid stale browser/CDN responses
   const isWrite = options.method && options.method !== 'GET'
   const url = isWrite ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
+  const adminKey = getAdminKey()
   const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(isWrite ? { 'x-admin-key': getAdminKey() } : {}),
+      ...(adminKey ? { 'x-admin-key': adminKey } : {}),
       ...options.headers,
     },
   })
@@ -35,6 +54,11 @@ async function apiCall(path, options = {}) {
     if (res.status === 413) throw new Error('File too large — try a smaller PDF (max ~10MB)')
     if (res.status === 504 || res.status === 502) throw new Error('Upload timed out — the file may be too large. Try a smaller PDF.')
     throw new Error(`Server error (${res.status}) — the request may have timed out. Try again or use a smaller file.`)
+  }
+
+  if (res.status === 401) {
+    clearAdminKey()
+    throw new Error('Session expired — please refresh and re-enter admin key')
   }
 
   if (!res.ok) {
