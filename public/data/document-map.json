@@ -1521,7 +1521,7 @@
     "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "*************",
+    "pattern": "************L",
     "type": "Storage & Handling",
     "name": "Cable Storage and Handling Guide",
     "path": "/storage-handling/Cable Storage and Handling Guide_08.25.pdf"
