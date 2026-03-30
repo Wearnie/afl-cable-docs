@@ -1503,12 +1503,6 @@
     "exclude": "STI**********"
   },
   {
-    "pattern": "*************",
-    "type": "Storage & Handling",
-    "name": "Cable Storage and Handling Guide",
-    "path": "/storage-handling/Cable Storage and Handling Guide_08.25.pdf"
-  },
-  {
     "pattern": "B************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -1525,5 +1519,12 @@
     "type": "TDS",
     "name": "144F Stranded LT Cable",
     "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "*************",
+    "type": "Storage & Handling",
+    "name": "Cable Storage and Handling Guide",
+    "path": "/storage-handling/Cable Storage and Handling Guide_08.25.pdf",
+    "exclude": "*Z***********"
   }
 ]
