@@ -712,12 +712,6 @@
     "path": "/tds/144F%20NM%20Flat%20FRP%20Armoured%20LT%20Cable%20-%20RMF6.pdf"
   },
   {
-    "pattern": "L*DC**PA144BE",
-    "type": "TDS",
-    "name": "144F Stranded LT Cable",
-    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "L*BC**PA144**",
     "type": "TDS",
     "name": "144F Stranded LT Cable with LSZH Sheath",
@@ -1519,5 +1513,11 @@
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
+  },
+  {
+    "pattern": "L*DC**PA144BX",
+    "type": "TDS",
+    "name": "144F Stranded LT Cable",
+    "path": "/tds/144F%20Stranded%20LT%20Cable.pdf"
   }
 ]
