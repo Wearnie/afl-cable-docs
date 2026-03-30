@@ -93,6 +93,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState('')
   const [deleted, setDeleted] = useState(false)
+  const [confirming, setConfirming] = useState(null) // null | 'hide' | 'delete'
   const original = useRef({ pattern: initialPattern, excludeDisplay: formatExclude(initialExclude) })
 
   const handleSave = async () => {
@@ -126,16 +127,24 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
     } finally { setSaving(false) }
   }
 
-  const handleHide = async () => {
+  const handleHide = () => {
     if (original.current.pattern === HIDDEN_PATTERN) return
-    if (!confirm(`Hide this pattern?\n\nOriginal: ${original.current.pattern}\nIt will be set to ${HIDDEN_PATTERN} so it never matches.`)) return
+    setConfirming('hide')
+  }
+
+  const confirmHide = () => {
+    setConfirming(null)
     setPattern(HIDDEN_PATTERN)
     setTimeout(() => handleSave(), 0)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!original.current.pattern) return
-    if (!confirm(`Delete pattern "${original.current.pattern}"?\n\nThis permanently removes it from document-map.json.`)) return
+    setConfirming('delete')
+  }
+
+  const confirmDelete = async () => {
+    setConfirming(null)
     setSaving(true); setStatus('Deleting...')
     try {
       await removeDocumentMappings([original.current.pattern], type)
@@ -225,7 +234,16 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
         className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold text-red-400 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 transition-colors">
         Delete
       </button>
-      {status && <span className={`text-xs ${status === 'Saved!' ? 'text-emerald-600' : status === 'Deleted' ? 'text-red-500' : 'text-gray-500'}`}>{status}</span>}
+      {confirming && (
+        <span className="flex items-center gap-1.5">
+          <span className="text-xs text-red-600 font-medium">{confirming === 'delete' ? 'Delete?' : 'Hide?'}</span>
+          <button onClick={confirming === 'delete' ? confirmDelete : confirmHide}
+            className="px-2 py-1 rounded text-xs font-bold bg-red-600 text-white hover:bg-red-700 transition-colors">Yes</button>
+          <button onClick={() => setConfirming(null)}
+            className="px-2 py-1 rounded text-xs font-bold bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors">No</button>
+        </span>
+      )}
+      {status && !confirming && <span className={`text-xs ${status === 'Saved!' ? 'text-emerald-600' : status === 'Deleted' ? 'text-red-500' : 'text-gray-500'}`}>{status}</span>}
     </div>
   )
 }
@@ -264,10 +282,6 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
   const handleReplacePDF = async (e) => {
     const file = e.target.files?.[0]
     if (!file || !file.name.toLowerCase().endsWith('.pdf')) return
-    if (!confirm(`Replace "${doc.name}" PDF with "${file.name}"?\n\nAll ${doc.patterns.length} pattern(s) will point to the new file.`)) {
-      e.target.value = ''
-      return
-    }
     setReplacing(true)
     try {
       const docTypeKey = DOC_TYPE_MAP[doc.type] || 'other'
@@ -746,14 +760,10 @@ export default function AuditPage() {
 
       <main className="max-w-7xl mx-auto px-6 -mt-8 pb-12">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-8 gap-3 mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
           <StatCard label="Unique PDFs" value={stats.uniquePDFs} color="bg-blue-800" />
           <StatCard label="Patterns" value={stats.totalPatterns} color="bg-blue-700" />
           <StatCard label="DJ Numbers" value={stats.totalDJs} color="bg-blue-700" />
-          <StatCard label="Product Codes" value={stats.uniqueCodes} color="bg-blue-700" />
-          <StatCard label="Coverage" value={`${stats.coverage}%`} color={parseFloat(stats.coverage) >= 80 ? 'bg-emerald-600' : 'bg-amber-600'} />
-          <StatCard label="Codes Matched" value={stats.coveredCodes} color="bg-emerald-600" />
-          <StatCard label="Orphaned" value={stats.orphaned} color={stats.orphaned === 0 ? 'bg-emerald-600' : 'bg-red-600'} />
           <StatCard label="Reviewed" value={`${reviewCount}/${stats.uniquePDFs}`} color={reviewCount === stats.uniquePDFs ? 'bg-emerald-600' : 'bg-amber-600'} />
         </div>
 
