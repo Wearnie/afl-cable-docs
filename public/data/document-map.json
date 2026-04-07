@@ -1525,11 +1525,5 @@
     "type": "TDS",
     "name": "288F Stranded LT Cable",
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
-    "pattern": "TESTPATTERN123*",
-    "type": "TDS",
-    "name": "288F Stranded LT Cable",
-    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
   }
 ]
