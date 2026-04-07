@@ -908,12 +908,6 @@
     "path": "/tds/288F%20MicroCore%20Stranded%20LT%20Cable.pdf"
   },
   {
-    "pattern": "LMDO**PA288BE",
-    "type": "TDS",
-    "name": "288F Stranded LT Cable",
-    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
-  },
-  {
     "pattern": "N************",
     "type": "Installation",
     "name": "Loose Tube Installation & Application Instructions",
@@ -1525,5 +1519,11 @@
     "type": "Storage & Handling",
     "name": "Cable Storage and Handling Guide",
     "path": "/storage-handling/Cable Storage and Handling Guide_08.25.pdf"
+  },
+  {
+    "pattern": "LMDO**PA288BX",
+    "type": "TDS",
+    "name": "288F Stranded LT Cable",
+    "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
   }
 ]
