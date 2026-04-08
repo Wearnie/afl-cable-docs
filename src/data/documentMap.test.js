@@ -397,6 +397,24 @@ describe('customer suffix handling', () => {
     expect(types).toContain('Stripping')
     expect(types).toContain('Installation')
   })
+
+  it('double suffix -SYDT-FP: customer suffix detected, no standard TDS', () => {
+    expect(getCustomerSuffix('NMD81DPB096BE-SYDT-FP')).toBe('-SYDT')
+    const docs = findDocuments('NMD81DPB096BE-SYDT-FP')
+    const types = docs.map(d => d.type)
+    expect(types).not.toContain('TDS')
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
+  })
+
+  it('double suffix -AG-FP: customer suffix detected, no standard TDS', () => {
+    expect(getCustomerSuffix('NMDC1FPB144BK-AG-FP')).toBe('-AG')
+    const docs = findDocuments('NMDC1FPB144BK-AG-FP')
+    const types = docs.map(d => d.type)
+    expect(types).not.toContain('TDS')
+    expect(types).toContain('Stripping')
+    expect(types).toContain('Installation')
+  })
 })
 
 // ============================================================================

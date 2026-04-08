@@ -82,10 +82,12 @@ export function stripSuffix(code) {
 
 /**
  * Check if a code has a customer-specific suffix.
+ * Strips safe suffixes first so double-suffix codes like -SYDT-FP are handled.
  * Returns the suffix (e.g. "-SYDT") or null.
  */
 export function getCustomerSuffix(code) {
-  const match = code.match(CUSTOMER_SUFFIXES)
+  const withoutSafe = code.replace(STRIP_SUFFIXES, '')
+  const match = withoutSafe.match(CUSTOMER_SUFFIXES)
   return match ? match[0] : null
 }
 
