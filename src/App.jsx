@@ -55,7 +55,7 @@ function HomePage() {
       {/* Header with AFL gradient */}
       <header className="afl-header-bg px-6 pt-8 pb-24">
         <div className="max-w-4xl mx-auto">
-          <div className="logo-dark-bg mb-10"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
+          <div className="logo-dark-bg mb-10"><img src="/afl-logo.png" alt="AFL" className="h-36 w-auto" /></div>
           <h1 className="text-white text-3xl font-bold font-heading leading-tight tracking-tight">
             Cable Documentation
           </h1>
