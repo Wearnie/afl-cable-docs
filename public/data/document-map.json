@@ -829,17 +829,6 @@
     "path": "/installation/Loose%20Tube%20Installation%20%26%20Application%20Instructions.pdf"
   },
   {
-    "pattern": "N*J**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": [
-      "NLJ**********",
-      "N5***********",
-      "N2***********"
-    ]
-  },
-  {
     "pattern": "L*D6**PA***BE",
     "type": "TDS",
     "name": "72F Stranded LT Cable",
@@ -1533,6 +1522,18 @@
     "exclude": [
       "NLD**********",
       "N5***********",
+      "NMD***PF*****"
+    ]
+  },
+  {
+    "pattern": "N*J**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "NLJ**********",
+      "N5***********",
+      "N2***********",
       "NMD***PF*****"
     ]
   }
