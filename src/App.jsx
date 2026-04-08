@@ -25,8 +25,8 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 -mt-10 pb-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <main className="max-w-5xl mx-auto px-6 -mt-10 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           <Link
             to="/generate"
             className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-cyan/40 transition-all duration-200"
@@ -82,6 +82,20 @@ function HomePage() {
             <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-rose-600 mb-1 font-heading">Admin</h2>
             <h3 className="text-xl font-bold text-afl-text font-heading">Pattern Audit</h3>
             <p className="text-afl-muted mt-2 text-sm leading-relaxed">Review, edit, and upload document pattern mappings.</p>
+          </Link>
+
+          <Link
+            to="/coverage"
+            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-violet-400/40 transition-all duration-200"
+          >
+            <div className="w-14 h-14 rounded-xl bg-violet-500 flex items-center justify-center mb-5 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M10.875 12c-.621 0-1.125.504-1.125 1.125M12 10.875c-.621 0-1.125.504-1.125 1.125m0 0v1.5c0 .621.504 1.125 1.125 1.125m-1.125-2.625c.621 0 1.125.504 1.125 1.125v1.5" />
+              </svg>
+            </div>
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-violet-600 mb-1 font-heading">Admin</h2>
+            <h3 className="text-xl font-bold text-afl-text font-heading">Coverage Audit</h3>
+            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Check document coverage for every product code.</p>
           </Link>
         </div>
       </main>
