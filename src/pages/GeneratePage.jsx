@@ -25,9 +25,12 @@ export default function GeneratePage() {
   const [certError, setCertError] = useState(null)
   const [certStep, setCertStep] = useState(0) // 0=idle, 1=reading, 2=uploading, 3=linking, 4=done
 
+  const [loadError, setLoadError] = useState(false)
+
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap(), loadFinalTestCerts(), loadDJOverrides()])
       .then(() => setMappingLoaded(true))
+      .catch(() => setLoadError(true))
   }, [])
 
   const productCode = mappingLoaded ? lookupProductCode(djNumber) : null
@@ -179,6 +182,11 @@ export default function GeneratePage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 160px, #F7F8FA 160px)' }}>
+      {loadError && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg z-50 text-sm">
+          Failed to load data — <button onClick={() => window.location.reload()} className="underline">refresh page</button>
+        </div>
+      )}
       {toast && (
         <div className={`fixed bottom-5 right-5 px-5 py-3 rounded-xl font-semibold text-white shadow-lg z-50 ${toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'}`}>
           {toast.msg}

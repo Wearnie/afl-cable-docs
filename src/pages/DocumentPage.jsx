@@ -13,7 +13,7 @@ export default function DocumentPage() {
   const [certsLoaded, setCertsLoaded] = useState(false)
 
   useEffect(() => {
-    loadFinalTestCerts().then(() => setCertsLoaded(true))
+    loadFinalTestCerts().then(() => setCertsLoaded(true)).catch(() => {})
   }, [])
 
   const documents = findDocuments(code)

@@ -130,6 +130,7 @@ export default function ReviewMatchesPage() {
   const [documentMap, setDocumentMap] = useState(null)
   const [productCodes, setProductCodes] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [selectedDoc, setSelectedDoc] = useState('')
   const [typeFilter, setTypeFilter] = useState('TDS')
   const [reviewStates, setReviewStates] = useState(getReviewState())
@@ -139,7 +140,7 @@ export default function ReviewMatchesPage() {
       setDocumentMap(docMap)
       setProductCodes(codes)
       setLoading(false)
-    })
+    }).catch(() => { setError(true); setLoading(false) })
   }, [])
 
   // Group documents by type
@@ -254,10 +255,12 @@ export default function ReviewMatchesPage() {
     return progress
   }, [docsByType, reviewStates])
 
-  if (loading) {
+  if (loading || error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
+        {error
+          ? <div className="text-center"><p className="text-red-600 font-semibold mb-2">Failed to load data</p><button onClick={() => window.location.reload()} className="text-sm text-afl-blue hover:underline">Refresh page</button></div>
+          : <p className="text-gray-500">Loading...</p>}
       </div>
     )
   }

@@ -51,8 +51,7 @@ async function commitFile(content, sha, message) {
 
 export default async function handler(req, res) {
   const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
-  const isWriteMethod = ['POST', 'PUT', 'DELETE'].includes(req.method)
-  res.setHeader('Access-Control-Allow-Origin', isWriteMethod ? ALLOWED_ORIGIN : '*')
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')

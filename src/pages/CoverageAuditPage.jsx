@@ -2,22 +2,10 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDocumentMap, findDocuments, invalidateDocumentMapCache, stripSuffix, getCustomerSuffix, docTypeInfo } from '../data/documentMap'
 import { editDocumentMappings, addDocumentMappings } from '../lib/adminApi'
+import Toast from '../components/Toast'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const DOC_TYPES = ['Stripping', 'TDS', 'Installation', 'Storage & Handling']
-
-// ============================================================================
-// Helpers
-// ============================================================================
-
-function Toast({ message, type, onDone }) {
-  useEffect(() => { const t = setTimeout(onDone, 3000); return () => clearTimeout(t) }, [onDone])
-  return (
-    <div className={`fixed bottom-5 right-5 px-5 py-3 rounded-2xl font-semibold text-white shadow-lg z-50 animate-fade-in ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'}`}>
-      {message}
-    </div>
-  )
-}
 
 function padExclude(val) {
   const v = val.toUpperCase().replace(/[^A-Z0-9*]/g, '')
@@ -293,6 +281,7 @@ export default function CoverageAuditPage() {
   const [productCodes, setProductCodes] = useState(null)
   const [documentMap, setDocumentMap] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [toast, setToast] = useState(null)
   const [search, setSearch] = useState('')
   const [familyFilter, setFamilyFilter] = useState('')
@@ -308,7 +297,7 @@ export default function CoverageAuditPage() {
       setProductCodes(codes)
       setDocumentMap(map)
       setLoading(false)
-    })
+    }).catch(() => { setError(true); setLoading(false) })
   }, [])
 
   const refreshData = useCallback(async () => {
@@ -368,6 +357,17 @@ export default function CoverageAuditPage() {
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-afl-cyan border-t-transparent rounded-full animate-spin" />
           <span className="text-afl-muted font-heading font-semibold">Loading coverage data...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-afl-light">
+        <div className="text-center">
+          <p className="text-red-600 font-heading font-semibold mb-2">Failed to load data</p>
+          <button onClick={() => window.location.reload()} className="text-sm text-afl-blue hover:underline">Refresh page</button>
         </div>
       </div>
     )

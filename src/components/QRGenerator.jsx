@@ -9,56 +9,49 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
   const handlePrint = () => {
     const printContent = printRef.current
     const printWindow = window.open('', '_blank')
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>QR Label - DJ ${dj}</title>
-          <style>
-            @page { size: 62mm 40mm; margin: 2mm; }
-            body {
-              margin: 0;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              height: 100vh;
-              font-family: Arial, sans-serif;
-            }
-            .label { text-align: center; }
-            .dj {
-              font-size: 11px;
-              font-weight: bold;
-              font-family: monospace;
-              margin-top: 4px;
-              letter-spacing: 1.5px;
-            }
-            .code {
-              font-size: 7px;
-              font-weight: bold;
-              font-family: monospace;
-              margin-top: 1px;
-              color: #444;
-            }
-            .brand {
-              font-size: 7px;
-              color: #666;
-              margin-top: 2px;
-            }
-            svg { width: 30mm; height: 30mm; }
-          </style>
-        </head>
-        <body>
-          <div class="label">
-            ${printContent.querySelector('svg').outerHTML}
-            ${dj ? `<div class="dj">DJ ${dj}</div>` : ''}
-            ${productCode ? `<div class="code">${productCode}</div>` : ''}
-            <div class="brand">AFL Cable Docs</div>
-          </div>
-        </body>
-      </html>
-    `)
-    printWindow.document.close()
+    const doc = printWindow.document
+
+    // Build the print document safely using DOM methods (no document.write)
+    doc.open()
+    const style = doc.createElement('style')
+    style.textContent = `
+      @page { size: 62mm 40mm; margin: 2mm; }
+      body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: Arial, sans-serif; }
+      .label { text-align: center; }
+      .dj { font-size: 11px; font-weight: bold; font-family: monospace; margin-top: 4px; letter-spacing: 1.5px; }
+      .code { font-size: 7px; font-weight: bold; font-family: monospace; margin-top: 1px; color: #444; }
+      .brand { font-size: 7px; color: #666; margin-top: 2px; }
+      svg { width: 30mm; height: 30mm; }
+    `
+    doc.head.appendChild(style)
+    doc.title = `QR Label - DJ ${dj}`
+
+    const label = doc.createElement('div')
+    label.className = 'label'
+
+    // Clone the SVG safely instead of using outerHTML in a template string
+    const svgClone = printContent.querySelector('svg').cloneNode(true)
+    label.appendChild(doc.adoptNode(svgClone))
+
+    if (dj) {
+      const djDiv = doc.createElement('div')
+      djDiv.className = 'dj'
+      djDiv.textContent = `DJ ${dj}`
+      label.appendChild(djDiv)
+    }
+    if (productCode) {
+      const codeDiv = doc.createElement('div')
+      codeDiv.className = 'code'
+      codeDiv.textContent = productCode
+      label.appendChild(codeDiv)
+    }
+    const brandDiv = doc.createElement('div')
+    brandDiv.className = 'brand'
+    brandDiv.textContent = 'AFL Cable Docs'
+    label.appendChild(brandDiv)
+
+    doc.body.appendChild(label)
+    doc.close()
     printWindow.focus()
     printWindow.print()
   }

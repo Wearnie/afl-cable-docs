@@ -96,12 +96,13 @@ export default function ReviewPage() {
   const [expandedCode, setExpandedCode] = useState(null) // productCode being assigned
   const [expandedType, setExpandedType] = useState(null) // doc type being assigned
   const [assignments, setAssignments] = useState({}) // key: `${code}-${type}` → { name, url, pattern }
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     Promise.all([loadDJMapping(), loadDocumentMap()]).then(([data]) => {
       setMapping(data)
       setLoading(false)
-    })
+    }).catch(() => { setError(true); setLoading(false) })
   }, [])
 
   const candidates = useMemo(() => mapping ? getCandidatesByType() : {}, [mapping])
@@ -212,10 +213,12 @@ export default function ReviewPage() {
     navigator.clipboard.writeText(lines.join('\n'))
   }, [assignments])
 
-  if (loading) {
+  if (loading || error) {
     return (
       <div className="min-h-screen bg-afl-light flex items-center justify-center">
-        <p className="text-afl-muted font-body">Loading DJ mappings...</p>
+        {error
+          ? <div className="text-center"><p className="text-red-600 font-semibold mb-2">Failed to load data</p><button onClick={() => window.location.reload()} className="text-sm text-afl-blue hover:underline">Refresh page</button></div>
+          : <p className="text-afl-muted font-body">Loading DJ mappings...</p>}
       </div>
     )
   }

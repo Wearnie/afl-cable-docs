@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { loadDocumentMap, patternMatches, stripSuffix } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
 import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
+import Toast from '../components/Toast'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 const TYPE_OPTIONS = ['TDS', 'Stripping', 'Installation', 'Storage & Handling', 'Other']
@@ -55,15 +56,6 @@ function CodeVsPattern({ code, pattern }) {
         return <span key={i} className="text-red-600 font-bold bg-red-50">{code[i]}</span>
       })}
     </span>
-  )
-}
-
-function Toast({ message, type, onDone }) {
-  useEffect(() => { const t = setTimeout(onDone, 3000); return () => clearTimeout(t) }, [onDone])
-  return (
-    <div className={`fixed bottom-5 right-5 px-5 py-3 rounded-xl font-semibold text-white shadow-lg z-50 animate-fade-in ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'}`}>
-      {message}
-    </div>
   )
 }
 
