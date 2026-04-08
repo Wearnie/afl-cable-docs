@@ -188,7 +188,7 @@ export default function GeneratePage() {
       <header className="px-6 pt-5 pb-14 no-print">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
+            <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
             <div className="border-l border-white/20 pl-4">
               <h1 className="text-lg font-bold text-white font-heading">QR Code Generator</h1>
               <p className="text-blue-300 text-sm">Generate QR labels for cable drums</p>

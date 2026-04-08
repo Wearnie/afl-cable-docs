@@ -269,7 +269,7 @@ export default function ReviewMatchesPage() {
       <header className="px-6 pt-5 pb-14">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
+            <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
             <div className="flex gap-3">
               <Link to="/audit" className="text-blue-200 hover:text-white text-sm transition-colors">← Audit</Link>
               <Link to="/" className="text-blue-200 hover:text-white text-sm transition-colors">Home</Link>

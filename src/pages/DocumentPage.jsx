@@ -34,7 +34,7 @@ export default function DocumentPage() {
       {/* Header — logo top-left, product code right */}
       <header className="px-6 pt-5 pb-14">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
+          <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
           {isValidLength && (
             <div className="bg-white/15 backdrop-blur-sm rounded-lg px-3.5 py-1.5">
               <span className="font-mono text-[13px] text-white tracking-[0.2em] font-medium">

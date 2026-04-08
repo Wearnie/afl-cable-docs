@@ -141,6 +141,14 @@ h1, h2, h3, h4, h5, h6 {
   color: #00C0F3;
 }
 
+/* Logo on dark backgrounds — white pill container */
+.logo-dark-bg {
+  background: white;
+  border-radius: 12px;
+  padding: 6px 14px;
+  display: inline-block;
+}
+
 @media print {
   .no-print { display: none !important; }
   .print-only { display: block !important; }

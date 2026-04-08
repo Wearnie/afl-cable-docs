@@ -77,7 +77,7 @@ function HomePage() {
       {/* Header with AFL gradient */}
       <header className="afl-header-bg px-6 pt-8 pb-24">
         <div className="max-w-4xl mx-auto">
-          <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto mb-10" />
+          <div className="logo-dark-bg mb-10"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
           <h1 className="text-white text-3xl font-bold font-heading leading-tight tracking-tight">
             Cable Documentation
           </h1>
@@ -89,13 +89,39 @@ function HomePage() {
 
       {/* Cards */}
       <main className="max-w-4xl mx-auto px-6 -mt-12 pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {cards.map((card, i) => (
+        {/* Hero card — QR Sticker Generator */}
+        <Link
+          to={cards[0].to}
+          className="card-enter gradient-border-hover group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-lg transition-all duration-300 mb-4"
+        >
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl afl-gradient flex items-center justify-center text-white shadow-md shrink-0 group-hover:scale-105 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-afl-cyan mb-1 font-heading">Generator</h2>
+              <h3 className="text-2xl font-bold text-afl-text font-heading">QR Sticker Generator</h3>
+              <p className="text-afl-muted mt-1 text-sm leading-relaxed">Generate scannable QR labels for cable drums with product code and DJ number.</p>
+            </div>
+            <div className="ml-auto shrink-0 text-afl-cyan group-hover:translate-x-1 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </Link>
+
+        {/* Secondary cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {cards.slice(1).map((card, i) => (
             <Link
               key={card.to}
               to={card.to}
               className="card-enter gradient-border-hover group block bg-white p-6 rounded-2xl shadow-sm border border-afl-border hover:shadow-lg transition-all duration-300"
-              style={{ animationDelay: `${i * 80}ms` }}
+              style={{ animationDelay: `${(i + 1) * 80}ms` }}
             >
               <div className="w-11 h-11 rounded-xl afl-gradient flex items-center justify-center mb-4 text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
                 {card.icon}

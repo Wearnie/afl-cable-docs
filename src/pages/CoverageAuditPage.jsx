@@ -381,7 +381,7 @@ export default function CoverageAuditPage() {
       <header className="afl-header-bg px-6 pt-6 pb-20">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-5">
-            <Link to="/"><img src="/afl-logo.svg" alt="AFL" className="h-10 w-auto" /></Link>
+            <Link to="/" className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-8 w-auto" /></Link>
             <div>
               <h1 className="text-white text-xl font-bold font-heading tracking-tight">Coverage Audit</h1>
               <p className="text-white/50 text-xs font-medium">Document coverage for every product code</p>

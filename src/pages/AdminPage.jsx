@@ -48,7 +48,7 @@ function AdminPageInner() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto" />
+              <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
               <div className="border-l border-white/20 pl-4">
                 <h1 className="text-lg font-bold text-white font-heading">Admin</h1>
                 <p className="text-blue-300 text-sm">Upload documents and manage mappings</p>
