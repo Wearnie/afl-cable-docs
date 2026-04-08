@@ -112,7 +112,14 @@ async function extractFromPdf(base64Data) {
   // Only strip safe suffixes (packaging variants) — keep customer suffixes like -SYDT, -TMR, -AG
   // so the DJ mapping preserves the customer-specific code
   const rawCode = itemMatch[1].toUpperCase()
+  if (rawCode.length > 25) {
+    throw new Error(`Item Code "${rawCode}" is too long (${rawCode.length} chars). Expected a product code like "TVBQ55AA024AQ"`)
+  }
   const productCode = rawCode.replace(/(?:-(?:FP|ESS|SH2|ANT|TMC))+$/i, '')
+  const baseCode = productCode.replace(/(?:-(?:SYDT|TMR|AG|SIE|FLH|EM))+$/i, '')
+  if (baseCode.length !== 13) {
+    throw new Error(`Product code "${productCode}" does not resolve to a valid 13-character AFL code (got ${baseCode.length} chars)`)
+  }
 
   return {
     djNumber: jobMatch[1],

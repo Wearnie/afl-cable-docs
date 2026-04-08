@@ -77,7 +77,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'File too large (max 10MB)' })
     }
 
-    const filePath = `public/docs/${folder}/${fileName}`
+    // Sanitize fileName to prevent path traversal
+    const safeName = fileName.replace(/[^a-zA-Z0-9._\- ]/g, '')
+    if (!safeName || safeName.startsWith('.')) {
+      return res.status(400).json({ error: 'Invalid file name' })
+    }
+    const filePath = `public/docs/${folder}/${safeName}`
 
     // Check if file already exists
     let existingSha = null
