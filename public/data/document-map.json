@@ -574,14 +574,10 @@
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
     "path": "/stripping/LMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": ["*L***********", "LQD**********"]
-  },
-  {
-    "pattern": "L*H**********",
-    "type": "Stripping",
-    "name": "LMHx Cable Stripping Instructions",
-    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "*Q***********"
+    "exclude": [
+      "*L***********",
+      "LQD**********"
+    ]
   },
   {
     "pattern": "L*K**********",
@@ -1525,5 +1521,15 @@
     "type": "TDS",
     "name": "288F Stranded LT Cable",
     "path": "/tds/288F%20Stranded%20LT%20Cable.pdf"
+  },
+  {
+    "pattern": "L*H**********",
+    "type": "Stripping",
+    "name": "LMHx Cable Stripping Instructions",
+    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "*Q***********",
+      "L*H***PZ*****"
+    ]
   }
 ]
