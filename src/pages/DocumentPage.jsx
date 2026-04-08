@@ -30,7 +30,7 @@ export default function DocumentPage() {
   const hasDjButNoCert = djNumber && !finalTestCert
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 160px, #F0F4F8 160px)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 160px, #F7F8FA 160px)' }}>
       {/* Header — logo top-left, product code right */}
       <header className="px-6 pt-5 pb-14">
         <div className="max-w-lg mx-auto flex items-center justify-between">

@@ -221,7 +221,7 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 200px, #F0F4F8 200px)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 200px, #F7F8FA 200px)' }}>
       <header className="px-6 pt-5 pb-14">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">

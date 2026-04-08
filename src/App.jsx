@@ -12,91 +12,105 @@ import CoverageAuditPage from './pages/CoverageAuditPage'
 import ReviewMatchesPage from './pages/ReviewMatchesPage'
 import AdminGate from './components/AdminGate'
 
+const cards = [
+  {
+    to: '/generate',
+    label: 'Generator',
+    title: 'QR Stickers',
+    desc: 'Generate scannable QR labels for cable drums.',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/upload',
+    label: 'Upload',
+    title: 'Test Certs',
+    desc: 'Upload Final Test Certificates — DJ and product code read from PDF.',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+      </svg>
+    ),
+  },
+  {
+    to: '/dj/03429835',
+    label: 'Preview',
+    title: 'Example Scan',
+    desc: 'See what a customer sees — all 5 documents.',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/audit',
+    label: 'Admin',
+    title: 'Pattern Audit',
+    desc: 'Review, edit, and upload document pattern mappings.',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/coverage',
+    label: 'Admin',
+    title: 'Coverage Audit',
+    desc: 'Check document coverage for every product code.',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+      </svg>
+    ),
+  },
+]
+
 function HomePage() {
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 240px, #F0F4F8 240px)' }}>
-      <header className="px-6 pt-6 pb-20">
-        <div className="max-w-2xl mx-auto">
-          <img src="/afl-logo.svg" alt="AFL" className="h-14 w-auto mb-8" />
-          <h1 className="text-white text-3xl font-bold font-heading leading-tight">
+    <div className="min-h-screen bg-afl-light">
+      {/* Header with AFL gradient */}
+      <header className="afl-header-bg px-6 pt-8 pb-24">
+        <div className="max-w-4xl mx-auto">
+          <img src="/afl-logo.svg" alt="AFL" className="h-12 w-auto mb-10" />
+          <h1 className="text-white text-3xl font-bold font-heading leading-tight tracking-tight">
             Cable Documentation
           </h1>
-          <p className="text-blue-300 mt-1.5 text-[15px]">Quick access to product documents and QR labels</p>
+          <p className="text-white/60 mt-2 text-[15px] font-medium">
+            Quick access to product documents and QR labels
+          </p>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 -mt-10 pb-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-          <Link
-            to="/generate"
-            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-cyan/40 transition-all duration-200"
-          >
-            <div className="w-14 h-14 rounded-xl bg-afl-cyan flex items-center justify-center mb-5 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
-              </svg>
-            </div>
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-cyan mb-1 font-heading">Generator</h2>
-            <h3 className="text-xl font-bold text-afl-text font-heading">QR Stickers</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Generate scannable QR labels for cable drums.</p>
-          </Link>
-
-          <Link
-            to="/upload"
-            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-emerald-400/40 transition-all duration-200"
-          >
-            <div className="w-14 h-14 rounded-xl bg-emerald-500 flex items-center justify-center mb-5 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-            </div>
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-600 mb-1 font-heading">Upload</h2>
-            <h3 className="text-xl font-bold text-afl-text font-heading">Test Certs</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Upload Final Test Certificates — DJ and product code read from PDF.</p>
-          </Link>
-
-          <Link
-            to="/dj/03429835"
-            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-afl-blue/40 transition-all duration-200"
-          >
-            <div className="w-14 h-14 rounded-xl bg-afl-blue flex items-center justify-center mb-5 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-            </div>
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-blue mb-1 font-heading">Preview</h2>
-            <h3 className="text-xl font-bold text-afl-text font-heading">Example Scan</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">See what a customer sees — all 5 documents.</p>
-          </Link>
-
-          <Link
-            to="/audit"
-            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-rose-400/40 transition-all duration-200"
-          >
-            <div className="w-14 h-14 rounded-xl bg-rose-500 flex items-center justify-center mb-5 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-            </div>
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-rose-600 mb-1 font-heading">Admin</h2>
-            <h3 className="text-xl font-bold text-afl-text font-heading">Pattern Audit</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Review, edit, and upload document pattern mappings.</p>
-          </Link>
-
-          <Link
-            to="/coverage"
-            className="group block bg-white p-8 rounded-2xl shadow-sm border border-afl-border hover:shadow-md hover:border-violet-400/40 transition-all duration-200"
-          >
-            <div className="w-14 h-14 rounded-xl bg-violet-500 flex items-center justify-center mb-5 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M10.875 12c-.621 0-1.125.504-1.125 1.125M12 10.875c-.621 0-1.125.504-1.125 1.125m0 0v1.5c0 .621.504 1.125 1.125 1.125m-1.125-2.625c.621 0 1.125.504 1.125 1.125v1.5" />
-              </svg>
-            </div>
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-violet-600 mb-1 font-heading">Admin</h2>
-            <h3 className="text-xl font-bold text-afl-text font-heading">Coverage Audit</h3>
-            <p className="text-afl-muted mt-2 text-sm leading-relaxed">Check document coverage for every product code.</p>
-          </Link>
+      {/* Cards */}
+      <main className="max-w-4xl mx-auto px-6 -mt-12 pb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {cards.map((card, i) => (
+            <Link
+              key={card.to}
+              to={card.to}
+              className="card-enter gradient-border-hover group block bg-white p-6 rounded-2xl shadow-sm border border-afl-border hover:shadow-lg transition-all duration-300"
+              style={{ animationDelay: `${i * 80}ms` }}
+            >
+              <div className="w-11 h-11 rounded-xl afl-gradient flex items-center justify-center mb-4 text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
+                {card.icon}
+              </div>
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-afl-cyan mb-1 font-heading">
+                {card.label}
+              </h2>
+              <h3 className="text-lg font-bold text-afl-text font-heading leading-snug">
+                {card.title}
+              </h3>
+              <p className="text-afl-muted mt-1.5 text-[13px] leading-relaxed">
+                {card.desc}
+              </p>
+            </Link>
+          ))}
         </div>
       </main>
     </div>

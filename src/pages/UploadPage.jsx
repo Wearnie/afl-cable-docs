@@ -60,7 +60,7 @@ function UploadPageInner() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 160px, #F0F4F8 160px)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 160px, #F7F8FA 160px)' }}>
       <header className="px-6 pt-5 pb-14 no-print">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">

@@ -1,6 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
-  <!-- Blue rounded square icon -->
-  <rect x="0" y="4" width="52" height="52" rx="8" fill="#0072CE"/>
+  <defs>
+    <linearGradient id="afl-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00C0F3"/>
+      <stop offset="100%" stop-color="#004282"/>
+    </linearGradient>
+  </defs>
+  <!-- Blue gradient rounded square icon -->
+  <rect x="0" y="4" width="52" height="52" rx="10" fill="url(#afl-grad)"/>
   <!-- Stylised F shape inside -->
   <path d="M14 14h26v7H22v6h14v7H22v14h-8V14z" fill="white"/>
   <!-- AFL text -->

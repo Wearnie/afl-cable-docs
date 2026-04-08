@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-afl-navy: #003366;
-  --color-afl-blue: #0072CE;
-  --color-afl-cyan: #00B5E2;
-  --color-afl-light: #F0F4F8;
+  /* AFL Brand — sourced from aflglobal.com */
+  --color-afl-navy: #004282;
+  --color-afl-blue: #0089C2;
+  --color-afl-cyan: #00C0F3;
+  --color-afl-light: #F7F8FA;
   --color-afl-card: #FFFFFF;
-  --color-afl-border: #DEE3EA;
-  --color-afl-text: #1B2A3D;
+  --color-afl-border: #E2E7ED;
+  --color-afl-text: #1A2332;
   --color-afl-muted: #6B7A8D;
   --font-heading: 'Outfit', system-ui, sans-serif;
   --font-body: 'Source Sans 3', system-ui, sans-serif;
@@ -20,26 +21,57 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--color-afl-text);
+  background: var(--color-afl-light);
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
 }
 
+/* AFL signature gradient — dark navy to bright cyan */
+.afl-gradient {
+  background: linear-gradient(135deg, #004282 0%, #0069A8 40%, #00C0F3 100%);
+}
+
+.afl-gradient-text {
+  background: linear-gradient(135deg, #004282, #00C0F3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle mesh background for headers */
+.afl-header-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(0, 192, 243, 0.15), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(0, 137, 194, 0.12), transparent),
+    linear-gradient(135deg, #004282 0%, #003A6F 30%, #004A8C 60%, #005EA4 100%);
+}
+
 /* Staggered card entrance */
 @keyframes cardIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .card-enter {
-  animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out both;
 }
 
 /* Accordion expand */
@@ -51,6 +83,62 @@ h1, h2, h3, h4, h5, h6 {
 .slide-down {
   animation: slideDown 0.3s ease-out both;
   overflow: hidden;
+}
+
+/* Gradient border accent on hover */
+.gradient-border-hover {
+  position: relative;
+}
+.gradient-border-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #004282, #00C0F3);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.gradient-border-hover:hover::before {
+  opacity: 1;
+}
+
+/* Pill button style */
+.afl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 42px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  transition: all 0.2s ease;
+  font-family: var(--font-heading);
+}
+
+.afl-btn-primary {
+  background: #00C0F3;
+  color: white;
+  border: 2px solid transparent;
+}
+.afl-btn-primary:hover {
+  background: #00A8D8;
+  box-shadow: 0 4px 14px rgba(0, 192, 243, 0.3);
+}
+
+.afl-btn-outline {
+  background: transparent;
+  color: #004282;
+  border: 2px solid #E2E7ED;
+}
+.afl-btn-outline:hover {
+  border-color: #00C0F3;
+  color: #00C0F3;
 }
 
 @media print {

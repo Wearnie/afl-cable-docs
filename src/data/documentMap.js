@@ -401,11 +401,11 @@ export function decodeProductCode(productCode) {
 // ============================================================================
 
 export const docTypeInfo = {
-  TDS: { label: 'Technical Data Sheet', color: '#003366', abbr: 'TDS' },
-  Stripping: { label: 'Stripping Instructions', color: '#003366', abbr: 'STRIP' },
-  'Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'CERT' },
-  'Final Test Certificate': { label: 'Test Certificate', color: '#003366', abbr: 'FTC' },
-  Installation: { label: 'Installation Guide', color: '#003366', abbr: 'INST' },
-  'Storage & Handling': { label: 'Storage & Handling', color: '#003366', abbr: 'S&H' },
-  Other: { label: 'Other Document', color: '#003366', abbr: 'DOC' },
+  TDS: { label: 'Technical Data Sheet', color: '#004282', abbr: 'TDS' },
+  Stripping: { label: 'Stripping Instructions', color: '#004282', abbr: 'STRIP' },
+  'Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'CERT' },
+  'Final Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'FTC' },
+  Installation: { label: 'Installation Guide', color: '#004282', abbr: 'INST' },
+  'Storage & Handling': { label: 'Storage & Handling', color: '#004282', abbr: 'S&H' },
+  Other: { label: 'Other Document', color: '#004282', abbr: 'DOC' },
 }

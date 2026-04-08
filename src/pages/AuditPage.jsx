@@ -742,7 +742,7 @@ export default function AuditPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #003366 0%, #003366 200px, #F0F4F8 200px)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 200px, #F7F8FA 200px)' }}>
       {toast && <Toast message={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
 
       <header className="px-6 pt-5 pb-14">
