@@ -1515,17 +1515,6 @@
     ]
   },
   {
-    "pattern": "N*D**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": [
-      "NLD**********",
-      "N5***********",
-      "NMD***PF*****"
-    ]
-  },
-  {
     "pattern": "N*J**********",
     "type": "Stripping",
     "name": "NMDx Cable Stripping Instructions",
@@ -1535,6 +1524,18 @@
       "N5***********",
       "N2***********",
       "NMD***PF*****"
+    ]
+  },
+  {
+    "pattern": "N*D**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "NLD**********",
+      "N5***********",
+      "NMD***PF*****",
+      "NQD***EF*****"
     ]
   }
 ]
