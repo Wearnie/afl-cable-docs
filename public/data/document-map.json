@@ -24,12 +24,6 @@
     "path": "/stripping/NLDx%20Cable%20Stripping%20Instructions.pdf"
   },
   {
-    "pattern": "RLD**********",
-    "type": "Stripping",
-    "name": "RLD Cable Stripping Instructions",
-    "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf"
-  },
-  {
     "pattern": "S*J**********",
     "type": "Stripping",
     "name": "SMJx Cable Stripping Instructions (Double Jacket)",
@@ -1536,6 +1530,17 @@
       "N5***********",
       "NMD***PF*****",
       "NQD***EF*****"
+    ]
+  },
+  {
+    "pattern": "RLD**********",
+    "type": "Stripping",
+    "name": "RLD Cable Stripping Instructions",
+    "path": "/stripping/RLD%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "RLD***FI*****",
+      "RLD***FF*****",
+      "RLD***PF*****"
     ]
   }
 ]
