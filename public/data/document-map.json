@@ -553,16 +553,6 @@
     "exclude": "TVA**********"
   },
   {
-    "pattern": "N*D**********",
-    "type": "Stripping",
-    "name": "NMDx Cable Stripping Instructions",
-    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": [
-      "NLD**********",
-      "N5***********"
-    ]
-  },
-  {
     "pattern": "L*J**********",
     "type": "Stripping",
     "name": "LMDx Cable Stripping Instructions",
@@ -1533,6 +1523,17 @@
     "exclude": [
       "*L***********",
       "L*H***PZ*****"
+    ]
+  },
+  {
+    "pattern": "N*D**********",
+    "type": "Stripping",
+    "name": "NMDx Cable Stripping Instructions",
+    "path": "/stripping/NMDx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "NLD**********",
+      "N5***********",
+      "NMD***PF*****"
     ]
   }
 ]
