@@ -1,48 +1,69 @@
-// Admin API client
-// Handles API calls to Vercel serverless functions
+// Auth API client — two-tier: dispatch (QR + certs) and admin (full access)
+// Uses sessionStorage (clears when browser closes)
 
-const ADMIN_KEY_STORAGE = 'afl_admin_key'
+const KEY_STORAGE = 'afl_auth_key'
+const ROLE_STORAGE = 'afl_auth_role'
 
-export function hasAdminKey() {
-  return !!localStorage.getItem(ADMIN_KEY_STORAGE)
+export function hasAuthKey() {
+  return !!sessionStorage.getItem(KEY_STORAGE)
 }
 
-export function setAdminKey(key) {
-  localStorage.setItem(ADMIN_KEY_STORAGE, key)
+export function getAuthRole() {
+  return sessionStorage.getItem(ROLE_STORAGE) || null
 }
 
-export function clearAdminKey() {
-  localStorage.removeItem(ADMIN_KEY_STORAGE)
+export function setAuth(key, role) {
+  sessionStorage.setItem(KEY_STORAGE, key)
+  sessionStorage.setItem(ROLE_STORAGE, role)
 }
 
-function getAdminKey() {
-  return localStorage.getItem(ADMIN_KEY_STORAGE) || ''
+export function clearAuth() {
+  sessionStorage.removeItem(KEY_STORAGE)
+  sessionStorage.removeItem(ROLE_STORAGE)
 }
 
-// Verify admin key against server — returns true/false
-export async function verifyAdminKey(keyOverride) {
-  const key = keyOverride || getAdminKey()
-  if (!key) return false
+function getAuthKey() {
+  return sessionStorage.getItem(KEY_STORAGE) || ''
+}
+
+// Backwards-compatible aliases (used by existing code)
+export const hasAdminKey = hasAuthKey
+export function setAdminKey(key) { setAuth(key, 'admin') }
+export const clearAdminKey = clearAuth
+
+/**
+ * Verify a key against the server. Returns { valid, role } or { valid: false }.
+ */
+export async function verifyKey(keyOverride) {
+  const key = keyOverride || getAuthKey()
+  if (!key) return { valid: false }
   try {
     const res = await fetch('/api/verify-admin', {
       headers: { 'x-admin-key': key },
     })
-    return res.ok
+    if (!res.ok) return { valid: false }
+    const data = await res.json()
+    return { valid: true, role: data.role || 'admin' }
   } catch {
-    return false
+    return { valid: false }
   }
 }
 
+// Backwards-compatible alias
+export async function verifyAdminKey(keyOverride) {
+  const { valid } = await verifyKey(keyOverride)
+  return valid
+}
+
 async function apiCall(path, options = {}) {
-  // Cache-bust GET requests to avoid stale browser/CDN responses
   const isWrite = options.method && options.method !== 'GET'
   const url = isWrite ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
-  const adminKey = getAdminKey()
+  const authKey = getAuthKey()
   const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(adminKey ? { 'x-admin-key': adminKey } : {}),
+      ...(authKey ? { 'x-admin-key': authKey } : {}),
       ...options.headers,
     },
   })
@@ -57,8 +78,12 @@ async function apiCall(path, options = {}) {
   }
 
   if (res.status === 401) {
-    clearAdminKey()
-    throw new Error('Session expired — please refresh and re-enter admin key')
+    clearAuth()
+    throw new Error('Session expired — please refresh and sign in again')
+  }
+
+  if (res.status === 403) {
+    throw new Error('Admin access required for this action')
   }
 
   if (!res.ok) {
@@ -145,7 +170,6 @@ export async function saveDJOverrides(djNumber, exclude, include) {
 }
 
 // Final Test Certificate API
-// The server extracts DJ number and product code from the PDF automatically
 
 export async function uploadFinalTestCert(file) {
   const base64 = await new Promise((resolve, reject) => {

@@ -127,8 +127,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/generate" element={<AdminGate><GeneratePage /></AdminGate>} />
-      <Route path="/upload" element={<AdminGate><UploadPage /></AdminGate>} />
+      <Route path="/generate" element={<AdminGate minRole="dispatch"><GeneratePage /></AdminGate>} />
+      <Route path="/upload" element={<AdminGate minRole="dispatch"><UploadPage /></AdminGate>} />
       <Route path="/review" element={<AdminGate><ReviewPage /></AdminGate>} />
       <Route path="/admin" element={<AdminGate><AdminPage /></AdminGate>} />
       <Route path="/audit" element={<AdminGate><AuditPage /></AdminGate>} />

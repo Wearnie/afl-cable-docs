@@ -8,7 +8,7 @@
 //
 // Stores the PDF at public/docs/final-test-certs/{djNumber}.pdf
 
-import { requireAdmin } from './lib/auth.js'
+import { requireDispatch } from './lib/auth.js'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 const pdf = require('pdf-parse/lib/pdf-parse.js')
@@ -139,7 +139,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  try { requireAdmin(req) } catch (err) {
+  try { requireDispatch(req) } catch (err) {
     return res.status(err.status || 500).json({ error: err.message })
   }
 
