@@ -580,13 +580,6 @@
     ]
   },
   {
-    "pattern": "L*K**********",
-    "type": "Stripping",
-    "name": "LMHx Cable Stripping Instructions",
-    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
-    "exclude": "*L***********"
-  },
-  {
     "pattern": "S*JC**LE***BK",
     "type": "TDS",
     "name": "144 Fibre Long Span ADSS Cable",
@@ -1529,6 +1522,16 @@
     "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
     "exclude": [
       "*Q***********",
+      "L*H***PZ*****"
+    ]
+  },
+  {
+    "pattern": "L*K**********",
+    "type": "Stripping",
+    "name": "LMHx Cable Stripping Instructions",
+    "path": "/stripping/LMHx%20Cable%20Stripping%20Instructions.pdf",
+    "exclude": [
+      "*L***********",
       "L*H***PZ*****"
     ]
   }
