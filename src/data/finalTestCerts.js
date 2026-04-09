@@ -5,7 +5,7 @@ let cache = null
 
 export async function loadFinalTestCerts() {
   if (cache) return cache
-  const res = await fetch(`/data/final-test-certs.json?_t=${Date.now()}`)
+  const res = await fetch(`/api/final-test-certs?_t=${Date.now()}`)
   cache = await res.json()
   return cache
 }
