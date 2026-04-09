@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { hasAuthKey, getAuthRole, setAuth, clearAuth, verifyKey } from '../lib/adminApi'
 
 const AuthContext = createContext(null)
@@ -7,7 +8,19 @@ export function useAuth() {
   return useContext(AuthContext)
 }
 
+// Routes accessible without login (QR code scans)
+const PUBLIC_PREFIXES = ['/dj/']
+
+function isPublicRoute(pathname) {
+  if (PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) return true
+  // /:productCode — any single-segment path that isn't a known app route
+  const appRoutes = ['/', '/generate', '/upload', '/review', '/admin', '/audit', '/coverage', '/review-matches']
+  if (!appRoutes.includes(pathname) && /^\/[^/]+$/.test(pathname)) return true
+  return false
+}
+
 export default function AuthProvider({ children }) {
+  const location = useLocation()
   const [state, setState] = useState('checking') // checking | login | authenticated
   const [role, setRole] = useState(null)
   const [key, setKey] = useState('')
@@ -65,6 +78,15 @@ export default function AuthProvider({ children }) {
     setRole(null)
     setKey('')
     setState('login')
+  }
+
+  // Public routes (QR code pages) skip auth entirely
+  if (isPublicRoute(location.pathname)) {
+    return (
+      <AuthContext.Provider value={{ role: null, signOut: () => {} }}>
+        {children}
+      </AuthContext.Provider>
+    )
   }
 
   if (state === 'checking') {
