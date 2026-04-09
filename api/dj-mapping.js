@@ -1,68 +1,21 @@
-// Vercel Serverless Function: DJ Mapping CRUD
+// Azure Blob Storage: DJ Mapping CRUD
 // GET  /api/dj-mapping         → returns full mapping
 // GET  /api/dj-mapping?dj=123  → returns single entry
-// POST /api/dj-mapping         → add/update entries, commits to GitHub
-// DELETE /api/dj-mapping       → remove an entry, commits to GitHub
+// POST /api/dj-mapping         → add/update entries
+// DELETE /api/dj-mapping       → remove entries
 
 import { requireAdmin } from './lib/auth.js'
+import { readJSON, writeJSON } from './lib/blob-storage.js'
 
-const GITHUB_REPO = process.env.GITHUB_REPO || 'Wearnie/afl-cable-docs'
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
-const FILE_PATH = 'public/data/dj-mapping.json'
-
-async function githubRequest(path, options = {}) {
-  const token = process.env.GITHUB_TOKEN
-  if (!token) throw new Error('GITHUB_TOKEN not configured')
-
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/${path}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  })
-
-  if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`GitHub API ${res.status}: ${body}`)
-  }
-  return res.json()
-}
-
-async function getCurrentFile() {
-  const data = await githubRequest(`contents/${FILE_PATH}?ref=${GITHUB_BRANCH}`)
-  const content = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'))
-  return { content, sha: data.sha }
-}
-
-async function commitFile(content, sha, message) {
-  return githubRequest(`contents/${FILE_PATH}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      message,
-      content: Buffer.from(JSON.stringify(content, null, 2)).toString('base64'),
-      sha,
-      branch: GITHUB_BRANCH,
-    }),
-  })
-}
+const BLOB_PATH = 'data/dj-mapping.json'
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGIN = process.env.CORS_ORIGIN || 'https://afl-cable-docs.vercel.app'
-  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key')
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
-    return res.status(200).end()
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end()
 
   try {
     if (req.method === 'GET') {
-      const { content } = await getCurrentFile()
+      const content = await readJSON(BLOB_PATH, {})
       const { dj } = req.query || {}
 
       if (dj) {
@@ -73,18 +26,16 @@ export default async function handler(req, res) {
       return res.json(content)
     }
 
-    // Auth required for all write operations
     try { requireAdmin(req) } catch (err) {
       return res.status(err.status || 500).json({ error: err.message })
     }
 
     if (req.method === 'POST') {
-      const { entries } = req.body // { entries: { "12345678": "LMDXXXXXX", ... } }
+      const { entries } = req.body
       if (!entries || typeof entries !== 'object') {
         return res.status(400).json({ error: 'Body must include { entries: { djNumber: productCode, ... } }' })
       }
 
-      // Validate entries
       for (const [dj, code] of Object.entries(entries)) {
         const cleanDj = dj.replace(/\D/g, '')
         if (cleanDj.length !== 8) {
@@ -95,27 +46,19 @@ export default async function handler(req, res) {
         }
       }
 
-      const { content, sha } = await getCurrentFile()
+      const content = await readJSON(BLOB_PATH, {})
 
       const added = []
       const updated = []
       for (const [dj, code] of Object.entries(entries)) {
         const cleanDj = dj.replace(/\D/g, '')
         const cleanCode = code.toUpperCase()
-        if (content[cleanDj]) {
-          updated.push(cleanDj)
-        } else {
-          added.push(cleanDj)
-        }
+        if (content[cleanDj]) updated.push(cleanDj)
+        else added.push(cleanDj)
         content[cleanDj] = cleanCode
       }
 
-      const parts = []
-      if (added.length) parts.push(`Add ${added.length} DJ mapping${added.length > 1 ? 's' : ''}`)
-      if (updated.length) parts.push(`Update ${updated.length} DJ mapping${updated.length > 1 ? 's' : ''}`)
-      const message = parts.join(', ') || 'Update DJ mappings'
-
-      await commitFile(content, sha, message)
+      await writeJSON(BLOB_PATH, content)
 
       return res.json({
         success: true,
@@ -126,12 +69,12 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const { djNumbers } = req.body // { djNumbers: ["12345678", ...] }
+      const { djNumbers } = req.body
       if (!Array.isArray(djNumbers) || djNumbers.length === 0) {
         return res.status(400).json({ error: 'Body must include { djNumbers: ["12345678", ...] }' })
       }
 
-      const { content, sha } = await getCurrentFile()
+      const content = await readJSON(BLOB_PATH, {})
 
       const removed = []
       for (const dj of djNumbers) {
@@ -146,7 +89,7 @@ export default async function handler(req, res) {
         return res.json({ success: true, removed: 0, message: 'No matching entries found' })
       }
 
-      await commitFile(content, sha, `Remove ${removed.length} DJ mapping${removed.length > 1 ? 's' : ''}`)
+      await writeJSON(BLOB_PATH, content)
 
       return res.json({ success: true, removed: removed.length, total: Object.keys(content).length })
     }
