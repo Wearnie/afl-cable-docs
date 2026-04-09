@@ -160,6 +160,15 @@ export async function editDocumentMappings(remove, add) {
   })
 }
 
+// Delete Document API
+
+export async function deleteDocument(path) {
+  return apiCall('/api/delete-doc', {
+    method: 'DELETE',
+    body: JSON.stringify({ path }),
+  })
+}
+
 // DJ Override API
 
 export async function saveDJOverrides(djNumber, exclude, include) {

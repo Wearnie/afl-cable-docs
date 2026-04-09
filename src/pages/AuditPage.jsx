@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDocumentMap, patternMatches, stripSuffix } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
-import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc } from '../lib/adminApi'
+import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc, deleteDocument } from '../lib/adminApi'
 import Toast from '../components/Toast'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
@@ -241,7 +241,7 @@ function PatternRow({ pattern: initialPattern, exclude: initialExclude, type, na
 }
 
 // Single document card
-function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange, onDocReplaced }) {
+function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewChange, onDocReplaced, onDocDeleted }) {
   const [open, setOpen] = useState(defaultOpen || false)
   const [toast, setToast] = useState(null)
   const [extraPatterns, setExtraPatterns] = useState([])
@@ -249,6 +249,8 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
   const [editedPatterns, setEditedPatterns] = useState(new Map())
   const [reviewed, setReviewed] = useState(() => !!getReviewedDocs()[doc.path])
   const [replacing, setReplacing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [currentPath, setCurrentPath] = useState(doc.path)
   const replaceInputRef = useRef(null)
 
@@ -300,6 +302,20 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
     } finally {
       setReplacing(false)
       e.target.value = ''
+    }
+  }
+
+  const handleDeleteDocument = async () => {
+    setConfirmingDelete(false)
+    setDeleting(true)
+    try {
+      await deleteDocument(currentPath)
+      setToast({ msg: `Document deleted: ${currentPath}`, type: 'success' })
+      if (onDocDeleted) onDocDeleted()
+    } catch (err) {
+      setToast({ msg: 'Error: ' + err.message, type: 'error' })
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -366,11 +382,28 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
             <input type="file" accept=".pdf" ref={replaceInputRef} onChange={handleReplacePDF} className="hidden" />
             <button
               onClick={() => replaceInputRef.current?.click()}
-              disabled={replacing}
+              disabled={replacing || deleting}
               className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 disabled:opacity-50 transition-colors shrink-0"
             >
               {replacing ? 'Uploading...' : 'Replace PDF'}
             </button>
+            {!confirmingDelete ? (
+              <button
+                onClick={() => setConfirmingDelete(true)}
+                disabled={replacing || deleting}
+                className="px-3 py-1.5 rounded-lg text-xs font-heading font-bold text-red-400 border border-transparent hover:bg-red-50 hover:text-red-700 hover:border-red-200 disabled:opacity-50 transition-colors shrink-0"
+              >
+                {deleting ? 'Deleting...' : 'Delete Document'}
+              </button>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <span className="text-xs text-red-600 font-medium">Delete document and all its patterns?</span>
+                <button onClick={handleDeleteDocument}
+                  className="px-2 py-1 rounded text-xs font-bold bg-red-600 text-white hover:bg-red-700 transition-colors">Yes</button>
+                <button onClick={() => setConfirmingDelete(false)}
+                  className="px-2 py-1 rounded text-xs font-bold bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors">No</button>
+              </span>
+            )}
           </div>
 
           <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500 mt-4 mb-2">Patterns</h4>
@@ -589,14 +622,16 @@ export default function AuditPage() {
     setReviewCount(Object.keys(getReviewedDocs()).length)
   }, [])
 
-  useEffect(() => {
+  const reload = useCallback(() => {
     Promise.all([loadDocumentMap(), loadDJMapping()]).then(([docMap, djMap]) => {
       setDocumentMap(docMap)
       setDjMapping(djMap)
       setLoading(false)
       recountReviewed()
     })
-  }, [])
+  }, [recountReviewed])
+
+  useEffect(() => { reload() }, [])
 
   // Derived data
   const { docGroups, allProductCodes, djEntries, stats } = useMemo(() => {
@@ -814,7 +849,7 @@ export default function AuditPage() {
                 {type} <span className="text-gray-400 font-normal text-sm">({docs.length} of {allDocs.length} PDFs, {allDocs.reduce((s, d) => s + d.patterns.length, 0)} patterns)</span>
               </h2>
               {docs.map(doc => (
-                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} onReviewChange={recountReviewed} />
+                <DocumentCard key={doc.path} doc={doc} allProductCodes={allProductCodes} djEntries={djEntries} onReviewChange={recountReviewed} onDocDeleted={reload} />
               ))}
             </div>
           )
