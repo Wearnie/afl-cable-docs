@@ -1542,11 +1542,5 @@
       "RLD***FF*****",
       "RLD***PF*****"
     ]
-  },
-  {
-    "pattern": "LMH#*YF(*)##F",
-    "type": "Other",
-    "name": "Hand_Over",
-    "path": "/other/Hand_Over.pdf"
   }
 ]
