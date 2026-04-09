@@ -60,6 +60,27 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
     await navigator.clipboard.writeText(url)
   }
 
+  const handleDownload = () => {
+    const svg = printRef.current.querySelector('svg')
+    const svgData = new XMLSerializer().serializeToString(svg)
+    const canvas = document.createElement('canvas')
+    const size = 600 // High-res PNG
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.onload = () => {
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, size, size)
+      ctx.drawImage(img, 0, 0, size, size)
+      const a = document.createElement('a')
+      a.download = `QR-${dj || productCode}.png`
+      a.href = canvas.toDataURL('image/png')
+      a.click()
+    }
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-6 text-center">
       <div ref={printRef} className="inline-block p-4 bg-white rounded-xl">
@@ -71,10 +92,16 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
         />
       </div>
       <p className="font-mono text-[13px] text-afl-muted mt-3 break-all tracking-wide">{url}</p>
-      <div className="flex gap-3 mt-4 justify-center">
+      <div className="flex gap-3 mt-4 justify-center flex-wrap">
+        <button
+          onClick={handleDownload}
+          className="px-5 py-2.5 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition cursor-pointer font-heading"
+        >
+          Download QR
+        </button>
         <button
           onClick={handlePrint}
-          className="px-5 py-2.5 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition cursor-pointer font-heading"
+          className="px-5 py-2.5 border border-afl-border text-afl-text rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-pointer font-heading"
         >
           Print Sticker
         </button>
