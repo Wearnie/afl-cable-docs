@@ -11,13 +11,15 @@ import AuditPage from './pages/AuditPage'
 import CoverageAuditPage from './pages/CoverageAuditPage'
 import ReviewMatchesPage from './pages/ReviewMatchesPage'
 import AdminGate from './components/AdminGate'
+import AuthProvider, { useAuth } from './components/AuthProvider'
 
-const cards = [
+const allCards = [
   {
     to: '/generate',
     label: 'Generator',
     title: 'QR Stickers',
     desc: 'Generate scannable QR labels for cable drums.',
+    minRole: 'dispatch',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
@@ -30,6 +32,7 @@ const cards = [
     label: 'Admin',
     title: 'Pattern Audit',
     desc: 'Review, edit, and upload document pattern mappings.',
+    minRole: 'admin',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -41,6 +44,7 @@ const cards = [
     label: 'Admin',
     title: 'Coverage Audit',
     desc: 'Check document coverage for every product code.',
+    minRole: 'admin',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
@@ -49,7 +53,16 @@ const cards = [
   },
 ]
 
+function meetsMinRole(userRole, requiredRole) {
+  if (requiredRole === 'dispatch') return userRole === 'dispatch' || userRole === 'admin'
+  if (requiredRole === 'admin') return userRole === 'admin'
+  return false
+}
+
 function HomePage() {
+  const { role } = useAuth()
+  const cards = allCards.filter(card => meetsMinRole(role, card.minRole))
+
   return (
     <div className="min-h-screen bg-afl-light">
       {/* Header with AFL gradient */}
@@ -92,30 +105,32 @@ function HomePage() {
           </div>
         </Link>
 
-        {/* Secondary cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {cards.slice(1).map((card, i) => (
-            <Link
-              key={card.to}
-              to={card.to}
-              className="card-enter gradient-border-hover group block bg-white p-6 rounded-2xl shadow-sm border border-afl-border hover:shadow-lg transition-all duration-300"
-              style={{ animationDelay: `${(i + 1) * 80}ms` }}
-            >
-              <div className="w-11 h-11 rounded-xl afl-gradient flex items-center justify-center mb-4 text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
-                {card.icon}
-              </div>
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-afl-cyan mb-1 font-heading">
-                {card.label}
-              </h2>
-              <h3 className="text-lg font-bold text-afl-text font-heading leading-snug">
-                {card.title}
-              </h3>
-              <p className="text-afl-muted mt-1.5 text-[13px] leading-relaxed">
-                {card.desc}
-              </p>
-            </Link>
-          ))}
-        </div>
+        {/* Secondary cards — only shown if user has access */}
+        {cards.length > 1 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {cards.slice(1).map((card, i) => (
+              <Link
+                key={card.to}
+                to={card.to}
+                className="card-enter gradient-border-hover group block bg-white p-6 rounded-2xl shadow-sm border border-afl-border hover:shadow-lg transition-all duration-300"
+                style={{ animationDelay: `${(i + 1) * 80}ms` }}
+              >
+                <div className="w-11 h-11 rounded-xl afl-gradient flex items-center justify-center mb-4 text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
+                  {card.icon}
+                </div>
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-afl-cyan mb-1 font-heading">
+                  {card.label}
+                </h2>
+                <h3 className="text-lg font-bold text-afl-text font-heading leading-snug">
+                  {card.title}
+                </h3>
+                <p className="text-afl-muted mt-1.5 text-[13px] leading-relaxed">
+                  {card.desc}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   )
@@ -125,17 +140,19 @@ export default function App() {
   useEffect(() => { loadDocumentMap() }, [])
 
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/generate" element={<AdminGate minRole="dispatch"><GeneratePage /></AdminGate>} />
-      <Route path="/upload" element={<AdminGate minRole="dispatch"><UploadPage /></AdminGate>} />
-      <Route path="/review" element={<AdminGate><ReviewPage /></AdminGate>} />
-      <Route path="/admin" element={<AdminGate><AdminPage /></AdminGate>} />
-      <Route path="/audit" element={<AdminGate><AuditPage /></AdminGate>} />
-      <Route path="/coverage" element={<AdminGate><CoverageAuditPage /></AdminGate>} />
-      <Route path="/review-matches" element={<AdminGate><ReviewMatchesPage /></AdminGate>} />
-      <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
-      <Route path="/:productCode" element={<DocumentPage />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/generate" element={<GeneratePage />} />
+        <Route path="/upload" element={<UploadPage />} />
+        <Route path="/review" element={<AdminGate><ReviewPage /></AdminGate>} />
+        <Route path="/admin" element={<AdminGate><AdminPage /></AdminGate>} />
+        <Route path="/audit" element={<AdminGate><AuditPage /></AdminGate>} />
+        <Route path="/coverage" element={<AdminGate><CoverageAuditPage /></AdminGate>} />
+        <Route path="/review-matches" element={<AdminGate><ReviewMatchesPage /></AdminGate>} />
+        <Route path="/dj/:djNumber" element={<DJDocumentPage />} />
+        <Route path="/:productCode" element={<DocumentPage />} />
+      </Routes>
+    </AuthProvider>
   )
 }
