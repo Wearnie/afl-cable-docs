@@ -1,69 +1,94 @@
-// Auth API client — two-tier: dispatch (QR + certs) and admin (full access)
+// Auth API client — JWT-based with email/password login
 // Uses sessionStorage (clears when browser closes)
 
-const KEY_STORAGE = 'afl_auth_key'
-const ROLE_STORAGE = 'afl_auth_role'
+const TOKEN_KEY = 'afl_auth_token'
+const USER_KEY = 'afl_auth_user'
 
-export function hasAuthKey() {
-  return !!sessionStorage.getItem(KEY_STORAGE)
+// --- Session helpers ---
+
+export function hasAuthToken() {
+  return !!sessionStorage.getItem(TOKEN_KEY)
 }
 
-export function getAuthRole() {
-  return sessionStorage.getItem(ROLE_STORAGE) || null
-}
-
-export function setAuth(key, role) {
-  sessionStorage.setItem(KEY_STORAGE, key)
-  sessionStorage.setItem(ROLE_STORAGE, role)
-}
-
-export function clearAuth() {
-  sessionStorage.removeItem(KEY_STORAGE)
-  sessionStorage.removeItem(ROLE_STORAGE)
-}
-
-function getAuthKey() {
-  return sessionStorage.getItem(KEY_STORAGE) || ''
-}
-
-// Backwards-compatible aliases (used by existing code)
-export const hasAdminKey = hasAuthKey
-export function setAdminKey(key) { setAuth(key, 'admin') }
-export const clearAdminKey = clearAuth
-
-/**
- * Verify a key against the server. Returns { valid, role } or { valid: false }.
- */
-export async function verifyKey(keyOverride) {
-  const key = keyOverride || getAuthKey()
-  if (!key) return { valid: false }
+export function getAuthUser() {
   try {
-    const res = await fetch('/api/verify-admin', {
-      headers: { 'x-admin-key': key },
-    })
-    if (!res.ok) return { valid: false }
-    const data = await res.json()
-    return { valid: true, role: data.role || 'admin' }
+    return JSON.parse(sessionStorage.getItem(USER_KEY))
   } catch {
-    return { valid: false }
+    return null
   }
 }
 
-// Backwards-compatible alias
-export async function verifyAdminKey(keyOverride) {
-  const { valid } = await verifyKey(keyOverride)
-  return valid
+export function getAuthRole() {
+  return getAuthUser()?.role || null
 }
+
+export function setAuthSession(token, user) {
+  sessionStorage.setItem(TOKEN_KEY, token)
+  sessionStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
+export function clearAuth() {
+  sessionStorage.removeItem(TOKEN_KEY)
+  sessionStorage.removeItem(USER_KEY)
+}
+
+function getToken() {
+  return sessionStorage.getItem(TOKEN_KEY) || ''
+}
+
+// --- Auth API ---
+
+export async function login(email, password) {
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || 'Login failed')
+  return data // { token, user } or { mustChangePassword, tempToken, user }
+}
+
+export async function changePassword(newPassword, currentPassword) {
+  const token = getToken()
+  const res = await fetch('/api/auth/password', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ newPassword, currentPassword }),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || 'Password change failed')
+  return data // { token, user }
+}
+
+export async function verifySession() {
+  const token = getToken()
+  if (!token) return null
+  try {
+    const res = await fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok) return null
+    return await res.json() // { email, name, role }
+  } catch {
+    return null
+  }
+}
+
+// --- Generic API call with JWT ---
 
 async function apiCall(path, options = {}) {
   const isWrite = options.method && options.method !== 'GET'
   const url = isWrite ? path : `${path}${path.includes('?') ? '&' : '?'}_t=${Date.now()}`
-  const authKey = getAuthKey()
+  const token = getToken()
   const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(authKey ? { 'x-admin-key': authKey } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   })
@@ -93,7 +118,34 @@ async function apiCall(path, options = {}) {
   return data
 }
 
-// DJ Mapping API
+// --- User Management API (admin only) ---
+
+export async function listUsers() {
+  return apiCall('/api/auth/users')
+}
+
+export async function createUser(email, name, role, password) {
+  return apiCall('/api/auth/users', {
+    method: 'POST',
+    body: JSON.stringify({ email, name, role, password }),
+  })
+}
+
+export async function updateUser(email, updates) {
+  return apiCall('/api/auth/users', {
+    method: 'PUT',
+    body: JSON.stringify({ email, ...updates }),
+  })
+}
+
+export async function deleteUser(email) {
+  return apiCall('/api/auth/users', {
+    method: 'DELETE',
+    body: JSON.stringify({ email }),
+  })
+}
+
+// --- DJ Mapping API ---
 
 export async function fetchDJMapping() {
   return apiCall('/api/dj-mapping')
@@ -110,7 +162,7 @@ export async function removeDJMappings(djNumbers) {
   })
 }
 
-// Static Document Upload API (TDS, Stripping, etc.)
+// --- Static Document Upload API (TDS, Stripping, etc.) ---
 
 export async function uploadStaticDoc(docType, file) {
   const base64 = await new Promise((resolve, reject) => {
@@ -130,7 +182,7 @@ export async function uploadStaticDoc(docType, file) {
   })
 }
 
-// Document Map API
+// --- Document Map API ---
 
 export async function fetchDocumentMap() {
   return apiCall('/api/document-map')
@@ -160,7 +212,7 @@ export async function editDocumentMappings(remove, add) {
   })
 }
 
-// Delete Document API
+// --- Delete Document API ---
 
 export async function deleteDocument(path) {
   return apiCall('/api/delete-doc', {
@@ -169,7 +221,7 @@ export async function deleteDocument(path) {
   })
 }
 
-// DJ Override API
+// --- DJ Override API ---
 
 export async function saveDJOverrides(djNumber, exclude, include) {
   return apiCall('/api/dj-overrides', {
@@ -178,7 +230,7 @@ export async function saveDJOverrides(djNumber, exclude, include) {
   })
 }
 
-// Final Test Certificate API
+// --- Final Test Certificate API ---
 
 export async function uploadFinalTestCert(file) {
   const base64 = await new Promise((resolve, reject) => {
