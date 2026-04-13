@@ -19,8 +19,8 @@ if (!connStr) {
 // Initial admin accounts — update placeholder emails before running
 const SEED_USERS = [
   { email: 'tom.wearne@aflglobal.com', name: 'Tom Wearne', role: 'admin' },
-  { email: 'mitra@aflglobal.com',      name: 'Mitra',      role: 'admin' },  // TODO: update email
-  { email: 'jim@aflglobal.com',        name: 'Jim',        role: 'admin' },  // TODO: update email
+  { email: 'Mithra.BaluBavitha@aflglobal.com', name: 'Mithra BaluBavitha', role: 'admin' },
+  { email: 'Jim.Boukouvalas@aflglobal.com',   name: 'Jim Boukouvalas',    role: 'admin' },
 ]
 
 // Default temporary password — each user must change on first login
