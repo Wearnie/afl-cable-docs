@@ -291,7 +291,7 @@ export default function CoverageAuditPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`/data/product-codes.json?_t=${Date.now()}`).then(r => r.json()),
+      fetch(`/api/product-codes?_t=${Date.now()}`).then(r => r.json()),
       loadDocumentMap(),
     ]).then(([codes, map]) => {
       setProductCodes(codes)

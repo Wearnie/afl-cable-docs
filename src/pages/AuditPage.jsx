@@ -507,7 +507,7 @@ function UploadSection({ onToast }) {
 
     setUploading(true)
     const steps = [
-      { text: 'Uploading PDF to GitHub...', status: 'active' },
+      { text: 'Uploading PDF...', status: 'active' },
       { text: 'Creating pattern mappings...', status: '' },
     ]
     setProgress([...steps])

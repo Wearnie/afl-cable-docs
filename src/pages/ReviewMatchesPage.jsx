@@ -122,7 +122,7 @@ function CodeRow({ code, pattern, exclude, type, docName, docPath, tightness, re
 }
 
 async function loadProductCodes() {
-  const res = await fetch(`/data/product-codes.json?_t=${Date.now()}`)
+  const res = await fetch(`/api/product-codes?_t=${Date.now()}`)
   return res.json()
 }
 

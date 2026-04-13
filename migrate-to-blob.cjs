@@ -48,7 +48,7 @@ async function main() {
   // 1. Upload JSON data files
   console.log('=== JSON Data ===')
   const dataDir = path.join(__dirname, 'public', 'data')
-  const jsonFiles = ['document-map.json', 'dj-mapping.json', 'dj-doc-overrides.json', 'final-test-certs.json']
+  const jsonFiles = ['document-map.json', 'dj-mapping.json', 'dj-doc-overrides.json', 'final-test-certs.json', 'product-codes.json']
   for (const file of jsonFiles) {
     const localPath = path.join(dataDir, file)
     if (fs.existsSync(localPath)) {

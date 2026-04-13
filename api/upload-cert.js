@@ -58,6 +58,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Required: fileBase64' })
     }
 
+    // base64 encoding inflates ~33%, so 14MB base64 ≈ 10MB file
     if (fileBase64.length > 14 * 1024 * 1024) {
       return res.status(400).json({ error: 'File too large (max 10MB)' })
     }
