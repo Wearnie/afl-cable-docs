@@ -55,7 +55,7 @@ export async function changePassword(newPassword, currentPassword) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token ? { 'x-auth-token': `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ newPassword, currentPassword }),
   })
@@ -88,7 +88,7 @@ async function apiCall(path, options = {}) {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token ? { 'x-auth-token': `Bearer ${token}` } : {}),
       ...options.headers,
     },
   })

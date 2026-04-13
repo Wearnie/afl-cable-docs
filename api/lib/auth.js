@@ -11,7 +11,7 @@ const JWT_SECRET = () => process.env.JWT_SECRET
  * Returns { email, role, name } or null if invalid/missing.
  */
 export function verifyToken(req) {
-  const header = req.headers['authorization'] || req.headers['Authorization'] || ''
+  const header = req.headers['x-auth-token'] || req.headers['authorization'] || req.headers['Authorization'] || ''
   const match = header.match(/^Bearer\s+(.+)$/i)
   if (!match) return null
   try {
