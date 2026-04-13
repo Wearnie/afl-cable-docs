@@ -14,10 +14,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const content = await readJSON(BLOB_PATH, [])
+    const { data: content } = await readJSON(BLOB_PATH, [])
     return res.json(content)
   } catch (err) {
     console.error('Product codes API error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

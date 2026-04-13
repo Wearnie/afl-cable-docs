@@ -3,9 +3,6 @@
 import { verifyToken } from './lib/auth.js'
 
 export default function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-auth-token')
   if (req.method === 'OPTIONS') return res.status(200).end()
 
   if (!process.env.JWT_SECRET) {

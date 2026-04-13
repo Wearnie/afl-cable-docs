@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const data = await readJSON(BLOB_PATH, {})
+      const { data } = await readJSON(BLOB_PATH, {})
       return res.json(data)
     }
 
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Required: djNumber (8 digits)' })
       }
 
-      const data = await readJSON(BLOB_PATH, {})
+      const { data } = await readJSON(BLOB_PATH, {})
 
       data[djNumber] = {
         exclude: Array.isArray(exclude) ? exclude : [],
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
       const djNumber = req.query.dj
       if (!djNumber) return res.status(400).json({ error: 'Required: ?dj=12345678' })
 
-      const data = await readJSON(BLOB_PATH, {})
+      const { data } = await readJSON(BLOB_PATH, {})
       if (!data[djNumber]) {
         return res.json({ success: true, message: 'No overrides to remove' })
       }
@@ -67,6 +67,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
     console.error('DJ overrides API error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

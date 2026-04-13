@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const entries = await readJSON(BLOB_PATH, [])
+      const { data: entries } = await readJSON(BLOB_PATH, [])
       return res.json({ entries, count: entries.length })
     }
 
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         if (err) return res.status(400).json({ error: `Invalid entry (${entry.pattern}): ${err}` })
       }
 
-      const existing = await readJSON(BLOB_PATH, [])
+      const { data: existing } = await readJSON(BLOB_PATH, [])
 
       const updated = [...existing]
       for (const newEntry of newEntries) {
@@ -88,7 +88,7 @@ export default async function handler(req, res) {
         }
       }
 
-      const existing = await readJSON(BLOB_PATH, [])
+      const { data: existing } = await readJSON(BLOB_PATH, [])
 
       const removeItems = remove || []
       let updated
@@ -128,7 +128,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Required: entries [{pattern, type}] or patterns [string]' })
       }
 
-      const existing = await readJSON(BLOB_PATH, [])
+      const { data: existing } = await readJSON(BLOB_PATH, [])
       let updated
       if (deleteEntries && Array.isArray(deleteEntries)) {
         const deleteSet = new Set(deleteEntries.map(e => `${e.pattern}::${e.type}`))
@@ -156,6 +156,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
     console.error('Document map API error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const content = await readJSON(BLOB_PATH, {})
+      const { data: content } = await readJSON(BLOB_PATH, {})
       const { dj } = req.query || {}
 
       if (dj) {
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         }
       }
 
-      const content = await readJSON(BLOB_PATH, {})
+      const { data: content } = await readJSON(BLOB_PATH, {})
 
       const added = []
       const updated = []
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Body must include { djNumbers: ["12345678", ...] }' })
       }
 
-      const content = await readJSON(BLOB_PATH, {})
+      const { data: content } = await readJSON(BLOB_PATH, {})
 
       const removed = []
       for (const dj of djNumbers) {
@@ -97,6 +97,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
     console.error('DJ mapping API error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

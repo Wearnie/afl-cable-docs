@@ -1,7 +1,7 @@
 // /api/auth/users — user management (admin only)
 // GET: list all users, POST: create, PUT: update, DELETE: remove
 import bcrypt from 'bcryptjs'
-import { readJSON, writeJSON } from '../lib/blob-storage.js'
+import { readJSON, writeJSON, appendAuditLog } from '../lib/blob-storage.js'
 import { requireAdmin } from '../lib/auth.js'
 
 const USERS_PATH = 'data/users.json'
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const users = await readJSON(USERS_PATH, {})
+    const { data: users, etag } = await readJSON(USERS_PATH, {})
 
     // GET — list all users (strip password hashes)
     if (req.method === 'GET') {
@@ -60,7 +60,8 @@ export default async function handler(req, res) {
         createdAt: new Date().toISOString(),
         createdBy: req.user?.email || 'system',
       }
-      await writeJSON(USERS_PATH, users)
+      await writeJSON(USERS_PATH, users, etag)
+      await appendAuditLog({ user: req.user?.email, action: 'user-create', target: normalised, role })
       return res.json({ ok: true, email: normalised })
     }
 
@@ -76,6 +77,7 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'Role must be admin or dispatch' })
         }
         users[normalised].role = role
+        await appendAuditLog({ user: req.user?.email, action: 'user-role-change', target: normalised, role })
       }
       if (resetPassword) {
         if (resetPassword.length < 8) {
@@ -83,8 +85,9 @@ export default async function handler(req, res) {
         }
         users[normalised].passwordHash = await bcrypt.hash(resetPassword, 12)
         users[normalised].mustChangePassword = true
+        await appendAuditLog({ user: req.user?.email, action: 'user-password-reset', target: normalised })
       }
-      await writeJSON(USERS_PATH, users)
+      await writeJSON(USERS_PATH, users, etag)
       return res.json({ ok: true })
     }
 
@@ -98,13 +101,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Cannot delete your own account' })
       }
       delete users[normalised]
-      await writeJSON(USERS_PATH, users)
+      await writeJSON(USERS_PATH, users, etag)
+      await appendAuditLog({ user: req.user?.email, action: 'user-delete', target: normalised })
       return res.json({ ok: true })
     }
 
     return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
     console.error('Users API error:', err)
-    return res.status(500).json({ error: 'Internal server error' })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

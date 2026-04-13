@@ -3,7 +3,7 @@
 // stores the PDF in blob storage, updates the cert index and DJ mapping.
 
 import { requireDispatch } from './lib/auth.js'
-import { readJSON, writeJSON, uploadBlob } from './lib/blob-storage.js'
+import { readJSON, writeJSON, uploadBlob, appendAuditLog } from './lib/blob-storage.js'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 const pdf = require('pdf-parse/lib/pdf-parse.js')
@@ -74,20 +74,22 @@ export default async function handler(req, res) {
     await uploadBlob(pdfBlobPath, pdfBuffer)
 
     // 3. Update the certs JSON index
-    const certsIndex = await readJSON(CERTS_JSON_PATH, {})
+    const { data: certsIndex, etag: certsEtag } = await readJSON(CERTS_JSON_PATH, {})
     certsIndex[djNumber] = {
       url: `/docs/final-test-certs/${djNumber}.pdf`,
       name: certName,
       productCode,
       uploadedAt: new Date().toISOString(),
     }
-    await writeJSON(CERTS_JSON_PATH, certsIndex)
+    await writeJSON(CERTS_JSON_PATH, certsIndex, certsEtag)
 
     // 4. Update DJ → Product Code mapping
-    const djMapping = await readJSON(DJ_MAPPING_PATH, {})
+    const { data: djMapping, etag: djEtag } = await readJSON(DJ_MAPPING_PATH, {})
     const isNew = !djMapping[djNumber]
     djMapping[djNumber] = productCode
-    await writeJSON(DJ_MAPPING_PATH, djMapping)
+    await writeJSON(DJ_MAPPING_PATH, djMapping, djEtag)
+
+    await appendAuditLog({ user: req.user?.email, action: 'upload-cert', target: djNumber, productCode })
 
     return res.json({
       success: true,
@@ -99,6 +101,7 @@ export default async function handler(req, res) {
     })
   } catch (err) {
     console.error('Upload cert error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

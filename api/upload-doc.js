@@ -2,7 +2,7 @@
 // POST /api/upload-doc
 
 import { requireAdmin } from './lib/auth.js'
-import { uploadBlob, blobExists } from './lib/blob-storage.js'
+import { uploadBlob, blobExists, appendAuditLog } from './lib/blob-storage.js'
 
 const VALID_DOC_TYPES = {
   tds: 'tds',
@@ -56,6 +56,8 @@ export default async function handler(req, res) {
     const pdfBuffer = Buffer.from(fileBase64, 'base64')
     await uploadBlob(blobPath, pdfBuffer)
 
+    await appendAuditLog({ user: req.user?.email, action: 'upload-doc', target: `${folder}/${safeName}`, docType })
+
     return res.json({
       success: true,
       path: `/docs/${folder}/${fileName}`,
@@ -64,6 +66,7 @@ export default async function handler(req, res) {
     })
   } catch (err) {
     console.error('Upload doc error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

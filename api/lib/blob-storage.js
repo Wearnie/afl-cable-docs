@@ -18,7 +18,8 @@ function getContainerClient() {
 
 /**
  * Read a JSON file from blob storage.
- * Returns the parsed JSON, or defaultValue if the blob doesn't exist.
+ * Returns { data, etag } where etag can be passed to writeJSON for optimistic concurrency.
+ * If the blob doesn't exist, returns { data: defaultValue, etag: null }.
  */
 export async function readJSON(blobPath, defaultValue = {}) {
   const container = getContainerClient()
@@ -26,23 +27,29 @@ export async function readJSON(blobPath, defaultValue = {}) {
   try {
     const response = await blob.download(0)
     const text = await streamToString(response.readableStreamBody)
-    return JSON.parse(text)
+    return { data: JSON.parse(text), etag: response.etag }
   } catch (err) {
-    if (err.statusCode === 404) return defaultValue
+    if (err.statusCode === 404) return { data: defaultValue, etag: null }
     throw err
   }
 }
 
 /**
  * Write a JSON file to blob storage.
+ * Pass etag from readJSON for optimistic concurrency (409 on conflict).
+ * Omit etag for unconditional write.
  */
-export async function writeJSON(blobPath, data) {
+export async function writeJSON(blobPath, data, etag) {
   const container = getContainerClient()
   const blob = container.getBlockBlobClient(blobPath)
   const content = JSON.stringify(data, null, 2)
-  await blob.upload(content, content.length, {
+  const options = {
     blobHTTPHeaders: { blobContentType: 'application/json' },
-  })
+  }
+  if (etag) {
+    options.conditions = { ifMatch: etag }
+  }
+  await blob.upload(content, content.length, options)
 }
 
 /**
@@ -88,6 +95,22 @@ export function getBlobUrl(blobPath) {
   const container = getContainerClient()
   const blob = container.getBlockBlobClient(blobPath)
   return blob.url
+}
+
+/**
+ * Append an audit log entry. Fire-and-forget — errors are logged but not thrown.
+ * Uses append blobs for efficient sequential writes.
+ */
+export async function appendAuditLog(entry) {
+  try {
+    const container = getContainerClient()
+    const blob = container.getAppendBlobClient('data/audit-log.jsonl')
+    try { await blob.createIfNotExists() } catch {}
+    const line = JSON.stringify({ ...entry, timestamp: new Date().toISOString() }) + '\n'
+    await blob.appendBlock(line, line.length)
+  } catch (err) {
+    console.error('Audit log write failed:', err.message)
+  }
 }
 
 // Helper to read a stream into a string

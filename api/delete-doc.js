@@ -2,7 +2,7 @@
 // DELETE /api/delete-doc
 
 import { requireAdmin } from './lib/auth.js'
-import { readJSON, writeJSON, deleteBlob } from './lib/blob-storage.js'
+import { readJSON, writeJSON, deleteBlob, appendAuditLog } from './lib/blob-storage.js'
 
 const DOC_MAP_PATH = 'data/document-map.json'
 
@@ -26,6 +26,9 @@ export default async function handler(req, res) {
     }
 
     const cleanPath = docPath.startsWith('/') ? docPath.slice(1) : docPath
+    if (cleanPath.includes('..')) {
+      return res.status(400).json({ error: 'Invalid path' })
+    }
     const blobPath = `docs/${cleanPath}`
 
     const deleted = await deleteBlob(blobPath)
@@ -36,7 +39,7 @@ export default async function handler(req, res) {
     let removedPatterns = 0
     if (removePatterns) {
       try {
-        const entries = await readJSON(DOC_MAP_PATH, [])
+        const { data: entries } = await readJSON(DOC_MAP_PATH, [])
         const normalizedPath = docPath.startsWith('/') ? docPath : `/${docPath}`
         const filtered = entries.filter(e => e.path !== normalizedPath)
         removedPatterns = entries.length - filtered.length
@@ -49,6 +52,8 @@ export default async function handler(req, res) {
       }
     }
 
+    await appendAuditLog({ user: req.user?.email, action: 'delete-doc', target: docPath, removedPatterns })
+
     return res.json({
       success: true,
       deleted: docPath,
@@ -57,6 +62,7 @@ export default async function handler(req, res) {
     })
   } catch (err) {
     console.error('Delete doc error:', err)
-    return res.status(500).json({ error: err.message })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

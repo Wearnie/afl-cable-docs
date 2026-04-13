@@ -143,7 +143,7 @@ export default async function handler(req, res) {
     }
 
     // Check for changes against current data
-    const currentContent = await readJSON(BLOB_PATH, {})
+    const { data: currentContent } = await readJSON(BLOB_PATH, {})
     const currentCount = Object.keys(currentContent).length
     const newCount = Object.keys(mapping).length
 

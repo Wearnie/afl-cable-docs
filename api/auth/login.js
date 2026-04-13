@@ -1,7 +1,7 @@
 // POST /api/auth/login — authenticate with email + password, return JWT
 import bcrypt from 'bcryptjs'
 import { readJSON } from '../lib/blob-storage.js'
-import { signToken } from '../lib/auth.js'
+import { signToken, signRestrictedToken } from '../lib/auth.js'
 
 const USERS_PATH = 'data/users.json'
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const normalised = email.toLowerCase().trim()
 
   try {
-    const users = await readJSON(USERS_PATH, {})
+    const { data: users } = await readJSON(USERS_PATH, {})
     const user = users[normalised]
 
     if (!user) {
@@ -34,9 +34,9 @@ export default async function handler(req, res) {
 
     // Force password change on first login
     if (user.mustChangePassword) {
-      const tempToken = signToken(
+      const tempToken = signRestrictedToken(
         { email: normalised, role: user.role, name: user.name },
-        '15m' // short-lived token for password change only
+        'password-change'
       )
       return res.json({
         mustChangePassword: true,
@@ -52,6 +52,7 @@ export default async function handler(req, res) {
     })
   } catch (err) {
     console.error('Login error:', err)
-    return res.status(500).json({ error: 'Internal server error' })
+    const msg = process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Production' ? 'Internal server error' : err.message
+    return res.status(500).json({ error: msg })
   }
 }

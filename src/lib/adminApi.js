@@ -69,7 +69,7 @@ export async function verifySession() {
   if (!token) return null
   try {
     const res = await fetch('/api/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 'x-auth-token': `Bearer ${token}` },
     })
     if (!res.ok) return null
     return await res.json() // { email, name, role }
