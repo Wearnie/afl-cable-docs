@@ -321,7 +321,7 @@ export default function GeneratePage() {
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">DJ Number</label>
               <input
-                type="text" value={djInput} onChange={(e) => setDjInput(e.target.value)}
+                type="text" value={djInput} onChange={(e) => setDjInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="e.g. 03429835" maxLength={8}
                 className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
                 autoFocus
