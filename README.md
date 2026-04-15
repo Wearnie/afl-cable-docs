@@ -1,5 +1,7 @@
 # AFL Cable Docs
 
+> **Standing up a fresh instance?** → See [DEPLOY.md](./DEPLOY.md). Clone → Bicep → migrate data → smoke test. One working day end-to-end.
+
 Internal web app for AFL Global (Melbourne). Dispatch staff print QR labels for cable drums; customers scan the label to access the relevant product documents (TDS, stripping, installation, final test certificate).
 
 Stack: **React 19 + Vite** frontend, **Azure Functions** (Node.js) API, **Azure Blob Storage** for data + PDFs, served as an **Azure Static Web App**.
