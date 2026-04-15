@@ -6,8 +6,11 @@ import { loadFinalTestCerts, findFinalTestCert, invalidateFinalTestCertsCache } 
 import { loadDJOverrides, getDJOverrides, applyOverrides, reloadDJOverrides } from '../data/djOverrides'
 import { saveDJOverrides, uploadFinalTestCert, saveDJMapping } from '../lib/adminApi'
 import QRGenerator from '../components/QRGenerator'
+import { useAuth } from '../components/AuthProvider'
 
 export default function GeneratePage() {
+  const { role } = useAuth()
+  const isAdmin = role === 'admin'
   const [djInput, setDjInput] = useState('')
   const [mappingLoaded, setMappingLoaded] = useState(false)
   const [toast, setToast] = useState(null)
@@ -270,99 +273,114 @@ export default function GeneratePage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 -mt-6 pb-8 space-y-4 no-print">
-        {/* Cert Upload — primary workflow */}
+        {/* Create QR Code — primary entry point (DJ + product code combined) */}
         <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Upload Final Test Certificate</label>
-          <p className="text-afl-muted text-sm mb-3">Drop a PDF — DJ number and product code extracted automatically.</p>
-          <input type="file" accept=".pdf" onChange={handleCertUpload} className="hidden" id="cert-upload-input" />
-          {!certUploading && (
-            <button
-              onClick={() => document.getElementById('cert-upload-input').click()}
-              className="px-5 py-2.5 rounded-xl text-sm font-heading font-semibold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors cursor-pointer"
-            >
-              Upload Certificate PDF
-            </button>
-          )}
-          {certUploading && (
-            <div className="space-y-2 mt-2">
-              {[
-                { step: 1, label: 'Reading PDF...' },
-                { step: 2, label: 'Uploading certificate to server...' },
-                { step: 3, label: 'Linking DJ number & product code...' },
-                { step: 4, label: 'QR code ready!' },
-              ].map(({ step, label }) => (
-                <div key={step} className={`flex items-center gap-3 text-sm transition-all duration-300 ${
-                  certStep >= step ? 'opacity-100' : 'opacity-30'
-                }`}>
-                  {certStep > step ? (
-                    <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shrink-0">✓</span>
-                  ) : certStep === step ? (
-                    <span className="w-6 h-6 rounded-full bg-afl-cyan flex items-center justify-center shrink-0">
-                      <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
-                    </span>
-                  ) : (
-                    <span className="w-6 h-6 rounded-full bg-gray-200 shrink-0" />
-                  )}
-                  <span className={certStep > step ? 'text-emerald-600 font-medium' : certStep === step ? 'text-afl-navy font-semibold' : 'text-gray-400'}>
-                    {label}
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1 font-heading">
+            Create QR Code
+          </h2>
+          <p className="text-afl-muted text-xs mb-4">
+            Enter the DJ number and product code from the yellow sheet. Generates a scannable QR and saves the mapping.
+          </p>
+
+          {!newDrumRegistered ? (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">DJ Number</label>
+                <input
+                  type="text"
+                  value={newDjInput}
+                  onChange={(e) => setNewDjInput(e.target.value.replace(/\D/g, ''))}
+                  placeholder="8 digits, e.g. 03429835"
+                  maxLength={8}
+                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+                  autoFocus
+                />
+                <div className="flex items-center justify-between mt-1">
+                  <span className={`text-xs font-medium ${newDjValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                    {newDjNumber.length}/8 digits
                   </span>
                 </div>
-              ))}
-              {/* Progress bar */}
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
-                <div
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${Math.min(certStep * 25, 100)}%` }}
-                />
               </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Product Code</label>
+                <input
+                  type="text"
+                  value={newProductInput}
+                  onChange={(e) => setNewProductInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. LMDC1DPA144BE or LMDC1DPA144BE-SYDT"
+                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+                />
+                <div className="flex items-center justify-between mt-1">
+                  <span className={`text-xs font-medium ${newCodeValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                    {newProductCode.length ? (newCodeValid ? 'Valid code' : 'Base code must be 13 characters') : 'Enter code'}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleNewDrumRegister}
+                disabled={!newDrumValid || newRegistering}
+                className="w-full px-4 py-3 bg-afl-cyan text-white rounded-xl text-sm font-semibold font-heading hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {newRegistering ? 'Generating…' : 'Generate QR'}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-afl-light border border-afl-border">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.djNumber}</span>
+                <span className="text-afl-muted mx-1">→</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.productCode}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleNewDrumReset}
+                className="text-xs font-semibold text-afl-muted hover:text-afl-navy underline"
+              >
+                Create another
+              </button>
             </div>
           )}
-          {certError && <p className="text-red-600 text-sm mt-2">{certError}</p>}
         </div>
 
-        {certResult && (
+        {newDrumRegistered && (
           <>
-            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ Number</span>
-                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.djNumber}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Product Code</span>
-                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.productCode}</span>
-              </div>
-            </div>
-
-            <QRGenerator djNumber={certResult.djNumber} productCode={certResult.productCode} baseUrl={baseUrl} />
+            <QRGenerator djNumber={newDrumRegistered.djNumber} productCode={newDrumRegistered.productCode} baseUrl={baseUrl} />
 
             <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
-                Documents that will appear ({certDocuments.length + 1})
+                Documents that will appear ({newDrumDocuments.length})
               </h3>
-              <div className="space-y-2">
-                {certDocuments.map((doc, i) => {
-                  const info = docTypeInfo[doc.type] || docTypeInfo.Other
-                  return (
-                    <div key={`cert-${doc.path}-${i}`} className="flex items-center gap-3">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
-                        {info.label}
-                      </span>
-                      <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
-                    </div>
-                  )
-                })}
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
-                    Test Certificate
-                  </span>
-                  <span className="text-afl-text truncate text-[13px] flex-1">{certResult.name}</span>
+              {newDrumDocuments.length > 0 ? (
+                <div className="space-y-2">
+                  {newDrumDocuments.map((doc, i) => {
+                    const info = docTypeInfo[doc.type] || docTypeInfo.Other
+                    return (
+                      <div key={`${doc.path}-${i}`} className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                          {info.label}
+                        </span>
+                        <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
+                      </div>
+                    )
+                  })}
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ minWidth: '110px' }}>
+                      Test Cert
+                    </span>
+                    <span className="text-[13px]">Pending — upload when ready</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="text-afl-muted text-sm">No documents match this product code.</p>
+              )}
             </div>
 
             <div className="text-center">
               <Link
-                to={`/dj/${certResult.djNumber}`}
+                to={`/dj/${newDrumRegistered.djNumber}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →
@@ -371,15 +389,18 @@ export default function GeneratePage() {
           </>
         )}
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 pt-4">
-          <div className="flex-1 border-t border-afl-border" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or enter DJ number manually</span>
-          <div className="flex-1 border-t border-afl-border" />
-        </div>
+        {/* Manual DJ lookup + overrides — admin only */}
+        {isAdmin && (
+          <>
+            {/* Divider */}
+            <div className="flex items-center gap-3 pt-4">
+              <div className="flex-1 border-t border-afl-border" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or look up an existing DJ</span>
+              <div className="flex-1 border-t border-afl-border" />
+            </div>
 
-        {/* DJ Number Input */}
-        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+            {/* DJ Number Input */}
+            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
           <div className="space-y-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">DJ Number</label>
@@ -387,7 +408,6 @@ export default function GeneratePage() {
                 type="text" value={djInput} onChange={(e) => setDjInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="e.g. 03429835" maxLength={8}
                 className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
-                autoFocus
               />
               <div className="flex items-center justify-between mt-2">
                 <span className={`text-xs font-medium ${djNumber.length === 8 ? 'text-emerald-600' : 'text-afl-muted'}`}>
@@ -576,120 +596,109 @@ export default function GeneratePage() {
             </div>
           </>
         )}
+          </>
+        )}
+
         {/* Divider */}
         <div className="flex items-center gap-3 pt-4">
           <div className="flex-1 border-t border-afl-border" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or register a new drum</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or upload a final test certificate</span>
           <div className="flex-1 border-t border-afl-border" />
         </div>
 
-        {/* Register new drum — DJ + product code combined */}
+        {/* Cert Upload — secondary workflow (bottom) */}
         <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1 font-heading">
-            Register New Drum
-          </h2>
-          <p className="text-afl-muted text-xs mb-4">
-            For drums where the DJ isn't in the lookup yet. Saves the DJ → Product Code mapping, then generates the QR.
-          </p>
-
-          {!newDrumRegistered ? (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">DJ Number</label>
-                <input
-                  type="text"
-                  value={newDjInput}
-                  onChange={(e) => setNewDjInput(e.target.value.replace(/\D/g, ''))}
-                  placeholder="8 digits, e.g. 03429835"
-                  maxLength={8}
-                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
-                />
-                <div className="flex items-center justify-between mt-1">
-                  <span className={`text-xs font-medium ${newDjValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
-                    {newDjNumber.length}/8 digits
+          <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Upload Final Test Certificate</label>
+          <p className="text-afl-muted text-sm mb-3">Drop a PDF — DJ number and product code extracted automatically.</p>
+          <input type="file" accept=".pdf" onChange={handleCertUpload} className="hidden" id="cert-upload-input" />
+          {!certUploading && (
+            <button
+              onClick={() => document.getElementById('cert-upload-input').click()}
+              className="px-5 py-2.5 rounded-xl text-sm font-heading font-semibold bg-emerald-500 text-white hover:bg-emerald-600 transition-colors cursor-pointer"
+            >
+              Upload Certificate PDF
+            </button>
+          )}
+          {certUploading && (
+            <div className="space-y-2 mt-2">
+              {[
+                { step: 1, label: 'Reading PDF...' },
+                { step: 2, label: 'Uploading certificate to server...' },
+                { step: 3, label: 'Linking DJ number & product code...' },
+                { step: 4, label: 'QR code ready!' },
+              ].map(({ step, label }) => (
+                <div key={step} className={`flex items-center gap-3 text-sm transition-all duration-300 ${
+                  certStep >= step ? 'opacity-100' : 'opacity-30'
+                }`}>
+                  {certStep > step ? (
+                    <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  ) : certStep === step ? (
+                    <span className="w-6 h-6 rounded-full bg-afl-cyan flex items-center justify-center shrink-0">
+                      <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
+                    </span>
+                  ) : (
+                    <span className="w-6 h-6 rounded-full bg-gray-200 shrink-0" />
+                  )}
+                  <span className={certStep > step ? 'text-emerald-600 font-medium' : certStep === step ? 'text-afl-navy font-semibold' : 'text-gray-400'}>
+                    {label}
                   </span>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Product Code</label>
-                <input
-                  type="text"
-                  value={newProductInput}
-                  onChange={(e) => setNewProductInput(e.target.value.toUpperCase())}
-                  placeholder="e.g. LMDC1DPA144BE or LMDC1DPA144BE-SYDT"
-                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+              ))}
+              {/* Progress bar */}
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
+                <div
+                  className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${Math.min(certStep * 25, 100)}%` }}
                 />
-                <div className="flex items-center justify-between mt-1">
-                  <span className={`text-xs font-medium ${newCodeValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
-                    {newProductCode.length ? (newCodeValid ? 'Valid code' : 'Base code must be 13 characters') : 'Enter code'}
-                  </span>
-                </div>
               </div>
-
-              <button
-                onClick={handleNewDrumRegister}
-                disabled={!newDrumValid || newRegistering}
-                className="w-full px-4 py-3 bg-afl-cyan text-white rounded-xl text-sm font-semibold font-heading hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {newRegistering ? 'Registering…' : 'Register & Generate QR'}
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-afl-light border border-afl-border">
-                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ</span>
-                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.djNumber}</span>
-                <span className="text-afl-muted mx-1">→</span>
-                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.productCode}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleNewDrumReset}
-                className="text-xs font-semibold text-afl-muted hover:text-afl-navy underline"
-              >
-                Register another
-              </button>
             </div>
           )}
+          {certError && <p className="text-red-600 text-sm mt-2">{certError}</p>}
         </div>
 
-        {newDrumRegistered && (
+        {certResult && (
           <>
-            <QRGenerator djNumber={newDrumRegistered.djNumber} productCode={newDrumRegistered.productCode} baseUrl={baseUrl} />
+            <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ Number</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.djNumber}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Product Code</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{certResult.productCode}</span>
+              </div>
+            </div>
+
+            <QRGenerator djNumber={certResult.djNumber} productCode={certResult.productCode} baseUrl={baseUrl} />
 
             <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
-                Documents that will appear ({newDrumDocuments.length})
+                Documents that will appear ({certDocuments.length + 1})
               </h3>
-              {newDrumDocuments.length > 0 ? (
-                <div className="space-y-2">
-                  {newDrumDocuments.map((doc, i) => {
-                    const info = docTypeInfo[doc.type] || docTypeInfo.Other
-                    return (
-                      <div key={`${doc.path}-${i}`} className="flex items-center gap-3">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
-                          {info.label}
-                        </span>
-                        <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
-                      </div>
-                    )
-                  })}
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ minWidth: '110px' }}>
-                      Test Cert
-                    </span>
-                    <span className="text-[13px]">Pending — upload when ready</span>
-                  </div>
+              <div className="space-y-2">
+                {certDocuments.map((doc, i) => {
+                  const info = docTypeInfo[doc.type] || docTypeInfo.Other
+                  return (
+                    <div key={`cert-${doc.path}-${i}`} className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                        {info.label}
+                      </span>
+                      <span className="text-afl-text truncate text-[13px] flex-1">{doc.name}</span>
+                    </div>
+                  )
+                })}
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-afl-navy shrink-0" style={{ minWidth: '110px' }}>
+                    Test Certificate
+                  </span>
+                  <span className="text-afl-text truncate text-[13px] flex-1">{certResult.name}</span>
                 </div>
-              ) : (
-                <p className="text-afl-muted text-sm">No documents match this product code.</p>
-              )}
+              </div>
             </div>
 
             <div className="text-center">
               <Link
-                to={`/dj/${newDrumRegistered.djNumber}`}
+                to={`/dj/${certResult.djNumber}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →
