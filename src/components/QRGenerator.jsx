@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 
-export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj' }) {
+export default function QRGenerator({ djNumber, productCode, baseUrl }) {
   const printRef = useRef(null)
   const [copyStatus, setCopyStatus] = useState(null) // 'image' | 'url' | 'error' | null
   const dj = djNumber ? djNumber.replace(/\D/g, '') : ''
-  const url = mode === 'product' ? `${baseUrl}/${productCode}` : `${baseUrl}/dj/${dj}`
+  const url = `${baseUrl}/dj/${dj}`
 
   const handlePrint = () => {
     const printContent = printRef.current
