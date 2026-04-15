@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { loadFinalTestCerts, getAllFinalTestCerts } from '../data/finalTestCerts'
+import { loadFinalTestCerts, getAllFinalTestCerts, invalidateFinalTestCertsCache } from '../data/finalTestCerts'
 import { uploadFinalTestCert } from '../lib/adminApi'
 import { invalidateDJMappingCache, loadDJMapping } from '../data/djLookup'
 
@@ -60,6 +60,7 @@ function UploadPageInner() {
 
     // Refresh the certs list and DJ mapping cache once at the end
     invalidateDJMappingCache()
+    invalidateFinalTestCertsCache()
     await Promise.all([loadFinalTestCerts(), loadDJMapping()])
     setCerts(getAllFinalTestCerts())
 

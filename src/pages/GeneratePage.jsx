@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDJMapping, lookupProductCode, invalidateDJMappingCache } from '../data/djLookup'
 import { findDocuments, getDocumentMap, loadDocumentMap, docTypeInfo, stripSuffix } from '../data/documentMap'
-import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
+import { loadFinalTestCerts, findFinalTestCert, invalidateFinalTestCertsCache } from '../data/finalTestCerts'
 import { loadDJOverrides, getDJOverrides, applyOverrides, reloadDJOverrides } from '../data/djOverrides'
 import { saveDJOverrides, uploadFinalTestCert, saveDJMapping } from '../lib/adminApi'
 import QRGenerator from '../components/QRGenerator'
@@ -109,6 +109,8 @@ export default function GeneratePage() {
       clearTimeout(stepTimer2)
       setCertStep(4) // Done
       setCertResult({ djNumber: result.djNumber, productCode: result.productCode, name: `Test Certificate — ${result.djNumber}` })
+      invalidateDJMappingCache()
+      invalidateFinalTestCertsCache()
       await Promise.all([loadDJMapping(), loadFinalTestCerts()])
       showToast(`QR ready — DJ ${result.djNumber}`, 'success')
     } catch (err) {
