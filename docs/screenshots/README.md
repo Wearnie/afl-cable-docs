@@ -1,20 +1,17 @@
 # Screenshots
 
-Placeholder directory for the visual walkthrough referenced in [`../../HANDOVER-SCREENSHOTS.md`](../../HANDOVER-SCREENSHOTS.md).
+Visual walkthrough referenced from [`../../HANDOVER-SCREENSHOTS.md`](../../HANDOVER-SCREENSHOTS.md).
 
-Expected files (drop each PNG in this directory with these exact names):
+Filenames follow `NN-<name>.png`:
 
 - `01-login.png`
 - `02-home-dispatch.png`
 - `03-home-admin.png`
 - `04-generate-dispatch.png`
-- `05-generate-admin.png`
 - `06-generate-qr-rendered.png`
-- `07-upload-bulk.png`
-- `08-pattern-audit.png`
-- `09-coverage-audit.png`
-- `10-users.png`
-- `11-public-scan-dj.png`
-- `12-public-scan-cert.png`
+- `07-pattern-audit.png`
+- `08-coverage-audit.png`
+- `09-users.png`
+- `10-public-scan-with-cert.png`
 
-Target size: roughly 1440×900 viewport. PNG, reasonable compression.
+(Slot 05 — generate admin — was not captured; the dispatch view plus the explanation in HANDOVER-SCREENSHOTS.md §5 covers it.)
