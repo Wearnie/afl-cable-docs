@@ -1,8 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 
 export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj' }) {
   const printRef = useRef(null)
+  const [copyStatus, setCopyStatus] = useState(null) // 'image' | 'url' | 'error' | null
   const dj = djNumber ? djNumber.replace(/\D/g, '') : ''
   const url = mode === 'product' ? `${baseUrl}/${productCode}` : `${baseUrl}/dj/${dj}`
 
@@ -56,15 +57,27 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
     printWindow.print()
   }
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(url)
+  const flashCopyStatus = (status) => {
+    setCopyStatus(status)
+    setTimeout(() => setCopyStatus(null), 2000)
   }
 
-  const handleDownload = () => {
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(url)
+      flashCopyStatus('url')
+    } catch {
+      flashCopyStatus('error')
+    }
+  }
+
+  // Render the QR SVG to a PNG blob at high resolution
+  const renderPngBlob = () => new Promise((resolve, reject) => {
     const svg = printRef.current.querySelector('svg')
+    if (!svg) return reject(new Error('QR not rendered'))
     const svgData = new XMLSerializer().serializeToString(svg)
     const canvas = document.createElement('canvas')
-    const size = 600 // High-res PNG
+    const size = 600
     canvas.width = size
     canvas.height = size
     const ctx = canvas.getContext('2d')
@@ -73,12 +86,37 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
       ctx.fillStyle = '#ffffff'
       ctx.fillRect(0, 0, size, size)
       ctx.drawImage(img, 0, 0, size, size)
+      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('toBlob failed')), 'image/png')
+    }
+    img.onerror = () => reject(new Error('SVG decode failed'))
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
+  })
+
+  const handleDownload = async () => {
+    try {
+      const blob = await renderPngBlob()
       const a = document.createElement('a')
       a.download = `QR-${dj || productCode}.png`
-      a.href = canvas.toDataURL('image/png')
+      a.href = URL.createObjectURL(blob)
       a.click()
+      URL.revokeObjectURL(a.href)
+    } catch {
+      flashCopyStatus('error')
     }
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
+  }
+
+  const handleCopyImage = async () => {
+    try {
+      const blob = await renderPngBlob()
+      // ClipboardItem requires a secure context (HTTPS or localhost)
+      if (!navigator.clipboard || !window.ClipboardItem) {
+        throw new Error('Clipboard image copy not supported in this browser')
+      }
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      flashCopyStatus('image')
+    } catch {
+      flashCopyStatus('error')
+    }
   }
 
   return (
@@ -94,10 +132,16 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
       <p className="font-mono text-[13px] text-afl-muted mt-3 break-all tracking-wide">{url}</p>
       <div className="flex gap-3 mt-4 justify-center flex-wrap">
         <button
-          onClick={handleDownload}
+          onClick={handleCopyImage}
           className="px-5 py-2.5 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition cursor-pointer font-heading"
         >
-          Download QR
+          {copyStatus === 'image' ? 'Copied ✓' : 'Copy QR Image'}
+        </button>
+        <button
+          onClick={handleDownload}
+          className="px-5 py-2.5 border border-afl-border text-afl-text rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-pointer font-heading"
+        >
+          Download
         </button>
         <button
           onClick={handlePrint}
@@ -106,12 +150,15 @@ export default function QRGenerator({ djNumber, productCode, baseUrl, mode = 'dj
           Print Sticker
         </button>
         <button
-          onClick={handleCopy}
+          onClick={handleCopyUrl}
           className="px-5 py-2.5 border border-afl-border text-afl-text rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-pointer font-heading"
         >
-          Copy URL
+          {copyStatus === 'url' ? 'Copied ✓' : 'Copy URL'}
         </button>
       </div>
+      {copyStatus === 'error' && (
+        <p className="text-xs text-red-600 mt-2">Copy failed — try Download instead.</p>
+      )}
     </div>
   )
 }
