@@ -1,6 +1,24 @@
-# Handover Brief — For the US Software Team
+# Handover Brief — AFL Cable Docs
 
-Short context on this repo so you can decide what to keep, rebuild, or retire before re-platforming it into your Azure tenancy.
+For the US software team taking over this repo from AFL Melbourne.
+
+## TL;DR
+
+- **What:** a small internal web app that replaces AFL Melbourne's manual cable-documentation email workflow with a QR-on-the-drum + self-serve customer page.
+- **Where it lives now:** Azure Static Web App (`lemon-moss-071796800.6.azurestaticapps.net`), Azure Blob Storage, GitHub Actions deploy. ~$2/month running cost.
+- **Status:** in daily production use by the Melbourne dispatch team. Stable. Ready to re-platform.
+- **Read these three docs alongside this one:** [README.md](./README.md) · [ARCHITECTURE.md](./ARCHITECTURE.md) · [RUNBOOK.md](./RUNBOOK.md). Optional visual tour: [HANDOVER-SCREENSHOTS.md](./HANDOVER-SCREENSHOTS.md).
+
+## Getting started for the US team
+
+A sensible first-day order of operations:
+
+1. Clone the repo, `npm install`, `npm run dev` — local dev mode skips auth and loads from `public/data/`. You'll see the app within 30 seconds of cloning.
+2. Read **README.md** for the repo layout and scripts.
+3. Read **ARCHITECTURE.md** for the data model, core workflows, API reference, and the product-code pattern-matching rules (the last bit is non-trivial — take it seriously).
+4. Browse **HANDOVER-SCREENSHOTS.md** for a visual tour of each page as used by dispatch and admin.
+5. Use **RUNBOOK.md** as the reference when standing up your own Azure resources: env vars, secrets, deploy mechanics, ops procedures.
+6. Smoke-test against the existing deployed app with a dispatch credential to feel the workflow before you touch the code.
 
 ## What this app actually does
 
@@ -16,8 +34,8 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 
 ## Who uses it
 
-- **Dispatch** (5-10 users): generate QR, upload certs. Role: `dispatch`.
-- **Admins** (~2-3 people — Mithra, Jim): everything above plus pattern/doc maintenance and user management. Role: `admin`.
+- **Dispatch** (5–10 users): generate QR, upload certs. Role: `dispatch`.
+- **Admins** (~2–3 people — Mithra, Jim): everything above plus pattern/doc maintenance and user management. Role: `admin`.
 - **Customers** (hundreds, intermittent): anonymous scan of the QR — no auth.
 
 ## What works well
@@ -32,25 +50,25 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 
 | Issue | Impact | What we'd do |
 |---|---|---|
-| JSON-in-blob as the data store | Works fine at current scale, but no transactional guarantees beyond ETag concurrency. Sync endpoint does a full-file merge. | Cosmos DB or even a tiny Postgres would be nicer long-term. |
-| No server-side pattern matching API | Client has to download the whole doc-map (few KB, fine today; grows linearly with doc count) | Move `findDocuments()` into an API endpoint once doc count crosses ~1000 patterns. |
-| No infrastructure as code | All Azure resources were clicked into existence | Bicep or Terraform for reproducibility — especially important for you standing up in a new tenant. |
+| JSON-in-blob as the data store | Works fine at current scale; no transactional guarantees beyond ETag concurrency. Sync endpoint does a full-file merge. | Cosmos DB or a small Postgres would be nicer long-term. |
+| No server-side pattern matching API | Client downloads the whole doc-map (few KB today, grows linearly with doc count) | Move `findDocuments()` into an API endpoint once doc count crosses ~1,000 patterns. |
+| No infrastructure as code | All Azure resources were created through the portal | Bicep or Terraform for reproducibility — especially important for you standing up a new tenant. |
 | `/api/sync-mapping` has no UI trigger | Only reachable via curl | Add a button to `/admin` if you keep the SharePoint dependency. |
-| `QRGenerator`'s `mode="product"` branch | No caller left after dispatch workflow change. Dead code. | Delete when you're confident no printed product-code QRs are still in circulation. |
-| `/api/verify-admin` | Legacy endpoint. Superseded by `/api/auth/me`. | Delete. |
-| No Application Insights / alerting | Fires in the dark | Wire it up when you re-host. |
-| No E2E tests | Unit tests cover pattern logic only | Playwright smoke test for the login → generate → scan → cert upload loop would be cheap insurance. |
-| Dev-mode auth fallback | When `JWT_SECRET` isn't set, `requireDispatch` / `requireAdmin` silently pass. Fine for local dev, scary if anyone ever deploys without `JWT_SECRET` set. | Consider failing closed in prod even if env var check is cheap belt-and-braces. |
-| PDF text extraction is fragile | `pdf-parse` regex against specific wording. Scanned PDFs without text layer fail. | If the supplier PDF format ever changes, cert upload breaks silently. Consider fallback or explicit error UI. |
+| No Application Insights / alerting | No production observability beyond the SWA portal metrics | Wire it up when you re-host. |
+| No E2E tests | Unit tests cover pattern logic only | A Playwright smoke test for the login → generate → scan → cert upload loop would be cheap insurance. |
+| Dev-mode auth fallback | When `JWT_SECRET` isn't set, `requireDispatch`/`requireAdmin` silently pass. Safe in dev; would be dangerous in prod if `JWT_SECRET` were ever absent. | Consider failing closed in prod as belt-and-braces, even though the env-var check is already there. |
+| PDF text extraction is fragile | `pdf-parse` regex matches specific wording on page 1. Scanned PDFs without a text layer fail with a generic error. | If the supplier PDF format ever changes, cert upload breaks silently. Add a fallback or an explicit "parse failed" UI. |
 
-## What's in the repo that you probably don't need
+## What's in the repo you might not need
 
 - `seed-users.cjs` — one-off script to bootstrap the first admin. Keep until you've added your own seeding path, then delete.
 - `scripts/convert-urls.js`, `scripts/extract-urls.js`, `scripts/url-mapping.json` — migration helpers from the pre-Azure setup. Safe to delete.
-- `api/sync-mapping.js` + Microsoft Graph env vars — SharePoint sync. It's manual-only and was mostly an emergency rehydrate path. If you don't want the SharePoint dependency, delete the endpoint and drop the env vars.
-- `api/product-codes.js` — thin list endpoint, only used by one admin page. Could inline-fetch `dj-mapping.json` directly.
+- `scripts/archive/stress-test.cjs` — archived load-test harness. Delete if you write your own.
+- `api/sync-mapping.js` + Microsoft Graph env vars — SharePoint sync. Manual-only, mostly an emergency rehydrate path. If you don't want the SharePoint dependency, delete the endpoint and drop the env vars.
 
-## What needs a real decision
+Not included on this list because it IS used (contrary to an earlier draft): `api/product-codes.js` — consumed by `CoverageAuditPage` and `ReviewMatchesPage`.
+
+## Decisions that need a real call
 
 1. **Domain.** Currently the Azure-generated `lemon-moss-071796800.6.azurestaticapps.net`. AFL will want `docs.afl.com.au` or similar — your call based on whose domain it sits under.
 2. **Repo ownership.** Repo is being transferred from the original author's personal GitHub (`Wearnie/afl-cable-docs`) to an AFL org. You'll want it in your team's GitHub org.
@@ -72,3 +90,7 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 ## Contact (post-handover)
 
 Tom Wearne — tom.wearne@icloud.com — happy to answer questions for ~30 days after handover. Ping about anything that's not obvious from the code or these docs.
+
+---
+
+*Prepared by Tom Wearne · v1.0 handover · April 2026*
