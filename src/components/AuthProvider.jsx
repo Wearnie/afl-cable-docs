@@ -135,8 +135,10 @@ export default function AuthProvider({ children }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
         <form onSubmit={handleChangePassword} className="bg-white rounded-2xl shadow-sm border border-afl-border p-8 w-full max-w-sm">
-          <div className="logo-dark-bg inline-block mb-6">
-            <img src="/afl-logo.png" alt="AFL" className="h-8 w-auto" />
+          <div className="flex justify-center mb-8">
+            <div className="logo-dark-bg">
+              <img src="/afl-logo.png" alt="AFL" className="h-16 w-auto" />
+            </div>
           </div>
 
           <h2 className="text-xl font-bold text-afl-text font-heading mb-1">
@@ -181,8 +183,10 @@ export default function AuthProvider({ children }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
         <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-afl-border p-8 w-full max-w-sm">
-          <div className="logo-dark-bg inline-block mb-6">
-            <img src="/afl-logo.png" alt="AFL" className="h-8 w-auto" />
+          <div className="flex justify-center mb-8">
+            <div className="logo-dark-bg">
+              <img src="/afl-logo.png" alt="AFL" className="h-16 w-auto" />
+            </div>
           </div>
 
           <h2 className="text-xl font-bold text-afl-text font-heading mb-1">
