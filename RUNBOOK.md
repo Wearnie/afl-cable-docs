@@ -23,12 +23,6 @@ All set in **Azure Portal → Static Web App → Configuration → Application s
 | `AZURE_STORAGE_CONTAINER` | No | Override container name. Defaults to `afl-cable-docs`. |
 | `JWT_SECRET` | Yes | Signing key for session tokens. Min 32 chars of entropy. Rotating invalidates all sessions. |
 | `AZURE_FUNCTIONS_ENVIRONMENT` | Yes (`Production`) | When set to `Production`, error messages to the client are sanitised to "Internal server error". |
-| `MICROSOFT_TENANT_ID` | No (sync only) | Azure AD tenant for Microsoft Graph (SharePoint sync) |
-| `MICROSOFT_CLIENT_ID` | No (sync only) | App registration client ID |
-| `MICROSOFT_CLIENT_SECRET` | No (sync only) | App registration client secret — rotate on schedule |
-| `SHAREPOINT_SITE_ID` | No (sync only) | SharePoint site ID containing the Jobpack workbook |
-| `EXCEL_FILE_PATH` | No (sync only) | Path to the workbook within the SharePoint drive |
-| `EXCEL_SHEET_NAME` | No (sync only) | Sheet name. Defaults to `Jobpack Database`. |
 
 Frontend env (set at **build time** via GitHub Actions, not at runtime):
 
@@ -67,20 +61,6 @@ Backup: `/generate` top section — single-file upload with step animation.
 ### Register a DJ → Product Code (yellow sheet flow)
 `/generate` top — "Create QR Code" section. DJ + product code inputs, click Generate QR. Saves to `data/dj-mapping.json` and renders the QR immediately.
 
-### Trigger SharePoint sync (emergency rehydrate only)
-No UI. Invoke the endpoint with an admin JWT:
-
-```bash
-TOKEN=$(curl -s -X POST https://lemon-moss-071796800.6.azurestaticapps.net/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"..."}' | jq -r .token)
-
-curl -X POST https://lemon-moss-071796800.6.azurestaticapps.net/api/sync-mapping \
-  -H "x-auth-token: Bearer $TOKEN"
-```
-
-Sync merges rather than overwrites. Manual registrations for DJs absent from SharePoint are preserved.
-
 ### Delete a document
 `/audit` → find doc → Delete. Removes from blob + doc-map atomically.
 
@@ -110,11 +90,6 @@ Append-only. Every write-path action is logged with `{ ts, user, action, target,
 3. Update `AZURE_STORAGE_CONNECTION_STRING` in SWA Configuration
 4. Save & restart
 
-### Microsoft Graph app secret
-1. Azure Portal → App Registrations → the app → Certificates & secrets → New client secret
-2. Update `MICROSOFT_CLIENT_SECRET` in SWA Configuration
-3. Delete the old secret after confirming sync still works
-
 ## Troubleshooting
 
 | Symptom | Likely cause | Check |
@@ -124,7 +99,6 @@ Append-only. Every write-path action is logged with `{ ts, user, action, target,
 | Cert upload fails "Could not find Job Number" | PDF is a scan with no text layer, or wording differs from `Job Number: NNNNNNNN` | Inspect the PDF; cert upload needs a text-layer PDF matching the regex |
 | Dispatch user gets 403 on registration | Old role mapping; `POST /api/dj-mapping` now requires dispatch, not admin | Re-deploy `main` |
 | Login hangs | `JWT_SECRET` not set in Production | SWA Configuration |
-| Sync fails "Graph API error 401" | Microsoft client secret expired | Rotate per above |
 | "File too large" on upload | >10 MB PDF | Split the source PDF or compress |
 
 ## Backups

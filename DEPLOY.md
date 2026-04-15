@@ -17,8 +17,8 @@ For business context on what the app does and who uses it, read [HANDOVER-BRIEF.
 - `openssl` — for the JWT secret
 
 You'll also receive from AFL Melbourne (via the password-manager vault described in HANDOVER-BRIEF):
-- A **30-day read SAS URL** to the current Melbourne blob container (for data migration), and
-- Existing user emails + SharePoint credentials if you want the sync endpoint.
+- A **30-day read SAS URL** to the current Melbourne blob container (for data migration)
+- Existing admin/dispatch login credentials
 
 ---
 
@@ -54,7 +54,7 @@ az deployment group create \
 
 **Check:** the command prints outputs including `storageAccountName`, `swaDefaultHostname`, and `blobBaseUrl`. Save `blobBaseUrl` — you'll need it in step 3.
 
-Parameter reference: see [infra/README.md](./infra/README.md) for SharePoint credentials, custom region, monitoring toggle, etc.
+Parameter reference: see [infra/README.md](./infra/README.md) for custom region, monitoring toggle, etc.
 
 ---
 

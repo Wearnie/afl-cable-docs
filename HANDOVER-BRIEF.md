@@ -53,7 +53,6 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 | JSON-in-blob as the data store | Works fine at current scale; no transactional guarantees beyond ETag concurrency. Sync endpoint does a full-file merge. | Cosmos DB or a small Postgres would be nicer long-term. |
 | No server-side pattern matching API | Client downloads the whole doc-map (few KB today, grows linearly with doc count) | Move `findDocuments()` into an API endpoint once doc count crosses ~1,000 patterns. |
 | No infrastructure as code | All Azure resources were created through the portal | Bicep or Terraform for reproducibility — especially important for you standing up a new tenant. |
-| `/api/sync-mapping` has no UI trigger | Only reachable via curl | Add a button to `/admin` if you keep the SharePoint dependency. |
 | No Application Insights / alerting | No production observability beyond the SWA portal metrics | Wire it up when you re-host. |
 | No E2E tests | Unit tests cover pattern logic only | A Playwright smoke test for the login → generate → scan → cert upload loop would be cheap insurance. |
 | Dev-mode auth fallback | When `JWT_SECRET` isn't set, `requireDispatch`/`requireAdmin` silently pass. Safe in dev; would be dangerous in prod if `JWT_SECRET` were ever absent. | Consider failing closed in prod as belt-and-braces, even though the env-var check is already there. |
@@ -64,7 +63,6 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 - `seed-users.cjs` — one-off script to bootstrap the first admin. Keep until you've added your own seeding path, then delete.
 - `scripts/convert-urls.js`, `scripts/extract-urls.js`, `scripts/url-mapping.json` — migration helpers from the pre-Azure setup. Safe to delete.
 - `scripts/archive/stress-test.cjs` — archived load-test harness. Delete if you write your own.
-- `api/sync-mapping.js` + Microsoft Graph env vars — SharePoint sync. Manual-only, mostly an emergency rehydrate path. If you don't want the SharePoint dependency, delete the endpoint and drop the env vars.
 
 Not included on this list because it IS used (contrary to an earlier draft): `api/product-codes.js` — consumed by `CoverageAuditPage` and `ReviewMatchesPage`.
 

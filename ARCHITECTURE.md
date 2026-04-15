@@ -24,7 +24,7 @@
          └───────────> https://aflcabledocs.blob.core.windows.net/afl-cable-docs/docs/...
 ```
 
-Three layers, one tenant-hosted dependency (SharePoint via Microsoft Graph, used only by the sync endpoint).
+Three layers. No third-party dependencies — the app is self-contained within Azure.
 
 ## Data model
 
@@ -33,7 +33,7 @@ All persistent data lives as JSON in Azure Blob Storage (container `afl-cable-do
 | File | Shape | Owned by |
 |---|---|---|
 | `data/users.json` | `{ [email]: { name, role, passwordHash, mustChangePassword, createdAt } }` | `api/auth/users.js`, `api/auth/login.js`, `api/auth/password.js` |
-| `data/dj-mapping.json` | `{ [djNumber]: productCode }` | `api/dj-mapping.js` (CRUD), `api/upload-cert.js` (side-effect write), `api/sync-mapping.js` (bulk SharePoint merge) |
+| `data/dj-mapping.json` | `{ [djNumber]: productCode }` | `api/dj-mapping.js` (CRUD), `api/upload-cert.js` (side-effect write) |
 | `data/document-map.json` | `{ entries: [{ pattern, type, name, path }] }` | `api/document-map.js` |
 | `data/final-test-certs.json` | `{ [djNumber]: { url, name, productCode, uploadedAt } }` | `api/upload-cert.js` |
 | `data/dj-doc-overrides.json` | `{ [djNumber]: { exclude: [path], include: [{type,name,path}] } }` | `api/dj-overrides.js` |
@@ -111,18 +111,6 @@ POST /api/upload-cert { fileName, fileBase64 }
         └─ appendAuditLog
 ```
 
-### 4. SharePoint sync (admin-only, manual, escape hatch)
-
-```
-POST /api/sync-mapping
-        │
-        ├─ getGraphToken() via MICROSOFT_* env
-        ├─ readExcelSheet from SHAREPOINT_SITE_ID / EXCEL_FILE_PATH / EXCEL_SHEET_NAME
-        ├─ parse rows → { [dj]: productCode }
-        └─ merge into data/dj-mapping.json (SharePoint wins on conflict; manual-only
-           entries are preserved)
-```
-
 ## Product code pattern matching (`src/data/documentMap.js`)
 
 Product codes are 13-char base + optional suffix. Patterns in `document-map.json` use non-alphanumeric wildcards.
@@ -169,7 +157,6 @@ Role tiers (`api/lib/auth.js`):
 | POST | `/api/upload-doc` | admin | Upload a static doc PDF (TDS, stripping, etc.) |
 | DELETE | `/api/delete-doc` | admin | Delete a doc from blob + remove from doc-map |
 | POST | `/api/dj-overrides` | admin | Per-DJ include/exclude doc overrides |
-| POST | `/api/sync-mapping` | admin | Bulk-merge DJ mapping from SharePoint Excel |
 | GET | `/api/product-codes` | public | Convenience — list of known product codes |
 | POST | `/api/verify-admin` | n/a | Legacy; current code uses `/api/auth/me` |
 
@@ -206,4 +193,3 @@ Invalidate after writes to ensure fresh reads. API GET calls are cache-busted vi
 - **No server-side rendering.** SPA + REST. Easier to host on SWA's free tier.
 - **Blob URLs served directly to the browser**, bypassing the Functions API for PDF downloads — saves Functions invocations and bandwidth.
 - **Pattern matching in the client**, not the API. `findDocuments()` runs in the browser over the whole doc-map (a few KB). Simpler caching, no round-trip per code.
-- **SharePoint sync merges rather than overwrites** so manual registrations aren't wiped.

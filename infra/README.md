@@ -41,12 +41,7 @@ az deployment group create \
       namePrefix=aflcabledocs \
       location=eastus2 \
       jwtSecret=$(openssl rand -hex 32) \
-      enableMonitoring=true \
-      sharePointTenantId=<tenant> \
-      sharePointClientId=<client> \
-      sharePointClientSecret=<secret> \
-      sharePointSiteId=<site> \
-      excelFilePath='Shared Documents/Print Message.xlsx'
+      enableMonitoring=true
 ```
 
 ## What this does NOT create

@@ -47,21 +47,6 @@ param jwtSecret string
 ])
 param functionsEnvironment string = 'Production'
 
-// SharePoint sync — all optional. Leave empty strings if you don't use SharePoint sync.
-@description('Optional: Microsoft Graph tenant ID for SharePoint sync.')
-param sharePointTenantId string = ''
-@description('Optional: Microsoft Graph app (client) ID for SharePoint sync.')
-param sharePointClientId string = ''
-@description('Optional: Microsoft Graph app secret for SharePoint sync.')
-@secure()
-param sharePointClientSecret string = ''
-@description('Optional: SharePoint site ID containing the Jobpack Database workbook.')
-param sharePointSiteId string = ''
-@description('Optional: Path to the Jobpack Database workbook within the SharePoint drive.')
-param excelFilePath string = ''
-@description('Optional: Sheet name in the Jobpack Database workbook. Default: Jobpack Database.')
-param excelSheetName string = 'Jobpack Database'
-
 @description('Enable Application Insights for the SWA + Functions. Default: false.')
 param enableMonitoring bool = false
 
@@ -148,12 +133,6 @@ var baseAppSettings = {
   AZURE_STORAGE_CONNECTION_STRING: storageConnectionString
   AZURE_STORAGE_CONTAINER: blobContainerName
   AZURE_FUNCTIONS_ENVIRONMENT: functionsEnvironment
-  MICROSOFT_TENANT_ID: sharePointTenantId
-  MICROSOFT_CLIENT_ID: sharePointClientId
-  MICROSOFT_CLIENT_SECRET: sharePointClientSecret
-  SHAREPOINT_SITE_ID: sharePointSiteId
-  EXCEL_FILE_PATH: excelFilePath
-  EXCEL_SHEET_NAME: excelSheetName
 }
 
 var appInsightsSettings = enableMonitoring ? {
