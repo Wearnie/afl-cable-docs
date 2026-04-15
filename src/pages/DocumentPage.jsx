@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { loadDocumentMap, findDocuments } from '../data/documentMap'
+import { loadDocumentMap, findDocuments, stripSuffix } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import DocumentCard from '../components/DocumentCard'
 
@@ -9,7 +9,7 @@ export default function DocumentPage() {
   const [searchParams] = useSearchParams()
   const code = productCode.toUpperCase()
   const djNumber = searchParams.get('dj')?.toUpperCase().trim() || ''
-  const isValidLength = code.length === 13
+  const isValidLength = stripSuffix(code).length === 13
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -57,8 +57,8 @@ export default function DocumentPage() {
             </div>
             <h2 className="text-xl font-bold text-afl-text font-heading">Invalid Product Code</h2>
             <p className="text-afl-muted mt-2">
-              "<span className="font-mono font-semibold text-afl-text">{code}</span>" is {code.length} characters.
-              AFL product codes are exactly 13 characters.
+              "<span className="font-mono font-semibold text-afl-text">{code}</span>" doesn't look like an AFL product code.
+              Base codes are 13 characters (optionally followed by a known suffix like -AG or -SYDT).
             </p>
           </div>
         ) : documents.length === 0 && !djNumber ? (
