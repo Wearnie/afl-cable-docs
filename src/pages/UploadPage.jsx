@@ -11,6 +11,7 @@ function UploadPageInner() {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState([]) // [{ name, size, file, status, result?, error? }]
   const [uploading, setUploading] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const fileRef = useRef(null)
 
   useEffect(() => {
@@ -20,18 +21,41 @@ function UploadPageInner() {
     })
   }, [])
 
+  // Shared file validation — used by both the file input and the drop zone
+  const toItems = (files) => Array.from(files).map((f) => {
+    if (f.type !== 'application/pdf') {
+      return { name: f.name, size: f.size, file: f, status: 'error', error: 'Not a PDF' }
+    }
+    if (f.size > MAX_FILE_BYTES) {
+      return { name: f.name, size: f.size, file: f, status: 'error', error: 'Too large (max 10MB)' }
+    }
+    return { name: f.name, size: f.size, file: f, status: 'queued' }
+  })
+
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files || [])
-    const next = files.map((f) => {
-      if (f.type !== 'application/pdf') {
-        return { name: f.name, size: f.size, file: f, status: 'error', error: 'Not a PDF' }
-      }
-      if (f.size > MAX_FILE_BYTES) {
-        return { name: f.name, size: f.size, file: f, status: 'error', error: 'Too large (max 10MB)' }
-      }
-      return { name: f.name, size: f.size, file: f, status: 'queued' }
-    })
-    setItems(next)
+    setItems(toItems(e.target.files || []))
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!uploading) setIsDragging(true)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // Only clear when leaving the drop zone itself, not its children
+    if (e.currentTarget === e.target) setIsDragging(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+    if (uploading) return
+    const dropped = e.dataTransfer?.files
+    if (dropped?.length) setItems(toItems(dropped))
   }
 
   const handleUpload = async (e) => {
@@ -109,17 +133,45 @@ function UploadPageInner() {
             <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
               PDF Files
             </label>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="application/pdf"
-              multiple
-              onChange={handleFileChange}
-              disabled={uploading}
-              className="w-full text-sm text-afl-text file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading disabled:opacity-50"
-            />
+            <div
+              onDragOver={handleDragOver}
+              onDragEnter={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => !uploading && fileRef.current?.click()}
+              className={`relative flex flex-col items-center justify-center gap-3 px-6 py-10 rounded-2xl border-2 border-dashed transition-all duration-150 cursor-pointer select-none ${
+                uploading
+                  ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+                  : isDragging
+                    ? 'border-afl-cyan bg-afl-cyan/5 scale-[1.01]'
+                    : 'border-afl-border bg-afl-light/40 hover:border-afl-cyan/60 hover:bg-afl-cyan/5'
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 ${isDragging ? 'text-afl-cyan' : 'text-afl-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 13.5V3.75m0 0L5.25 7.5M9 3.75l3.75 3.75M4.5 21h12.75A2.25 2.25 0 0019.5 18.75V12" />
+              </svg>
+              <div className="text-center">
+                <p className={`text-sm font-semibold font-heading ${isDragging ? 'text-afl-cyan' : 'text-afl-text'}`}>
+                  {isDragging ? 'Drop to queue' : 'Drag and drop PDFs here'}
+                </p>
+                <p className="text-xs text-afl-muted mt-1">
+                  or click to browse · one or many at a time · 10MB each
+                </p>
+              </div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="application/pdf"
+                multiple
+                onChange={handleFileChange}
+                disabled={uploading}
+                onClick={(e) => e.stopPropagation()}
+                className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                aria-label="Select PDF files"
+              />
+            </div>
             {items.length > 0 && (
-              <p className="text-xs text-afl-muted mt-1">
+              <p className="text-xs text-afl-muted mt-2">
                 {items.length} file{items.length === 1 ? '' : 's'} selected
               </p>
             )}
