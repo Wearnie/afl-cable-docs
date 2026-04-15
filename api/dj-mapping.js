@@ -36,23 +36,36 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Body must include { entries: { djNumber: productCode, ... } }' })
       }
 
+      // Match api/upload-cert.js: allow customer-suffixed codes (e.g. -AG, -SYDT)
+      // so long as the base code is 13 characters. Safe suffixes are stripped;
+      // customer suffixes are retained in storage so findDocuments can do
+      // suffix-aware TDS matching downstream.
+      const SAFE_SUFFIX_RE = /(?:-(?:FP|ESS|SH2|ANT|TMC))+$/i
+      const CUSTOMER_SUFFIX_RE = /(?:-(?:SYDT|TMR|AG|SIE|FLH|EM))+$/i
+
+      const normalised = []
       for (const [dj, code] of Object.entries(entries)) {
         const cleanDj = dj.replace(/\D/g, '')
         if (cleanDj.length !== 8) {
           return res.status(400).json({ error: `DJ number "${dj}" must be 8 digits` })
         }
-        if (typeof code !== 'string' || code.length !== 13) {
-          return res.status(400).json({ error: `Product code "${code}" for DJ ${dj} must be exactly 13 characters` })
+        if (typeof code !== 'string') {
+          return res.status(400).json({ error: `Product code for DJ ${dj} must be a string` })
         }
+        const upper = code.toUpperCase().trim()
+        const withoutSafe = upper.replace(SAFE_SUFFIX_RE, '')
+        const base = withoutSafe.replace(CUSTOMER_SUFFIX_RE, '')
+        if (base.length !== 13) {
+          return res.status(400).json({ error: `Product code "${code}" for DJ ${dj} does not resolve to a valid 13-character AFL code (base is ${base.length} chars)` })
+        }
+        normalised.push({ cleanDj, cleanCode: withoutSafe })
       }
 
       const { data: content } = await readJSON(BLOB_PATH, {})
 
       const added = []
       const updated = []
-      for (const [dj, code] of Object.entries(entries)) {
-        const cleanDj = dj.replace(/\D/g, '')
-        const cleanCode = code.toUpperCase()
+      for (const { cleanDj, cleanCode } of normalised) {
         if (content[cleanDj]) updated.push(cleanDj)
         else added.push(cleanDj)
         content[cleanDj] = cleanCode
