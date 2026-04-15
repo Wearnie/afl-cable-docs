@@ -4,7 +4,7 @@
 // POST /api/dj-mapping         → add/update entries
 // DELETE /api/dj-mapping       → remove entries
 
-import { requireAdmin } from './lib/auth.js'
+import { requireAdmin, requireDispatch } from './lib/auth.js'
 import { readJSON, writeJSON } from './lib/blob-storage.js'
 
 const BLOB_PATH = 'data/dj-mapping.json'
@@ -26,7 +26,10 @@ export default async function handler(req, res) {
       return res.json(content)
     }
 
-    try { requireAdmin(req) } catch (err) {
+    // POST (register/update a mapping) is part of dispatch's yellow-sheet workflow,
+    // so dispatch users can write here. DELETE stays admin-only (destructive).
+    const authFn = req.method === 'DELETE' ? requireAdmin : requireDispatch
+    try { authFn(req) } catch (err) {
       return res.status(err.status || 500).json({ error: err.message })
     }
 

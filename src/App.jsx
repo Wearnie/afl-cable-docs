@@ -73,7 +73,7 @@ function meetsMinRole(userRole, requiredRole) {
 }
 
 function HomePage() {
-  const { role } = useAuth()
+  const { role, user, signOut } = useAuth()
   const cards = allCards.filter(card => meetsMinRole(role, card.minRole))
 
   return (
@@ -81,7 +81,23 @@ function HomePage() {
       {/* Header with AFL gradient */}
       <header className="afl-header-bg px-6 pt-8 pb-24">
         <div className="max-w-4xl mx-auto">
-          <div className="logo-dark-bg mb-10"><img src="/afl-logo.png" alt="AFL" className="h-36 w-auto" /></div>
+          <div className="flex items-start justify-between mb-10">
+            <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-36 w-auto" /></div>
+            {user && (
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
+                <div className="text-right leading-tight">
+                  <div className="text-[13px] font-semibold text-white">{user.name || user.email}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-white/60 font-heading">{role}</div>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="text-[11px] font-bold uppercase tracking-wider text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-md px-2.5 py-1.5 transition-colors font-heading"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
           <h1 className="text-white text-3xl font-bold font-heading leading-tight tracking-tight">
             Cable Documentation
           </h1>
