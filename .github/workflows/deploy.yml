@@ -1,0 +1,48 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        env:
+          # Build-time: the frontend bakes this into its bundle so PDFs
+          # resolve to the blob directly. Set as a GitHub repo-level Variable
+          # (Settings -> Secrets and variables -> Actions -> Variables).
+          VITE_DOC_BASE_URL: ${{ vars.VITE_DOC_BASE_URL }}
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOY_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (PR comments, etc.)
+          action: "upload"
+          app_location: "/"      # App source code path
+          api_location: "api"    # API source code path
+          output_location: "dist" # Built app content directory
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_DEPLOY_TOKEN }}
+          action: "close"
