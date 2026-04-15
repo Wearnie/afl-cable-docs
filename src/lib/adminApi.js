@@ -162,6 +162,13 @@ export async function removeDJMappings(djNumbers) {
   })
 }
 
+export async function saveDJMapping(entries) {
+  return apiCall('/api/dj-mapping', {
+    method: 'POST',
+    body: JSON.stringify({ entries }),
+  })
+}
+
 // --- Static Document Upload API (TDS, Stripping, etc.) ---
 
 export async function uploadStaticDoc(docType, file) {

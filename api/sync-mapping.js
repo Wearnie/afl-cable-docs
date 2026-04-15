@@ -142,26 +142,32 @@ export default async function handler(req, res) {
       })
     }
 
-    // Check for changes against current data
+    // Merge-safe: SharePoint wins for DJs it has, manual entries for DJs SharePoint
+    // doesn't know about are preserved. This prevents dispatch-time registrations
+    // (made before a DJ hits SharePoint) from being wiped on the next sync.
     const { data: currentContent } = await readJSON(BLOB_PATH, {})
     const currentCount = Object.keys(currentContent).length
     const newCount = Object.keys(mapping).length
 
-    const changed = newCount !== currentCount ||
-      Object.entries(mapping).some(([dj, code]) => currentContent[dj] !== code)
+    const added = Object.keys(mapping).filter(dj => !currentContent[dj]).length
+    const updated = Object.keys(mapping).filter(dj => currentContent[dj] && currentContent[dj] !== mapping[dj]).length
+    const preserved = Object.keys(currentContent).filter(dj => !mapping[dj]).length
+
+    const changed = added > 0 || updated > 0
 
     let commitResult
     if (!changed) {
       commitResult = { committed: false, reason: 'No changes detected' }
     } else {
-      await writeJSON(BLOB_PATH, mapping)
+      const merged = { ...currentContent, ...mapping }
+      await writeJSON(BLOB_PATH, merged)
       commitResult = {
         committed: true,
         previous: currentCount,
-        current: newCount,
-        added: Object.keys(mapping).filter(dj => !currentContent[dj]).length,
-        removed: Object.keys(currentContent).filter(dj => !mapping[dj]).length,
-        updated: Object.keys(mapping).filter(dj => currentContent[dj] && currentContent[dj] !== mapping[dj]).length,
+        current: Object.keys(merged).length,
+        added,
+        updated,
+        preserved,
       }
     }
 

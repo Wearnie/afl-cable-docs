@@ -17,3 +17,11 @@ export function lookupProductCode(djNumber) {
   const key = djNumber.replace(/\D/g, '') // strip non-digits
   return cache[key] || null
 }
+
+export function invalidateDJMappingCache(newEntries) {
+  if (newEntries) {
+    cache = newEntries
+  } else {
+    cache = null
+  }
+}

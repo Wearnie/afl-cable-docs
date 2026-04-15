@@ -2,14 +2,15 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadFinalTestCerts, getAllFinalTestCerts } from '../data/finalTestCerts'
 import { uploadFinalTestCert } from '../lib/adminApi'
+import { invalidateDJMappingCache, loadDJMapping } from '../data/djLookup'
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024 // 10MB
 
 function UploadPageInner() {
   const [certs, setCerts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [file, setFile] = useState(null)
+  const [items, setItems] = useState([]) // [{ name, size, file, status, result?, error? }]
   const [uploading, setUploading] = useState(false)
-  const [result, setResult] = useState(null)
-  const [error, setError] = useState('')
   const fileRef = useRef(null)
 
   useEffect(() => {
@@ -20,44 +21,61 @@ function UploadPageInner() {
   }, [])
 
   const handleFileChange = (e) => {
-    const f = e.target.files[0]
-    if (f && f.type !== 'application/pdf') {
-      setError('Only PDF files are accepted')
-      setFile(null)
-      return
-    }
-    if (f && f.size > 10 * 1024 * 1024) {
-      setError('File too large (max 10MB)')
-      setFile(null)
-      return
-    }
-    setFile(f)
-    setError('')
-    setResult(null)
+    const files = Array.from(e.target.files || [])
+    const next = files.map((f) => {
+      if (f.type !== 'application/pdf') {
+        return { name: f.name, size: f.size, file: f, status: 'error', error: 'Not a PDF' }
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        return { name: f.name, size: f.size, file: f, status: 'error', error: 'Too large (max 10MB)' }
+      }
+      return { name: f.name, size: f.size, file: f, status: 'queued' }
+    })
+    setItems(next)
   }
 
   const handleUpload = async (e) => {
     e.preventDefault()
-    if (!file) return
+    if (items.length === 0) return
 
     setUploading(true)
-    setError('')
-    setResult(null)
 
-    try {
-      const data = await uploadFinalTestCert(file)
-      setResult(data)
-      setFile(null)
-      if (fileRef.current) fileRef.current.value = ''
-      // Refresh the cert list
-      await loadFinalTestCerts()
-      setCerts(getAllFinalTestCerts())
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setUploading(false)
+    // Upload sequentially — the API uses etag optimistic concurrency on the
+    // shared dj-mapping.json; parallel writes would cause retries.
+    const working = [...items]
+    for (let i = 0; i < working.length; i++) {
+      if (working[i].status === 'error') continue
+
+      working[i] = { ...working[i], status: 'uploading' }
+      setItems([...working])
+
+      try {
+        const data = await uploadFinalTestCert(working[i].file)
+        working[i] = { ...working[i], status: 'success', result: data }
+      } catch (err) {
+        working[i] = { ...working[i], status: 'error', error: err.message }
+      }
+      setItems([...working])
     }
+
+    // Refresh the certs list and DJ mapping cache once at the end
+    invalidateDJMappingCache()
+    await Promise.all([loadFinalTestCerts(), loadDJMapping()])
+    setCerts(getAllFinalTestCerts())
+
+    if (fileRef.current) fileRef.current.value = ''
+    setUploading(false)
   }
+
+  const handleClear = () => {
+    setItems([])
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const successCount = items.filter(i => i.status === 'success').length
+  const errorCount = items.filter(i => i.status === 'error').length
+  const pendingCount = items.filter(i => i.status === 'queued' || i.status === 'uploading').length
+  const allFinished = items.length > 0 && pendingCount === 0
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #004282 0%, #004282 160px, #F7F8FA 160px)' }}>
@@ -67,7 +85,7 @@ function UploadPageInner() {
             <div className="logo-dark-bg"><img src="/afl-logo.png" alt="AFL" className="h-9 w-auto" /></div>
             <div className="border-l border-white/20 pl-4">
               <h1 className="text-lg font-bold text-white font-heading">Final Test Certificates</h1>
-              <p className="text-blue-300 text-sm">Upload certificates — DJ number and product code are read automatically</p>
+              <p className="text-blue-300 text-sm">Upload one or many — DJ number and product code are read from each PDF</p>
             </div>
           </div>
           <Link to="/" className="text-blue-300 hover:text-white text-sm font-medium transition-colors">
@@ -80,56 +98,119 @@ function UploadPageInner() {
         {/* Upload form */}
         <form onSubmit={handleUpload} className="bg-white rounded-2xl shadow-sm border border-afl-border p-5 space-y-4">
           <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">
-            Upload a Final Test Certificate
+            Upload Final Test Certificates
           </h2>
           <p className="text-afl-muted text-xs">
-            Upload the Optical Test Report PDF. The Job Number and Item Code are extracted automatically from the document.
+            Drop one or many Optical Test Report PDFs. Job Number and Item Code are extracted automatically from each document.
           </p>
 
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">
-              PDF File
+              PDF Files
             </label>
             <input
               ref={fileRef}
               type="file"
               accept="application/pdf"
+              multiple
               onChange={handleFileChange}
-              className="w-full text-sm text-afl-text file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading"
+              disabled={uploading}
+              className="w-full text-sm text-afl-text file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-afl-navy/8 file:text-afl-navy hover:file:bg-afl-navy/15 file:cursor-pointer file:font-heading disabled:opacity-50"
             />
-            {file && (
+            {items.length > 0 && (
               <p className="text-xs text-afl-muted mt-1">
-                {file.name} ({(file.size / 1024).toFixed(0)} KB)
+                {items.length} file{items.length === 1 ? '' : 's'} selected
               </p>
             )}
           </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-              {error}
+          {items.length > 0 && (
+            <div className="space-y-1.5 max-h-80 overflow-y-auto">
+              {items.map((item, idx) => (
+                <div
+                  key={`${item.name}-${idx}`}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg border text-sm ${
+                    item.status === 'success' ? 'bg-emerald-50 border-emerald-200' :
+                    item.status === 'error' ? 'bg-red-50 border-red-200' :
+                    item.status === 'uploading' ? 'bg-blue-50 border-blue-200' :
+                    'bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                    style={
+                      item.status === 'success' ? { background: '#10b981', color: '#fff' } :
+                      item.status === 'error' ? { background: '#ef4444', color: '#fff' } :
+                      item.status === 'uploading' ? { background: '#3b82f6', color: '#fff' } :
+                      { background: '#e5e7eb', color: '#6b7280' }
+                    }
+                  >
+                    {item.status === 'success' ? '✓' :
+                     item.status === 'error' ? '!' :
+                     item.status === 'uploading' ? '…' :
+                     '•'}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-medium text-afl-text">{item.name}</div>
+                    {item.status === 'success' && item.result && (
+                      <div className="text-xs font-mono text-emerald-700">
+                        DJ {item.result.djNumber} → {item.result.productCode}
+                      </div>
+                    )}
+                    {item.status === 'error' && (
+                      <div className="text-xs text-red-700">{item.error}</div>
+                    )}
+                    {item.status === 'uploading' && (
+                      <div className="text-xs text-blue-700">Uploading…</div>
+                    )}
+                    {item.status === 'queued' && (
+                      <div className="text-xs text-gray-500">
+                        Queued · {(item.size / 1024).toFixed(0)} KB
+                      </div>
+                    )}
+                  </div>
+                  {item.status === 'success' && item.result && (
+                    <Link
+                      to={`/dj/${item.result.djNumber}`}
+                      className="text-[10px] font-bold uppercase tracking-wider text-afl-cyan hover:underline shrink-0"
+                    >
+                      View
+                    </Link>
+                  )}
+                </div>
+              ))}
             </div>
           )}
 
-          {result && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700 space-y-1">
-              <p>{result.message}</p>
-              <div className="flex items-center gap-4 text-xs font-mono">
-                <span>DJ: <strong>{result.djNumber}</strong></span>
-                <span>Product Code: <strong>{result.productCode}</strong></span>
-              </div>
-              <Link to={`/dj/${result.djNumber}`} className="block mt-1 text-afl-cyan font-semibold hover:underline">
-                View DJ {result.djNumber} page
-              </Link>
+          {allFinished && (
+            <div className={`rounded-xl px-4 py-3 text-sm ${
+              errorCount === 0 ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' :
+              successCount === 0 ? 'bg-red-50 border border-red-200 text-red-800' :
+              'bg-amber-50 border border-amber-200 text-amber-800'
+            }`}>
+              {successCount} uploaded · {errorCount} failed
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={!file || uploading}
-            className="w-full px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold font-heading hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {uploading ? 'Uploading & reading PDF...' : 'Upload Certificate'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={items.length === 0 || uploading || pendingCount === 0}
+              className="flex-1 px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold font-heading hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {uploading ? `Uploading ${items.length - pendingCount + 1} of ${items.length}…` :
+               pendingCount === 0 && items.length > 0 ? 'All done' :
+               `Upload ${pendingCount || items.length} ${(pendingCount || items.length) === 1 ? 'Certificate' : 'Certificates'}`}
+            </button>
+            {items.length > 0 && !uploading && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="px-4 py-3 border border-afl-border text-afl-text rounded-xl text-sm font-semibold font-heading hover:bg-gray-50 transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </form>
 
         {/* Existing certificates */}

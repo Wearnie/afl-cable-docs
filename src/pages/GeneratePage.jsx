@@ -1,15 +1,14 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { loadDJMapping, lookupProductCode } from '../data/djLookup'
-import { findDocuments, getDocumentMap, loadDocumentMap, docTypeInfo } from '../data/documentMap'
+import { loadDJMapping, lookupProductCode, invalidateDJMappingCache } from '../data/djLookup'
+import { findDocuments, getDocumentMap, loadDocumentMap, docTypeInfo, stripSuffix } from '../data/documentMap'
 import { loadFinalTestCerts, findFinalTestCert } from '../data/finalTestCerts'
 import { loadDJOverrides, getDJOverrides, applyOverrides, reloadDJOverrides } from '../data/djOverrides'
-import { saveDJOverrides, uploadFinalTestCert } from '../lib/adminApi'
+import { saveDJOverrides, uploadFinalTestCert, saveDJMapping } from '../lib/adminApi'
 import QRGenerator from '../components/QRGenerator'
 
 export default function GeneratePage() {
   const [djInput, setDjInput] = useState('')
-  const [productInput, setProductInput] = useState('')
   const [mappingLoaded, setMappingLoaded] = useState(false)
   const [toast, setToast] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -18,8 +17,21 @@ export default function GeneratePage() {
   const [addTypeFilter, setAddTypeFilter] = useState('')
   const [saving, setSaving] = useState(false)
   const djNumber = djInput.replace(/\D/g, '')
-  const directCode = productInput.toUpperCase().trim()
-  const directCodeValid = directCode.length >= 1
+
+  // Inline registration (when DJ entered above isn't in the lookup yet)
+  const [pendingProductCode, setPendingProductCode] = useState('')
+  const [registering, setRegistering] = useState(false)
+
+  // "Register new drum" section state (bottom of page)
+  const [newDjInput, setNewDjInput] = useState('')
+  const [newProductInput, setNewProductInput] = useState('')
+  const [newDrumRegistered, setNewDrumRegistered] = useState(null) // { djNumber, productCode }
+  const [newRegistering, setNewRegistering] = useState(false)
+  const newDjNumber = newDjInput.replace(/\D/g, '')
+  const newProductCode = newProductInput.toUpperCase().trim()
+  const newDjValid = newDjNumber.length === 8
+  const newCodeValid = stripSuffix(newProductCode).length === 13
+  const newDrumValid = newDjValid && newCodeValid
   const [certUploading, setCertUploading] = useState(false)
   const [certResult, setCertResult] = useState(null) // { djNumber, productCode }
   const [certError, setCertError] = useState(null)
@@ -73,7 +85,11 @@ export default function GeneratePage() {
     }).sort((a, b) => a.name.localeCompare(b.name))
   }, [productCode, showAddDoc, documents, addSearch, addTypeFilter])
 
-  const directDocuments = useMemo(() => (directCodeValid ? findDocuments(directCode) : []), [directCode, directCodeValid])
+  // Documents preview for the "Register new drum" section (after registration succeeds)
+  const newDrumDocuments = useMemo(
+    () => (newDrumRegistered ? findDocuments(newDrumRegistered.productCode) : []),
+    [newDrumRegistered]
+  )
 
   const certDocuments = useMemo(() => (certResult ? findDocuments(certResult.productCode) : []), [certResult])
 
@@ -168,6 +184,51 @@ export default function GeneratePage() {
     } catch (err) {
       showToast('Error: ' + err.message, 'error')
     }
+  }
+
+  // Register a DJ→ProductCode mapping + refresh the lookup cache
+  const registerMapping = async (dj, code) => {
+    await saveDJMapping({ [dj]: code })
+    invalidateDJMappingCache()
+    await loadDJMapping()
+  }
+
+  // Inline register (from the DJ section when product code unknown)
+  const handleInlineRegister = async () => {
+    const code = pendingProductCode.toUpperCase().trim()
+    if (!djNumber || stripSuffix(code).length !== 13) return
+    setRegistering(true)
+    try {
+      await registerMapping(djNumber, code)
+      showToast(`Registered DJ ${djNumber} → ${code}`, 'success')
+      setPendingProductCode('')
+      setRefreshKey(k => k + 1) // re-derive productCode from the refreshed cache
+    } catch (err) {
+      showToast('Error: ' + err.message, 'error')
+    } finally {
+      setRegistering(false)
+    }
+  }
+
+  // "Register new drum" section handler
+  const handleNewDrumRegister = async () => {
+    if (!newDrumValid) return
+    setNewRegistering(true)
+    try {
+      await registerMapping(newDjNumber, newProductCode)
+      setNewDrumRegistered({ djNumber: newDjNumber, productCode: newProductCode })
+      showToast(`Registered DJ ${newDjNumber} → ${newProductCode}`, 'success')
+    } catch (err) {
+      showToast('Error: ' + err.message, 'error')
+    } finally {
+      setNewRegistering(false)
+    }
+  }
+
+  const handleNewDrumReset = () => {
+    setNewDjInput('')
+    setNewProductInput('')
+    setNewDrumRegistered(null)
   }
 
   // Find names of excluded docs for display
@@ -336,14 +397,33 @@ export default function GeneratePage() {
               </div>
             </div>
 
-            {isValid && (
+            {isValid && productCode && (
               <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-afl-light border border-afl-border">
                 <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Product Code</span>
-                {productCode ? (
-                  <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{productCode}</span>
-                ) : (
-                  <span className="text-sm text-amber-600 font-medium">Not found in lookup — QR will still generate</span>
-                )}
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{productCode}</span>
+              </div>
+            )}
+
+            {isValid && !productCode && (
+              <div className="px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 space-y-3">
+                <div>
+                  <p className="text-sm text-amber-800 font-medium">DJ {djNumber} isn't mapped yet</p>
+                  <p className="text-xs text-amber-700 mt-0.5">Enter the product code from the yellow sheet to register it.</p>
+                </div>
+                <input
+                  type="text"
+                  value={pendingProductCode}
+                  onChange={(e) => setPendingProductCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. SMJ61FLE072BK or SMJ61FLE072BK-AG"
+                  className="w-full px-3 py-2.5 border border-amber-300 rounded-lg font-mono text-sm tracking-[0.15em] uppercase bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <button
+                  onClick={handleInlineRegister}
+                  disabled={registering || stripSuffix(pendingProductCode.toUpperCase().trim()).length !== 13}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold font-heading hover:bg-amber-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {registering ? 'Registering…' : 'Register & Generate QR'}
+                </button>
               </div>
             )}
           </div>
@@ -497,40 +577,92 @@ export default function GeneratePage() {
         {/* Divider */}
         <div className="flex items-center gap-3 pt-4">
           <div className="flex-1 border-t border-afl-border" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or generate by product code</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">Or register a new drum</span>
           <div className="flex-1 border-t border-afl-border" />
         </div>
 
-        {/* Product Code Input */}
+        {/* Register new drum — DJ + product code combined */}
         <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-2 font-heading">Product Code</label>
-              <input
-                type="text" value={productInput} onChange={(e) => setProductInput(e.target.value)}
-                placeholder="e.g. LMDC1DPA144BE"
-                className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-lg tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent transition-shadow"
-              />
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-xs font-medium text-afl-muted">
-                  {directCode.length} characters
-                </span>
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1 font-heading">
+            Register New Drum
+          </h2>
+          <p className="text-afl-muted text-xs mb-4">
+            For drums where the DJ isn't in the lookup yet. Saves the DJ → Product Code mapping, then generates the QR.
+          </p>
+
+          {!newDrumRegistered ? (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">DJ Number</label>
+                <input
+                  type="text"
+                  value={newDjInput}
+                  onChange={(e) => setNewDjInput(e.target.value.replace(/\D/g, ''))}
+                  placeholder="8 digits, e.g. 03429835"
+                  maxLength={8}
+                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+                />
+                <div className="flex items-center justify-between mt-1">
+                  <span className={`text-xs font-medium ${newDjValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                    {newDjNumber.length}/8 digits
+                  </span>
+                </div>
               </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-1.5 font-heading">Product Code</label>
+                <input
+                  type="text"
+                  value={newProductInput}
+                  onChange={(e) => setNewProductInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. LMDC1DPA144BE or LMDC1DPA144BE-SYDT"
+                  className="w-full px-4 py-3 border border-afl-border rounded-xl font-mono text-base tracking-[0.15em] uppercase focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
+                />
+                <div className="flex items-center justify-between mt-1">
+                  <span className={`text-xs font-medium ${newCodeValid ? 'text-emerald-600' : 'text-afl-muted'}`}>
+                    {newProductCode.length ? (newCodeValid ? 'Valid code' : 'Base code must be 13 characters') : 'Enter code'}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleNewDrumRegister}
+                disabled={!newDrumValid || newRegistering}
+                className="w-full px-4 py-3 bg-afl-cyan text-white rounded-xl text-sm font-semibold font-heading hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {newRegistering ? 'Registering…' : 'Register & Generate QR'}
+              </button>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-afl-light border border-afl-border">
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted font-heading">DJ</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.djNumber}</span>
+                <span className="text-afl-muted mx-1">→</span>
+                <span className="font-mono text-sm font-semibold text-afl-navy tracking-[0.15em]">{newDrumRegistered.productCode}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleNewDrumReset}
+                className="text-xs font-semibold text-afl-muted hover:text-afl-navy underline"
+              >
+                Register another
+              </button>
+            </div>
+          )}
         </div>
 
-        {directCodeValid && (
+        {newDrumRegistered && (
           <>
-            <QRGenerator productCode={directCode} baseUrl={baseUrl} mode="product" />
+            <QRGenerator djNumber={newDrumRegistered.djNumber} productCode={newDrumRegistered.productCode} baseUrl={baseUrl} />
 
             <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-5">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.12em] text-afl-muted mb-3 font-heading">
-                Documents that will appear ({directDocuments.length})
+                Documents that will appear ({newDrumDocuments.length})
               </h3>
-              {directDocuments.length > 0 ? (
+              {newDrumDocuments.length > 0 ? (
                 <div className="space-y-2">
-                  {directDocuments.map((doc, i) => {
+                  {newDrumDocuments.map((doc, i) => {
                     const info = docTypeInfo[doc.type] || docTypeInfo.Other
                     return (
                       <div key={`${doc.path}-${i}`} className="flex items-center gap-3">
@@ -545,7 +677,7 @@ export default function GeneratePage() {
                     <span className="text-[10px] font-bold uppercase tracking-wider shrink-0" style={{ minWidth: '110px' }}>
                       Test Cert
                     </span>
-                    <span className="text-[13px]">No DJ number — no test certificate attached</span>
+                    <span className="text-[13px]">Pending — upload when ready</span>
                   </div>
                 </div>
               ) : (
@@ -555,7 +687,7 @@ export default function GeneratePage() {
 
             <div className="text-center">
               <Link
-                to={`/${directCode}`}
+                to={`/dj/${newDrumRegistered.djNumber}`}
                 className="inline-block px-5 py-2 bg-afl-cyan text-white rounded-lg text-sm font-semibold uppercase tracking-wider hover:brightness-110 transition font-heading"
               >
                 Preview customer page →
