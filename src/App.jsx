@@ -29,6 +29,18 @@ const allCards = [
     ),
   },
   {
+    to: '/upload',
+    label: 'Dispatch',
+    title: 'Upload Final Test Certificates',
+    desc: 'Drop one or many cert PDFs — DJ number and product code extracted automatically.',
+    minRole: 'dispatch',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 13.5V3.75m0 0L5.25 7.5M9 3.75l3.75 3.75M4.5 21h12.75A2.25 2.25 0 0019.5 18.75V12" />
+      </svg>
+    ),
+  },
+  {
     to: '/audit',
     label: 'Admin',
     title: 'Pattern Audit',
