@@ -243,4 +243,4 @@ No deadline. Ship when ready.
 
 See [RUNBOOK.md](./RUNBOOK.md#troubleshooting) for a table of common symptoms and fixes (404 on PDFs, cert upload parse errors, dispatch 403s, etc.).
 
-For anything not covered there: tom.wearne@icloud.com — 30 days of follow-up post-go-live.
+For anything not covered there: tom.wearne@aflglobal.com — 30 days of follow-up post-go-live. Ongoing AFL-side contact: Mithra BaluBavitha — mithra.balubavitha@aflglobal.com.

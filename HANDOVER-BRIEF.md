@@ -87,7 +87,8 @@ Not included on this list because it IS used (contrary to an earlier draft): `ap
 
 ## Contact (post-handover)
 
-Tom Wearne — tom.wearne@icloud.com — happy to answer questions for ~30 days after handover. Ping about anything that's not obvious from the code or these docs.
+Tom Wearne — tom.wearne@aflglobal.com — happy to answer questions for ~30 days after handover. Ping about anything that's not obvious from the code or these docs.
+Mithra BaluBavitha — mithra.balubavitha@aflglobal.com — primary ongoing contact for AFL-side workflow questions.
 
 ---
 
