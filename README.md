@@ -5,7 +5,7 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Node](https://img.shields.io/badge/node-%E2%89%A5%2022.12-brightgreen)
 
-> **Standing up a fresh instance?** → See [DEPLOY.md](./DEPLOY.md). Clone → Bicep → migrate data → smoke test. One working day end-to-end.
+> **Standing up a fresh instance?** → See [DEPLOY.md](./docs/DEPLOY.md). Clone → Bicep → migrate data → smoke test. One working day end-to-end.
 
 Internal web app for AFL Global (Melbourne). Dispatch staff print QR labels for cable drums; customers scan the label to access the relevant product documents (TDS, stripping, installation, final test certificate).
 
@@ -28,9 +28,9 @@ staticwebapp.config.json  Azure SWA routing + fallback rules
 ```
 
 Deeper reference:
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — system diagram, data model, API reference, auth
-- **[RUNBOOK.md](./RUNBOOK.md)** — env vars, Azure resources, ops procedures, secret rotation
-- **[HANDOVER-BRIEF.md](./HANDOVER-BRIEF.md)** — context for the US dev team, known issues, what we'd rebuild differently
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — system diagram, data model, API reference, auth
+- **[RUNBOOK.md](./docs/RUNBOOK.md)** — env vars, Azure resources, ops procedures, secret rotation
+- **[HANDOVER-BRIEF.md](./docs/HANDOVER-BRIEF.md)** — context for the US dev team, known issues, what we'd rebuild differently
 
 ## Quick start (local dev)
 

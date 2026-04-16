@@ -2,7 +2,7 @@
 
 A screen-by-screen tour of the app as used in production. Read this after HANDOVER-BRIEF.md and before diving into the code.
 
-Screenshots live in [`docs/screenshots/`](./docs/screenshots/) and are embedded below.
+Screenshots live in [`screenshots/`](./screenshots/) and are embedded below.
 
 ---
 
@@ -10,7 +10,7 @@ Screenshots live in [`docs/screenshots/`](./docs/screenshots/) and are embedded 
 
 The one public entry point for the authenticated surface. JWT-backed, session-scoped (clears on browser close). First login forces a password change.
 
-![Login screen](./docs/screenshots/01-login.png)
+![Login screen](./screenshots/01-login.png)
 
 ---
 
@@ -20,7 +20,7 @@ Dispatch sees a single card: the QR Sticker Generator. Nothing else is surfaced 
 
 Top-right: the user chip showing signed-in name, role, and a Sign Out button.
 
-![Home as dispatch](./docs/screenshots/02-home-dispatch.png)
+![Home as dispatch](./screenshots/02-home-dispatch.png)
 
 ---
 
@@ -28,7 +28,7 @@ Top-right: the user chip showing signed-in name, role, and a Sign Out button.
 
 Admins see four cards: QR Generator (primary), Pattern Audit, Coverage Audit, User Management. Same signed-in chip top-right.
 
-![Home as admin](./docs/screenshots/03-home-admin.png)
+![Home as admin](./screenshots/03-home-admin.png)
 
 ---
 
@@ -40,7 +40,7 @@ Two sections, top to bottom:
 
 Nothing else. Deliberately minimal for the yellow-sheet workflow.
 
-![Generate as dispatch](./docs/screenshots/04-generate-dispatch.png)
+![Generate as dispatch](./screenshots/04-generate-dispatch.png)
 
 ---
 
@@ -56,7 +56,7 @@ _(Screenshot not captured; mentally insert a panel between sections 1 and 2 of t
 
 After clicking **Generate QR**, the QR image, its target URL, docs preview, and action buttons render inline: **Copy QR Image** (writes a PNG to the system clipboard), **Download**, **Print Sticker**, **Copy URL**. Copy QR Image is the button dispatch actually uses day-to-day — they paste straight into their label template.
 
-![Generated QR with buttons](./docs/screenshots/06-generate-qr-rendered.png)
+![Generated QR with buttons](./screenshots/06-generate-qr-rendered.png)
 
 ---
 
@@ -66,7 +66,7 @@ Where document-to-product-code patterns are reviewed and edited. Full CRUD on `d
 
 Top banner shows at-a-glance counts: unique PDFs, total patterns, known DJ numbers, review status.
 
-![Pattern audit](./docs/screenshots/07-pattern-audit.png)
+![Pattern audit](./screenshots/07-pattern-audit.png)
 
 ---
 
@@ -76,7 +76,7 @@ Loads every product code the app knows about, runs `findDocuments()` against eac
 
 Top cards summarise: total codes / full-coverage / partial / no-docs.
 
-![Coverage audit](./docs/screenshots/08-coverage-audit.png)
+![Coverage audit](./screenshots/08-coverage-audit.png)
 
 ---
 
@@ -84,7 +84,7 @@ Top cards summarise: total codes / full-coverage / partial / no-docs.
 
 List, create, edit, delete users. Role dropdown (`dispatch` / `admin`), password reset inline (forces change-on-next-login). New accounts are tagged **TEMP PASSWORD** until the user signs in and changes it.
 
-![User management](./docs/screenshots/09-users.png)
+![User management](./screenshots/09-users.png)
 
 ---
 
@@ -94,7 +94,7 @@ What the customer sees when they scan the sticker on a drum. No login. Clean, mo
 
 Reached via `/dj/<djNumber>`. This is the "real" scan URL; every newly-printed sticker points here.
 
-![Public DJ scan with cert](./docs/screenshots/10-public-scan-with-cert.png)
+![Public DJ scan with cert](./screenshots/10-public-scan-with-cert.png)
 
 If the cert hasn't been uploaded yet, the Test Certificate row shows *"Pending — upload when ready"* instead of a link. The printable QR is still useful pre-cert.
 

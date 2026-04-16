@@ -54,7 +54,7 @@ az deployment group create \
 
 **Check:** the command prints outputs including `storageAccountName`, `swaDefaultHostname`, and `blobBaseUrl`. Save `blobBaseUrl` — you'll need it in step 3.
 
-Parameter reference: see [infra/README.md](./infra/README.md) for custom region, monitoring toggle, etc.
+Parameter reference: see [infra/README.md](../infra/README.md) for custom region, monitoring toggle, etc.
 
 ---
 

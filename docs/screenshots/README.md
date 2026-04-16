@@ -1,6 +1,6 @@
 # Screenshots
 
-Visual walkthrough referenced from [`../../HANDOVER-SCREENSHOTS.md`](../../HANDOVER-SCREENSHOTS.md).
+Visual walkthrough referenced from [`../HANDOVER-SCREENSHOTS.md`](../HANDOVER-SCREENSHOTS.md).
 
 Filenames follow `NN-<name>.png`:
 

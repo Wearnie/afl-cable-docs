@@ -48,9 +48,9 @@ az deployment group create \
 
 Portal operations you still need to do once:
 
-- **GitHub Actions deploy token.** After `az deployment` succeeds, read the deploy token from the SWA and add it as a repo secret. See `DEPLOY.md` §3.
-- **Custom domain + SSL.** Bind via SWA Portal → Custom domains. See `DEPLOY.md` §8.
-- **301 redirect from the old Melbourne URL.** If you're re-hosting, preserve sticker URLs. See `DEPLOY.md` §9.
+- **GitHub Actions deploy token.** After `az deployment` succeeds, read the deploy token from the SWA and add it as a repo secret. See `docs/DEPLOY.md` §3.
+- **Custom domain + SSL.** Bind via SWA Portal → Custom domains. See `docs/DEPLOY.md` §8.
+- **301 redirect from the old Melbourne URL.** If you're re-hosting, preserve sticker URLs. See `docs/DEPLOY.md` §9.
 
 ## Validate without deploying
 
