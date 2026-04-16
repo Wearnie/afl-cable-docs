@@ -1,0 +1,12 @@
+# CODEOWNERS — auto-assigned reviewers on PRs.
+# Format: <path-pattern> <github-handle> [<github-handle> ...]
+# Replace handles after the repo transfers to the AFL US org.
+
+*                       @Wearnie
+
+/api/                   @Wearnie
+/infra/                 @Wearnie
+/.github/               @Wearnie
+
+# Documentation
+*.md                    @Wearnie
