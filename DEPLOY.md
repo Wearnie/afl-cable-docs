@@ -26,7 +26,7 @@ You'll also receive from AFL Melbourne (via the password-manager vault described
 
 If you're taking ownership: GitHub → Settings → **Transfer ownership** to your AFL-US org.
 
-If you're forking first and transferring later: `gh repo fork Wearnie/afl-cable-docs --org <your-org> --clone=false`.
+If you're forking first and transferring later: `gh repo fork <current-org>/afl-cable-docs --org <your-org> --clone=false` (substitute the current owner of the repo you received in the handover email).
 
 Clone locally:
 

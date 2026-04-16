@@ -69,7 +69,7 @@ Not included on this list because it IS used (contrary to an earlier draft): `ap
 ## Decisions that need a real call
 
 1. **Domain.** Currently the Azure-generated `lemon-moss-071796800.6.azurestaticapps.net`. AFL will want `docs.afl.com.au` or similar — your call based on whose domain it sits under.
-2. **Repo ownership.** Repo is being transferred from the original author's personal GitHub (`Wearnie/afl-cable-docs`) to an AFL org. You'll want it in your team's GitHub org.
+2. **Repo ownership.** Repo currently sits on the original author's GitHub during the handover window; it should be transferred or forked into an AFL-owned GitHub organisation as your first action. See `DEPLOY.md` §1.
 3. **Auth provider.** Currently email/password with bcrypt hashes in a JSON file. If AFL has SSO (Azure AD / Entra), you'll probably want to wire that up.
 4. **Data hosting.** You'll stand up your own Azure tenant. Can either (a) re-create the blob layout and import the JSON snapshots + PDFs, or (b) rewrite against a DB and import via a migration script.
 
