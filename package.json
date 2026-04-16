@@ -1,7 +1,18 @@
 {
   "name": "afl-cable-docs",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "description": "Internal QR-based cable documentation web app for AFL Global. Dispatch prints QR stickers for cable drums; customers scan to access TDS, stripping, installation, and final test certificate PDFs.",
+  "author": "AFL Global",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wearnie/afl-cable-docs.git"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.0.0"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
