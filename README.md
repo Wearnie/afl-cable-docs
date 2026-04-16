@@ -1,5 +1,10 @@
 # AFL Cable Docs
 
+![License](https://img.shields.io/badge/license-Proprietary-red)
+![Build](https://github.com/Wearnie/afl-cable-docs/actions/workflows/deploy.yml/badge.svg?branch=main)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Node](https://img.shields.io/badge/node-%E2%89%A5%2022.12-brightgreen)
+
 > **Standing up a fresh instance?** → See [DEPLOY.md](./DEPLOY.md). Clone → Bicep → migrate data → smoke test. One working day end-to-end.
 
 Internal web app for AFL Global (Melbourne). Dispatch staff print QR labels for cable drums; customers scan the label to access the relevant product documents (TDS, stripping, installation, final test certificate).
