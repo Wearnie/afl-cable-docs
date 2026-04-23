@@ -1,0 +1,5 @@
+{
+  "safeSuffixes": ["FP", "ESS", "SH2", "ANT", "TMC"],
+  "customerSuffixes": ["SYDT", "TMR", "AG", "SIE", "FLH", "EM"],
+  "customDocTypes": []
+}

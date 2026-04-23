@@ -237,6 +237,19 @@ export async function saveDJOverrides(djNumber, exclude, include) {
   })
 }
 
+// --- App Config API (suffixes + custom doc types) ---
+
+export async function fetchAppConfig() {
+  return apiCall('/api/config')
+}
+
+export async function saveAppConfig(config) {
+  return apiCall('/api/config', {
+    method: 'PUT',
+    body: JSON.stringify(config),
+  })
+}
+
 // --- Final Test Certificate API ---
 
 export async function uploadFinalTestCert(file) {

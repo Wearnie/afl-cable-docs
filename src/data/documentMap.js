@@ -62,22 +62,29 @@ export function invalidateDocumentMapCache(newEntries) {
 // PATTERN MATCHING
 // ============================================================================
 
-/**
- * Suffixes that are safe to strip — same cable, same docs for all types.
- */
-const STRIP_SUFFIXES = /(?:-(?:FP|ESS|SH2|ANT|TMC))+$/i
+// Defaults for admin-editable config. Used as a fallback if /api/config fails,
+// so pattern matching keeps working even if the config blob is missing.
+export const DEFAULT_SAFE_SUFFIXES = ['FP', 'ESS', 'SH2', 'ANT', 'TMC']
+export const DEFAULT_CUSTOMER_SUFFIXES = ['SYDT', 'TMR', 'AG', 'SIE', 'FLH', 'EM']
 
-/**
- * Customer-specific suffixes — need their own TDS, but Stripping & Installation
- * are the same as the base code.
- */
-const CUSTOMER_SUFFIXES = /(?:-(?:SYDT|TMR|AG|SIE|FLH|EM))+$/i
+let _safeSuffixes = [...DEFAULT_SAFE_SUFFIXES]
+let _customerSuffixes = [...DEFAULT_CUSTOMER_SUFFIXES]
+
+function escapeSuffixAtom(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function buildSuffixRegex(list) {
+  if (!list || list.length === 0) return /(?!)/ // matches nothing
+  const alts = list.map(escapeSuffixAtom).join('|')
+  return new RegExp(`(?:-(?:${alts}))+$`, 'i')
+}
 
 /**
  * Strip ALL known suffixes from a product code (for decode, cert upload, etc.)
  */
 export function stripSuffix(code) {
-  return code.replace(STRIP_SUFFIXES, '').replace(CUSTOMER_SUFFIXES, '')
+  return code.replace(buildSuffixRegex(_safeSuffixes), '').replace(buildSuffixRegex(_customerSuffixes), '')
 }
 
 /**
@@ -86,8 +93,8 @@ export function stripSuffix(code) {
  * Returns the suffix (e.g. "-SYDT") or null.
  */
 export function getCustomerSuffix(code) {
-  const withoutSafe = code.replace(STRIP_SUFFIXES, '')
-  const match = withoutSafe.match(CUSTOMER_SUFFIXES)
+  const withoutSafe = code.replace(buildSuffixRegex(_safeSuffixes), '')
+  const match = withoutSafe.match(buildSuffixRegex(_customerSuffixes))
   return match ? match[0] : null
 }
 
@@ -133,17 +140,19 @@ export function findDocuments(productCode) {
   const baseCode = stripSuffix(raw)
   const customerSuffix = getCustomerSuffix(raw)
   // Code with only safe suffixes stripped (keeps customer suffix for TDS matching)
-  const codeForTDS = customerSuffix ? raw.replace(STRIP_SUFFIXES, '') : baseCode
+  const codeForTDS = customerSuffix ? raw.replace(buildSuffixRegex(_safeSuffixes), '') : baseCode
 
   if (baseCode.length < 1) return []
 
   const map = getDocumentMap()
+  const customTypeSet = new Set(_customDocTypes.map(t => t.id))
 
   const found = {
     TDS: null,
     Stripping: null,
   }
   const installationDocs = []
+  const customTypeDocs = []
   const otherDocs = []
 
   for (const entry of map) {
@@ -170,6 +179,8 @@ export function findDocuments(productCode) {
 
     if (entry.type === 'Installation' || entry.type === 'Storage & Handling') {
       installationDocs.push({ ...entry })
+    } else if (customTypeSet.has(entry.type)) {
+      customTypeDocs.push({ ...entry })
     } else if (found[entry.type] === undefined) {
       otherDocs.push({ ...entry })
     } else if (found[entry.type] === null) {
@@ -188,6 +199,7 @@ export function findDocuments(productCode) {
   if (found.Stripping) results.push(found.Stripping)
   if (found.TDS) results.push(found.TDS)
   results.push(...installationDocs)
+  results.push(...customTypeDocs)
   results.push(...otherDocs)
 
   return results
@@ -402,12 +414,96 @@ export function decodeProductCode(productCode) {
 // DOCUMENT TYPE METADATA (icons, colors)
 // ============================================================================
 
-export const docTypeInfo = {
-  TDS: { label: 'Technical Data Sheet', color: '#004282', abbr: 'TDS' },
-  Stripping: { label: 'Stripping Instructions', color: '#004282', abbr: 'STRIP' },
-  'Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'CERT' },
-  'Final Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'FTC' },
-  Installation: { label: 'Installation Guide', color: '#004282', abbr: 'INST' },
-  'Storage & Handling': { label: 'Storage & Handling', color: '#004282', abbr: 'S&H' },
-  Other: { label: 'Other Document', color: '#004282', abbr: 'DOC' },
+// Built-in types have special handling in findDocuments() and cannot be
+// removed via the admin UI. Custom types (added by admins) get merged in
+// at runtime by setAppConfig().
+export const BUILT_IN_DOC_TYPES = {
+  TDS: { label: 'Technical Data Sheet', color: '#004282', abbr: 'TDS', builtIn: true },
+  Stripping: { label: 'Stripping Instructions', color: '#004282', abbr: 'STRIP', builtIn: true },
+  'Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'CERT', builtIn: true },
+  'Final Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'FTC', builtIn: true },
+  Installation: { label: 'Installation Guide', color: '#004282', abbr: 'INST', builtIn: true },
+  'Storage & Handling': { label: 'Storage & Handling', color: '#004282', abbr: 'S&H', builtIn: true },
+  Other: { label: 'Other Document', color: '#004282', abbr: 'DOC', builtIn: true },
+}
+
+// Mutable registry — consumers import this reference and read from it.
+// setAppConfig() mutates in place so new keys appear without a reload.
+export const docTypeInfo = { ...BUILT_IN_DOC_TYPES }
+
+let _customDocTypes = []
+
+/**
+ * List of custom (admin-added) doc type IDs, in display order.
+ * Used by findDocuments to group custom-type matches together, after built-ins.
+ */
+export function getCustomDocTypeIds() {
+  return _customDocTypes.map(t => t.id)
+}
+
+/**
+ * Inject config from /api/config (or local fallback). Mutates module-level
+ * state so existing consumers of stripSuffix / docTypeInfo pick up changes
+ * without re-importing.
+ */
+export function setAppConfig({ safeSuffixes, customerSuffixes, customDocTypes } = {}) {
+  if (Array.isArray(safeSuffixes)) {
+    _safeSuffixes = safeSuffixes.map(s => String(s).toUpperCase())
+  }
+  if (Array.isArray(customerSuffixes)) {
+    _customerSuffixes = customerSuffixes.map(s => String(s).toUpperCase())
+  }
+  if (Array.isArray(customDocTypes)) {
+    // Remove any stale custom types from the shared registry before adding new ones
+    for (const prev of _customDocTypes) {
+      if (!BUILT_IN_DOC_TYPES[prev.id]) delete docTypeInfo[prev.id]
+    }
+    _customDocTypes = customDocTypes
+    for (const t of customDocTypes) {
+      if (BUILT_IN_DOC_TYPES[t.id]) continue // built-ins win
+      docTypeInfo[t.id] = {
+        label: t.label,
+        color: t.color || '#004282',
+        abbr: t.abbr || t.id.slice(0, 4).toUpperCase(),
+        builtIn: false,
+      }
+    }
+  }
+}
+
+let _configCache = null
+
+/**
+ * Load admin-editable config (suffix lists + custom doc types) from the API.
+ * Safe to call multiple times; results are cached.
+ * On failure, falls back to defaults (already loaded at module init).
+ */
+export async function loadAppConfig() {
+  if (_configCache) return _configCache
+  try {
+    const res = await fetch(`/api/config?_t=${Date.now()}`)
+    if (!res.ok) throw new Error(`Config fetch failed: ${res.status}`)
+    const data = await res.json()
+    setAppConfig(data)
+    _configCache = data
+    return data
+  } catch (err) {
+    console.warn('[documentMap] loadAppConfig failed, using defaults:', err.message)
+    const fallback = {
+      safeSuffixes: DEFAULT_SAFE_SUFFIXES,
+      customerSuffixes: DEFAULT_CUSTOMER_SUFFIXES,
+      customDocTypes: [],
+    }
+    _configCache = fallback
+    return fallback
+  }
+}
+
+export function invalidateAppConfigCache(newConfig) {
+  if (newConfig) {
+    setAppConfig(newConfig)
+    _configCache = newConfig
+  } else {
+    _configCache = null
+  }
 }
