@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../components/AuthProvider'
 import { listUsers, createUser, updateUser, deleteUser } from '../lib/adminApi'
 
-function UserRow({ u, currentEmail, onUpdate, onDelete }) {
+function UserRow({ u, currentEmail, onUpdate, onDelete, readOnly = false }) {
   const [editing, setEditing] = useState(false)
   const [role, setRole] = useState(u.role)
   const [resetting, setResetting] = useState(false)
@@ -99,7 +99,7 @@ function UserRow({ u, currentEmail, onUpdate, onDelete }) {
         </div>
       )}
 
-      {!isSelf && !resetting && (
+      {!isSelf && !resetting && !readOnly && (
         <div className="mt-3 flex items-center gap-2">
           {!editing && (
             <button onClick={() => setEditing(true)} className="text-xs text-afl-cyan hover:underline">
@@ -122,7 +122,8 @@ function UserRow({ u, currentEmail, onUpdate, onDelete }) {
 }
 
 export default function UsersPage() {
-  const { user } = useAuth()
+  const { user, authMode } = useAuth()
+  const entraMode = authMode === 'entra'
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -207,16 +208,30 @@ export default function UsersPage() {
             <a href="/" className="text-white/60 text-sm hover:text-white/80 transition-colors">&larr; Home</a>
             <h1 className="text-white text-2xl font-bold font-heading mt-1">User Management</h1>
           </div>
-          <button
-            onClick={() => setShowCreate(!showCreate)}
-            className="afl-btn bg-white/10 text-white hover:bg-white/20 border-white/20 text-sm"
-          >
-            + Add User
-          </button>
+          {!entraMode && (
+            <button
+              onClick={() => setShowCreate(!showCreate)}
+              className="afl-btn bg-white/10 text-white hover:bg-white/20 border-white/20 text-sm"
+            >
+              + Add User
+            </button>
+          )}
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 -mt-10 pb-16">
+        {entraMode && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-4">
+            <h3 className="text-sm font-bold text-blue-900 font-heading mb-1">Users are managed in Microsoft Entra</h3>
+            <p className="text-sm text-blue-800 leading-relaxed">
+              This deployment uses single sign-on. To add or remove users, change roles, or reset passwords, go to the Microsoft Entra admin centre:{' '}
+              <a href="https://entra.microsoft.com" target="_blank" rel="noopener noreferrer" className="font-semibold underline">entra.microsoft.com</a>. Roles are assigned by adding users to the <code className="font-mono text-xs bg-white/70 px-1 py-0.5 rounded">dispatch</code> or <code className="font-mono text-xs bg-white/70 px-1 py-0.5 rounded">admin</code> app role on the AFL Cable Docs app registration.
+            </p>
+            <p className="text-xs text-blue-700 mt-2">
+              The list below shows any legacy password-based users still in the data file. It is not updated by Entra sign-ins and is shown for reference only.
+            </p>
+          </div>
+        )}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-4 mb-4">
             {error}
@@ -296,6 +311,7 @@ export default function UsersPage() {
               currentEmail={user?.email}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
+              readOnly={entraMode}
             />
           ))}
           {users.length === 0 && (

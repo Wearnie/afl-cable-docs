@@ -8,6 +8,7 @@ For the US software team taking over this repo from AFL Melbourne.
 - **Where it lives now:** Azure Static Web App (`lemon-moss-071796800.6.azurestaticapps.net`), Azure Blob Storage, GitHub Actions deploy. ~$2/month running cost.
 - **Status:** in daily production use by the Melbourne dispatch team. Stable. Ready to re-platform.
 - **Read these three docs alongside this one:** [README.md](../README.md) · [ARCHITECTURE.md](./ARCHITECTURE.md) · [RUNBOOK.md](./RUNBOOK.md). Optional visual tour: [HANDOVER-SCREENSHOTS.md](./HANDOVER-SCREENSHOTS.md).
+- **Switching sign-in to Microsoft Entra ID:** the code is already in place behind a feature flag. See [SSO-MIGRATION.md](./SSO-MIGRATION.md) for the full playbook — Entra app registration, role mapping, env vars, rollback.
 
 ## Getting started for the US team
 

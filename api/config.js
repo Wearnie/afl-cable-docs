@@ -103,6 +103,7 @@ export default async function handler(req, res) {
         safeSuffixes: data.safeSuffixes || DEFAULT_CONFIG.safeSuffixes,
         customerSuffixes: data.customerSuffixes || DEFAULT_CONFIG.customerSuffixes,
         customDocTypes: data.customDocTypes || [],
+        authMode: process.env.AUTH_MODE === 'entra' ? 'entra' : 'password',
       })
     }
 

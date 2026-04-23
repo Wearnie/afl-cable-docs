@@ -1,12 +1,39 @@
-// JWT-based authentication helper for API endpoints
-// Two-tier auth: dispatch (upload certs, print QR) and admin (full access)
-// Tokens sent via x-auth-token: Bearer header
+// Two-tier auth: dispatch (upload certs, print QR) and admin (full access).
+// Two modes, switched by AUTH_MODE env var:
+//   - 'password' (default) — JWT in x-auth-token: Bearer header, bcrypt-hashed
+//     passwords stored in data/users.json. Current production model.
+//   - 'entra' — Azure SWA native Entra ID. Identity is delivered by the
+//     platform via the x-ms-client-principal header; no JWT, no passwords.
+//     See docs/SSO-MIGRATION.md.
 
 import jwt from 'jsonwebtoken'
+import { getClientPrincipal, resolveRole, principalToUser } from './client-principal.js'
 
 const JWT_SECRET = () => process.env.JWT_SECRET
 const isDev = () => process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Development'
                  || process.env.NODE_ENV === 'development'
+const isEntraMode = () => process.env.AUTH_MODE === 'entra'
+
+function entraRequire(req, minRole) {
+  const principal = getClientPrincipal(req)
+  if (!principal) {
+    const e = new Error('Unauthorized')
+    e.status = 401
+    throw e
+  }
+  const role = resolveRole(principal)
+  if (!role) {
+    const e = new Error('No role assigned — contact your administrator')
+    e.status = 403
+    throw e
+  }
+  if (minRole === 'admin' && role !== 'admin') {
+    const e = new Error('Admin access required')
+    e.status = 403
+    throw e
+  }
+  req.user = principalToUser(principal, role)
+}
 
 /**
  * Decode and verify the JWT from the x-auth-token header.
@@ -70,6 +97,7 @@ export function signRestrictedToken(user, purpose, expiresIn = '15m') {
  * Accepts either dispatch or admin role.
  */
 export function requireDispatch(req) {
+  if (isEntraMode()) return entraRequire(req, 'dispatch')
   if (!JWT_SECRET()) {
     if (!isDev()) {
       const e = new Error('Server misconfiguration: JWT_SECRET not set')
@@ -91,6 +119,7 @@ export function requireDispatch(req) {
  * Require admin-level access. Only admin role accepted.
  */
 export function requireAdmin(req) {
+  if (isEntraMode()) return entraRequire(req, 'admin')
   if (!JWT_SECRET()) {
     if (!isDev()) {
       const e = new Error('Server misconfiguration: JWT_SECRET not set')

@@ -21,8 +21,13 @@ All set in **Azure Portal → Static Web App → Configuration → Application s
 |---|---|---|
 | `AZURE_STORAGE_CONNECTION_STRING` | Yes | Connection string to the `aflcabledocs` storage account. Used by `api/lib/blob-storage.js` for all data reads/writes. |
 | `AZURE_STORAGE_CONTAINER` | No | Override container name. Defaults to `afl-cable-docs`. |
-| `JWT_SECRET` | Yes | Signing key for session tokens. Min 32 chars of entropy. Rotating invalidates all sessions. |
+| `JWT_SECRET` | Yes (password mode) | Signing key for session tokens. Min 32 chars of entropy. Rotating invalidates all sessions. Ignored when `AUTH_MODE=entra`. |
 | `AZURE_FUNCTIONS_ENVIRONMENT` | Yes (`Production`) | When set to `Production`, error messages to the client are sanitised to "Internal server error". |
+| `AUTH_MODE` | No (defaults to `password`) | Set to `entra` to use Microsoft Entra ID SSO instead of email/password. See [SSO-MIGRATION.md](./SSO-MIGRATION.md). |
+| `AAD_CLIENT_ID` | Yes (entra mode) | Entra app registration client ID. Referenced by `staticwebapp.config.json`. |
+| `AAD_CLIENT_SECRET` | Yes (entra mode) | Entra app registration client secret. Rotate before expiry. |
+| `AUTH_ADMIN_EMAILS` | No | Comma-separated bootstrap admin allowlist for Entra mode. Wins over AAD role claims. |
+| `AUTH_DISPATCH_EMAILS` | No | Comma-separated bootstrap dispatch allowlist for Entra mode. |
 
 Frontend env (set at **build time** via GitHub Actions, not at runtime):
 

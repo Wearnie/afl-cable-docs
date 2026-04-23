@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { hasAuthToken, getAuthUser, setAuthSession, clearAuth, login as apiLogin, verifySession, changePassword as apiChangePassword } from '../lib/adminApi'
+import { hasAuthToken, getAuthUser, setAuthSession, clearAuth, login as apiLogin, verifySession, changePassword as apiChangePassword, fetchAppConfig } from '../lib/adminApi'
+import { fetchClientPrincipal, signInWithEntra, signOutEntra } from '../lib/entraAuth'
 
 const AuthContext = createContext(null)
 
@@ -19,9 +20,23 @@ function isPublicRoute(pathname) {
   return false
 }
 
+async function fetchEntraUser() {
+  const principal = await fetchClientPrincipal()
+  if (!principal) return null
+  // Resolve role server-side via /api/auth/me — authoritative, env-var-aware.
+  try {
+    const res = await fetch('/api/auth/me', { cache: 'no-store' })
+    if (!res.ok) return null
+    return await res.json()
+  } catch {
+    return null
+  }
+}
+
 export default function AuthProvider({ children }) {
   const location = useLocation()
-  const [state, setState] = useState('checking') // checking | login | authenticated | change-password
+  const [state, setState] = useState('checking') // checking | login | entra-signin | entra-no-role | authenticated | change-password
+  const [authMode, setAuthMode] = useState('password')
   const [user, setUser] = useState(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,12 +49,44 @@ export default function AuthProvider({ children }) {
   const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
-    if (!hasAuthToken()) {
-      setState('login')
-      return
-    }
-    verifySession()
-      .then((u) => {
+    let cancelled = false
+
+    const bootstrap = async () => {
+      let mode = 'password'
+      try {
+        const cfg = await fetchAppConfig()
+        if (cfg?.authMode === 'entra') mode = 'entra'
+      } catch {
+        // /api/config unreachable — fall through to password mode, which is
+        // the safe default. Entra mode would fail anyway without the API.
+      }
+      if (cancelled) return
+      setAuthMode(mode)
+
+      if (mode === 'entra') {
+        const u = await fetchEntraUser()
+        if (cancelled) return
+        if (u) {
+          setUser(u)
+          setState('authenticated')
+        } else {
+          // Distinguish "not signed in" from "signed in but no role".
+          const principal = await fetchClientPrincipal()
+          if (cancelled) return
+          setState(principal ? 'entra-no-role' : 'entra-signin')
+          if (principal) setUser({ email: principal.userDetails, name: principal.userDetails, role: null })
+        }
+        return
+      }
+
+      // Password mode (existing behaviour)
+      if (!hasAuthToken()) {
+        setState('login')
+        return
+      }
+      try {
+        const u = await verifySession()
+        if (cancelled) return
         if (u) {
           setUser(u)
           setState('authenticated')
@@ -47,13 +94,16 @@ export default function AuthProvider({ children }) {
           clearAuth()
           setState('login')
         }
-      })
-      .catch(() => {
-        // Network error — allow through (dev mode)
+      } catch {
+        if (cancelled) return
         const stored = getAuthUser()
         setUser(stored || { email: 'dev@local', name: 'Dev User', role: 'admin' })
         setState('authenticated')
-      })
+      }
+    }
+
+    bootstrap()
+    return () => { cancelled = true }
   }, [])
 
   const handleLogin = async (e) => {
@@ -64,7 +114,6 @@ export default function AuthProvider({ children }) {
     try {
       const data = await apiLogin(email.trim(), password)
       if (data.mustChangePassword) {
-        // Store temp token and show password change form
         setTempToken(data.tempToken)
         setUser(data.user)
         sessionStorage.setItem('afl_auth_token', data.tempToken)
@@ -104,6 +153,10 @@ export default function AuthProvider({ children }) {
   }
 
   const signOut = () => {
+    if (authMode === 'entra') {
+      signOutEntra('/')
+      return
+    }
     clearAuth()
     setUser(null)
     setEmail('')
@@ -114,7 +167,7 @@ export default function AuthProvider({ children }) {
   // Public routes (QR code pages) skip auth entirely
   if (isPublicRoute(location.pathname)) {
     return (
-      <AuthContext.Provider value={{ user: null, role: null, signOut: () => {} }}>
+      <AuthContext.Provider value={{ user: null, role: null, authMode, signOut: () => {} }}>
         {children}
       </AuthContext.Provider>
     )
@@ -126,6 +179,49 @@ export default function AuthProvider({ children }) {
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-afl-cyan border-t-transparent rounded-full animate-spin" />
           <p className="text-afl-muted font-heading">Verifying access...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (state === 'entra-signin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-8 w-full max-w-sm text-center">
+          <div className="flex justify-center mb-8">
+            <div className="logo-dark-bg">
+              <img src="/afl-logo.png" alt="AFL" className="h-16 w-auto" />
+            </div>
+          </div>
+          <h2 className="text-xl font-bold text-afl-text font-heading mb-1">Sign In</h2>
+          <p className="text-afl-muted text-sm mb-6">Use your AFL Microsoft account.</p>
+          <button
+            type="button"
+            onClick={() => signInWithEntra(location.pathname || '/')}
+            className="w-full afl-btn afl-btn-primary justify-center !rounded-xl !py-3"
+          >
+            Sign in with Microsoft
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (state === 'entra-no-role') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-afl-light px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-afl-border p-8 w-full max-w-md text-center">
+          <h2 className="text-xl font-bold text-afl-text font-heading mb-2">Access Pending</h2>
+          <p className="text-afl-muted text-sm mb-4">
+            You&apos;re signed in as <span className="font-semibold">{user?.email}</span>, but no role has been assigned to your account yet. Contact an administrator to request <strong>dispatch</strong> or <strong>admin</strong> access.
+          </p>
+          <button
+            type="button"
+            onClick={() => signOutEntra('/')}
+            className="afl-btn afl-btn-secondary text-sm"
+          >
+            Sign out
+          </button>
         </div>
       </div>
     )
@@ -228,7 +324,7 @@ export default function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, role: user?.role, signOut }}>
+    <AuthContext.Provider value={{ user, role: user?.role, authMode, signOut }}>
       {children}
     </AuthContext.Provider>
   )
