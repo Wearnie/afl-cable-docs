@@ -26,5 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.vercel
 api/local.settings.json

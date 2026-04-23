@@ -1,9 +1,9 @@
-// Adapter: translates Azure Functions v4 (request, context) into Vercel-compatible (req, res)
-// so existing API handlers work unchanged on Azure Static Web Apps managed functions.
+// Adapter: translates Azure Functions v4 (request, context) into the Express-style
+// (req, res) shape our handlers are written against.
 
 export function adaptHandler(handler) {
   return async (request) => {
-    // Build Vercel-compatible req
+    // Build Express-style req
     const url = new URL(request.url)
     const query = Object.fromEntries(url.searchParams)
     let body = null
@@ -15,7 +15,7 @@ export function adaptHandler(handler) {
 
     const req = { method: request.method, headers, query, body }
 
-    // Build Vercel-compatible res that collects the response
+    // Build Express-style res that collects the response
     const responseHeaders = {}
     let statusCode = 200
     let responseBody = null

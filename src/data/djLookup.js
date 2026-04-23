@@ -1,7 +1,7 @@
 // DJ Number → Product Code lookup
 // Fetches from the API (reads live blob storage data) so newly uploaded
 // certs and DJ mappings are available immediately without waiting
-// for a Vercel redeploy.
+// for a redeploy.
 
 let cache = null
 

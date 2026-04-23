@@ -3,8 +3,8 @@
 // Patterns use wildcards: any non-alphanumeric character matches any position
 
 // Base URL for document hosting.
-// Set VITE_DOC_BASE_URL in Vercel env vars to point at Azure Blob, S3, etc.
-// Default: relative /docs/ path (served from public/docs/ by Vite)
+// Set VITE_DOC_BASE_URL at build time (GitHub Actions) to point at Azure Blob.
+// Default: relative /docs/ path (served from public/docs/ by Vite in local dev).
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
 
 // ============================================================================
