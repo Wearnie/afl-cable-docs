@@ -8,7 +8,7 @@
 // Usage:
 //   AZURE_STORAGE_CONNECTION_STRING="..." node scripts/purge-test-certificates.cjs [--dry-run]
 
-const { BlobServiceClient } = require('@azure/storage-blob')
+const { BlobServiceClient } = require('../api/node_modules/@azure/storage-blob')
 
 const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
 if (!connStr) {
