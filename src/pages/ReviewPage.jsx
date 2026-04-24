@@ -91,7 +91,7 @@ export default function ReviewPage() {
   const [mapping, setMapping] = useState(null)
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('gaps')
-  const [typeFilter, setTypeFilter] = useState('all') // 'all' | 'TDS' | 'Stripping' | 'Test Certificate'
+  const [typeFilter, setTypeFilter] = useState('all') // 'all' | 'TDS' | 'Stripping'
   const [search, setSearch] = useState('')
   const [expandedCode, setExpandedCode] = useState(null) // productCode being assigned
   const [expandedType, setExpandedType] = useState(null) // doc type being assigned

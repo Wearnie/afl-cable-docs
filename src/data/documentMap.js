@@ -156,7 +156,9 @@ export function findDocuments(productCode) {
   const otherDocs = []
 
   for (const entry of map) {
-    if (entry.type === 'Test Certificate') continue // hidden for now
+    // Test Certificate type was retired; skip any legacy entries still
+    // present in blob data until a purge lands.
+    if (entry.type === 'Test Certificate') continue
 
     // For customer suffix codes: TDS only matches if the pattern explicitly
     // covers the suffix (i.e. pattern length >= full code length).
@@ -420,7 +422,6 @@ export function decodeProductCode(productCode) {
 export const BUILT_IN_DOC_TYPES = {
   TDS: { label: 'Technical Data Sheet', color: '#004282', abbr: 'TDS', builtIn: true },
   Stripping: { label: 'Stripping Instructions', color: '#004282', abbr: 'STRIP', builtIn: true },
-  'Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'CERT', builtIn: true },
   'Final Test Certificate': { label: 'Test Certificate', color: '#004282', abbr: 'FTC', builtIn: true },
   Installation: { label: 'Installation Guide', color: '#004282', abbr: 'INST', builtIn: true },
   'Storage & Handling': { label: 'Storage & Handling', color: '#004282', abbr: 'S&H', builtIn: true },

@@ -4,13 +4,13 @@
 import { requireAdmin } from './lib/auth.js'
 import { uploadBlob, blobExists, appendAuditLog } from './lib/blob-storage.js'
 
-const VALID_DOC_TYPES = {
-  tds: 'tds',
-  stripping: 'stripping',
-  'test-certificates': 'test-certificates',
-  installation: 'installation',
-  'storage-handling': 'storage-handling',
-  other: 'other',
+// Built-in folder slugs plus any admin-configured custom type slug.
+// Admin UI enforces the same shape (TYPE_ID_RE in AdminConfigPage).
+const BUILTIN_DOC_TYPES = new Set(['tds', 'stripping', 'installation', 'storage-handling', 'other'])
+const CUSTOM_TYPE_RE = /^[a-z][a-z0-9-]{2,30}$/
+
+function isValidDocType(docType) {
+  return BUILTIN_DOC_TYPES.has(docType) || CUSTOM_TYPE_RE.test(docType)
 }
 
 export default async function handler(req, res) {
@@ -32,10 +32,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Required: docType, fileName, fileBase64' })
     }
 
-    const folder = VALID_DOC_TYPES[docType]
-    if (!folder) {
-      return res.status(400).json({ error: `Invalid docType. Must be one of: ${Object.keys(VALID_DOC_TYPES).join(', ')}` })
+    if (!isValidDocType(docType)) {
+      return res.status(400).json({ error: 'Invalid docType — must be a built-in slug or a valid custom-type id' })
     }
+    const folder = docType
 
     if (!fileName.toLowerCase().endsWith('.pdf')) {
       return res.status(400).json({ error: 'Only PDF files accepted' })

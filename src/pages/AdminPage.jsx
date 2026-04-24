@@ -158,7 +158,6 @@ function AdminPageInner() {
 const BUILTIN_DOC_TYPE_OPTIONS = [
   { value: 'tds', label: 'Technical Data Sheet (TDS)' },
   { value: 'stripping', label: 'Stripping Instructions' },
-  { value: 'test-certificates', label: 'Test Certificate' },
   { value: 'installation', label: 'Installation Guide' },
 ]
 
@@ -167,7 +166,6 @@ const BUILTIN_DOC_TYPE_OPTIONS = [
 const FOLDER_TO_TYPE = {
   tds: 'TDS',
   stripping: 'Stripping',
-  'test-certificates': 'Test Certificate',
   installation: 'Installation',
 }
 
