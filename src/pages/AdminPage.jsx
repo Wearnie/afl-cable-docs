@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { removeDJMappings, uploadStaticDoc, addDocumentMappings } from '../lib/adminApi'
+import { removeDJMappings, uploadStaticDoc, addDocumentMappings, fetchAppConfig } from '../lib/adminApi'
 import { loadDJMapping } from '../data/djLookup'
 import { findDocuments, decodeProductCode } from '../data/documentMap'
 function AdminPageInner() {
@@ -155,14 +155,15 @@ function AdminPageInner() {
   )
 }
 
-const DOC_TYPE_OPTIONS = [
+const BUILTIN_DOC_TYPE_OPTIONS = [
   { value: 'tds', label: 'Technical Data Sheet (TDS)' },
   { value: 'stripping', label: 'Stripping Instructions' },
   { value: 'test-certificates', label: 'Test Certificate' },
   { value: 'installation', label: 'Installation Guide' },
 ]
 
-// Map folder names to document-map type values
+// Map folder names to document-map type values (built-ins only; custom
+// types use their ID as both the folder and the type, so no mapping needed).
 const FOLDER_TO_TYPE = {
   tds: 'TDS',
   stripping: 'Stripping',
@@ -172,6 +173,18 @@ const FOLDER_TO_TYPE = {
 
 function DocUploadCard() {
   const [docType, setDocType] = useState('tds')
+  const [customTypes, setCustomTypes] = useState([])
+
+  useEffect(() => {
+    fetchAppConfig()
+      .then(cfg => setCustomTypes(cfg?.customDocTypes || []))
+      .catch(() => {})
+  }, [])
+
+  const docTypeOptions = useMemo(() => [
+    ...BUILTIN_DOC_TYPE_OPTIONS,
+    ...customTypes.map(t => ({ value: t.id, label: t.label })),
+  ], [customTypes])
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [result, setResult] = useState(null)
@@ -227,7 +240,9 @@ function DocUploadCard() {
     setMappingResult(null)
 
     try {
-      const docTypeName = FOLDER_TO_TYPE[docType] || 'TDS'
+      // Built-ins map folder slug → TitleCase type name; custom types use
+      // their ID as both the folder and the type, so the ID passes through.
+      const docTypeName = FOLDER_TO_TYPE[docType] || docType
       const entries = patterns.map(pattern => ({
         pattern,
         type: docTypeName,
@@ -264,7 +279,7 @@ function DocUploadCard() {
               onChange={e => { setDocType(e.target.value); setResult(null); setMappingResult(null) }}
               className="px-3 py-2.5 border border-afl-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-afl-cyan focus:border-transparent"
             >
-              {DOC_TYPE_OPTIONS.map(o => (
+              {docTypeOptions.map(o => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>

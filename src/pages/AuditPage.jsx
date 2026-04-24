@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { loadDocumentMap, patternMatches, stripSuffix } from '../data/documentMap'
 import { loadDJMapping } from '../data/djLookup'
-import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc, deleteDocument } from '../lib/adminApi'
+import { addDocumentMappings, removeDocumentMappings, editDocumentMappings, uploadStaticDoc, deleteDocument, fetchAppConfig } from '../lib/adminApi'
 import Toast from '../components/Toast'
 
 const DOC_BASE_URL = import.meta.env.VITE_DOC_BASE_URL || '/docs'
-const TYPE_OPTIONS = ['TDS', 'Stripping', 'Installation', 'Storage & Handling', 'Other']
+const BUILTIN_TYPE_OPTIONS = ['TDS', 'Stripping', 'Installation', 'Storage & Handling', 'Other']
 const DOC_TYPE_MAP = { TDS: 'tds', Stripping: 'stripping', Installation: 'installation', 'Storage & Handling': 'storage-handling', Other: 'other' }
 const HIDDEN_PATTERN = '1111111111111'
 const REVIEWED_KEY = 'audit-reviewed-docs'
@@ -478,7 +478,7 @@ function DocumentCard({ doc, allProductCodes, djEntries, defaultOpen, onReviewCh
 }
 
 // Upload section
-function UploadSection({ onToast }) {
+function UploadSection({ onToast, customTypes = [] }) {
   const [docType, setDocType] = useState('tds')
   const [docName, setDocName] = useState('')
   const [file, setFile] = useState(null)
@@ -548,6 +548,9 @@ function UploadSection({ onToast }) {
             <option value="installation">Installation Guide</option>
             <option value="storage-handling">Storage & Handling</option>
             <option value="other">Other</option>
+            {customTypes.map(t => (
+              <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
           </select>
         </div>
         <div>
@@ -617,6 +620,22 @@ export default function AuditPage() {
   const [reviewFilter, setReviewFilter] = useState('') // '' | 'pending' | 'reviewed'
   const [toast, setToast] = useState(null)
   const [reviewCount, setReviewCount] = useState(0)
+  const [customTypes, setCustomTypes] = useState([])
+
+  useEffect(() => {
+    fetchAppConfig()
+      .then(cfg => setCustomTypes(cfg?.customDocTypes || []))
+      .catch(() => {})
+  }, [])
+
+  // Built-in types first (preserves existing display order), then custom types.
+  // "Other" stays last so any unrecognised type bucket renders after the
+  // explicitly-named custom types.
+  const typeOptions = useMemo(() => {
+    const builtInsWithoutOther = BUILTIN_TYPE_OPTIONS.filter(t => t !== 'Other')
+    const customIds = customTypes.map(t => t.id)
+    return [...builtInsWithoutOther, ...customIds, 'Other']
+  }, [customTypes])
 
   const recountReviewed = useCallback(() => {
     setReviewCount(Object.keys(getReviewedDocs()).length)
@@ -677,14 +696,14 @@ export default function AuditPage() {
   // Group by type
   const byType = useMemo(() => {
     const grouped = {}
-    for (const t of TYPE_OPTIONS) grouped[t] = []
+    for (const t of typeOptions) grouped[t] = []
     for (const doc of Object.values(docGroups)) {
       if (!grouped[doc.type]) grouped[doc.type] = []
       grouped[doc.type].push(doc)
     }
-    for (const t of TYPE_OPTIONS) grouped[t]?.sort((a, b) => a.name.localeCompare(b.name))
+    for (const t of Object.keys(grouped)) grouped[t]?.sort((a, b) => a.name.localeCompare(b.name))
     return grouped
-  }, [docGroups])
+  }, [docGroups, typeOptions])
 
   // Partial match: does a search string (treated as a partial product code)
   // overlap with a pattern? Compares up to the shorter length.
@@ -710,7 +729,7 @@ export default function AuditPage() {
     const reviewedDocs = getReviewedDocs()
 
     const result = {}
-    for (const type of TYPE_OPTIONS) {
+    for (const type of typeOptions) {
       if (typeFilter && typeFilter !== type) continue
       result[type] = (byType[type] || []).filter(doc => {
         // Review filter
@@ -755,8 +774,8 @@ export default function AuditPage() {
   }, [search, typeFilter, reviewFilter, reviewCount, byType, allProductCodes, djEntries, djMapping, partialMatch])
 
   const totalVisible = useMemo(() =>
-    TYPE_OPTIONS.reduce((s, t) => s + (filtered[t]?.length || 0), 0),
-    [filtered])
+    typeOptions.reduce((s, t) => s + (filtered[t]?.length || 0), 0),
+    [filtered, typeOptions])
 
   const handleToast = useCallback((msg, type) => setToast({ msg, type }), [])
 
@@ -807,7 +826,7 @@ export default function AuditPage() {
               <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
                 className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
                 <option value="">All Types</option>
-                {TYPE_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                {typeOptions.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div>
@@ -835,10 +854,10 @@ export default function AuditPage() {
         </div>
 
         {/* Upload */}
-        <UploadSection onToast={handleToast} />
+        <UploadSection onToast={handleToast} customTypes={customTypes} />
 
         {/* Document sections */}
-        {TYPE_OPTIONS.map(type => {
+        {typeOptions.map(type => {
           const docs = filtered[type] || []
           if (typeFilter && typeFilter !== type) return null
           if (search && docs.length === 0) return null
