@@ -27,3 +27,6 @@ dist-ssr
 *.sln
 *.sw?
 api/local.settings.json
+
+# Claude Code local config (personal permissions, not for handover)
+.claude/
