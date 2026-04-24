@@ -61,11 +61,9 @@ Admin surface (`/audit`, `/coverage`, `/users`, `/admin`, `/review`, etc.) is fo
 
 ## What's in the repo you might not need
 
-- `seed-users.cjs` — one-off script to bootstrap the first admin. Keep until you've added your own seeding path, then delete.
-- `scripts/convert-urls.js`, `scripts/extract-urls.js`, `scripts/url-mapping.json` — migration helpers from the pre-Azure setup. Safe to delete.
-- `scripts/archive/stress-test.cjs` — archived load-test harness. Delete if you write your own.
+- `scripts/seed-first-admin.cjs` — one-off script to bootstrap the first admin user. Keep until you've added your own seeding path (or switched to Entra SSO — see [SSO-MIGRATION.md](./SSO-MIGRATION.md)), then delete.
 
-Not included on this list because it IS used (contrary to an earlier draft): `api/product-codes.js` — consumed by `CoverageAuditPage` and `ReviewMatchesPage`.
+Note: `api/product-codes.js` IS used (consumed by `CoverageAuditPage` and `ReviewMatchesPage`) — don't remove it.
 
 ## Decisions that need a real call
 
@@ -81,7 +79,7 @@ Not included on this list because it IS used (contrary to an earlier draft): `ap
 - [ ] Env vars configured (`AZURE_STORAGE_CONNECTION_STRING`, `JWT_SECRET`, `VITE_DOC_BASE_URL`, `AZURE_FUNCTIONS_ENVIRONMENT=Production`)
 - [ ] `data/*.json` snapshots imported into the new blob
 - [ ] `docs/**/*.pdf` imported into the new blob (or new paths mapped in `document-map.json`)
-- [ ] First admin seeded (via `seed-users.cjs` or equivalent)
+- [ ] First admin seeded (via `scripts/seed-first-admin.cjs` or equivalent)
 - [ ] GitHub Actions deploy token regenerated & added to new repo
 - [ ] Custom domain wired up (if desired)
 - [ ] Smoke test: login → register a DJ → generate QR → upload a cert PDF → scan the QR → see the cert

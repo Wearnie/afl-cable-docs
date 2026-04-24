@@ -22,8 +22,7 @@ src/              React frontend (Vite)
 api/              Azure Functions (one file per endpoint)
   lib/            Shared helpers (auth.js, blob-storage.js, azure-adapter.js)
 public/           Static assets; local-dev fallback for /data and /docs
-scripts/          Dev-only utilities (URL extraction, archives)
-seed-users.cjs    One-off script to seed the first admin user
+scripts/          Deploy helpers (first-admin seed, blob restore from SAS/tarball)
 staticwebapp.config.json  Azure SWA routing + fallback rules
 ```
 
